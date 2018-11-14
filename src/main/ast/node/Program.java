@@ -17,8 +17,8 @@ public class Program {
         this.mainClass = mainClass;
     }
 
-    public void addClass(ClassDeclaration classDefinition) {
-        classes.add(classDefinition);
+    public void addClass(ClassDeclaration classDeclaration) {
+        classes.add(classDeclaration);
     }
 
     public List<ClassDeclaration> getClasses() {
