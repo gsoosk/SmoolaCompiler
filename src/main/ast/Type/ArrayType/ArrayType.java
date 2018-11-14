@@ -1,6 +1,6 @@
-package main.ast.Type.ArrayType;
+package ast.Type.ArrayType;
 
-import main.ast.Type.Type;
+import ast.Type.Type;
 
 public class ArrayType extends Type {
     private int size;

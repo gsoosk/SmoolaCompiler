@@ -1,16 +1,16 @@
-package main.ast;
+package ast;
 
-import main.ast.node.Node;
-import main.ast.node.Program;
-import main.ast.node.declaration.ClassDeclaration;
-import main.ast.node.declaration.MainMethodDeclaration;
-import main.ast.node.declaration.MethodDeclaration;
-import main.ast.node.declaration.VarDeclaration;
-import main.ast.node.expression.*;
-import main.ast.node.expression.Value.BooleanValue;
-import main.ast.node.expression.Value.IntValue;
-import main.ast.node.expression.Value.StringValue;
-import main.ast.node.statement.*;
+import ast.node.Node;
+import ast.node.Program;
+import ast.node.declaration.ClassDeclaration;
+import ast.node.declaration.MainMethodDeclaration;
+import ast.node.declaration.MethodDeclaration;
+import ast.node.declaration.VarDeclaration;
+import ast.node.expression.*;
+import ast.node.expression.Value.BooleanValue;
+import ast.node.expression.Value.IntValue;
+import ast.node.expression.Value.StringValue;
+import ast.node.statement.*;
 
 public class VisitorImpl implements Visitor {
     @Override

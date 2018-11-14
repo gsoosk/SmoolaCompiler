@@ -1,6 +1,6 @@
-package main.ast.node.expression;
+package ast.node.expression;
 
-import main.ast.Visitor;
+import ast.Visitor;
 
 public class ArrayCall extends Expression {
     private Expression instance;

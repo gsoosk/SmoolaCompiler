@@ -1,4 +1,4 @@
-package main.symbolTable;
+package symbolTable;
 
 public class ItemAlreadyExistsException extends Exception {
 }

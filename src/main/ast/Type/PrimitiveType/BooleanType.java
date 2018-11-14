@@ -1,6 +1,6 @@
-package main.ast.Type.PrimitiveType;
+package ast.Type.PrimitiveType;
 
-import main.ast.Type.Type;
+import ast.Type.Type;
 
 public class BooleanType extends Type {
 

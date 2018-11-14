@@ -1,7 +1,7 @@
-package main.ast.node.expression;
+package ast.node.expression;
 
-import main.ast.Type.Type;
-import main.ast.node.Node;
+import ast.Type.Type;
+import ast.node.Node;
 
 public abstract class Expression extends Node{
     private Type type;

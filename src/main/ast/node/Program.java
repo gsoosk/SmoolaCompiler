@@ -1,28 +1,27 @@
-package main.ast.node;
+package ast.node;
 
-import main.ast.Visitor;
-
-import java.lang.instrument.ClassDefinition;
+import ast.Visitor;
 import java.util.ArrayList;
+import ast.node.declaration.ClassDeclaration;
 import java.util.List;
 
 public class Program {
-    private ArrayList<ClassDefinition> classes = new ArrayList<>();
-    private ClassDefinition mainClass;
+    private ArrayList<ClassDeclaration> classes = new ArrayList<>();
+    private ClassDeclaration mainClass;
 
-    public ClassDefinition getMainClass() {
+    public ClassDeclaration getMainClass() {
         return mainClass;
     }
 
-    public void setMainClass(ClassDefinition mainClass) {
+    public void setMainClass(ClassDeclaration mainClass) {
         this.mainClass = mainClass;
     }
 
-    public void addClass(ClassDefinition classDefinition) {
+    public void addClass(ClassDeclaration classDefinition) {
         classes.add(classDefinition);
     }
 
-    public List<ClassDefinition> getClasses() {
+    public List<ClassDeclaration> getClasses() {
         return classes;
     }
 

@@ -1,6 +1,6 @@
-package main.symbolTable;
+package symbolTable;
 
-import main.ast.Type.Type;
+import ast.Type.Type;
 
 public abstract class SymbolTableItem {
 	protected String name;

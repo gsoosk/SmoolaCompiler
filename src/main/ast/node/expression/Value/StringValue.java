@@ -1,7 +1,7 @@
-package main.ast.node.expression.Value;
+package ast.node.expression.Value;
 
-import main.ast.Type.Type;
-import main.ast.Visitor;
+import ast.Type.Type;
+import ast.Visitor;
 
 public class StringValue extends Value {
     private String constant;

@@ -1,7 +1,7 @@
-package main.ast.node.statement;
+package ast.node.statement;
 
-import main.ast.Visitor;
-import main.ast.node.expression.Expression;
+import ast.Visitor;
+import ast.node.expression.Expression;
 
 public class Write extends Statement {
     private Expression arg;

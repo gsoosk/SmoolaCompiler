@@ -1,6 +1,6 @@
-package main.ast.node.statement;
+package ast.node.statement;
 
-import main.ast.node.Node;
+import ast.node.Node;
 
 public class Statement extends Node {
 

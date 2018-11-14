@@ -1,6 +1,6 @@
-package main.ast.node.statement;
+package ast.node.statement;
 
-import main.ast.Visitor;
+import ast.Visitor;
 
 import java.util.ArrayList;
 

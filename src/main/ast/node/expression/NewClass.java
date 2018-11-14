@@ -1,6 +1,6 @@
-package main.ast.node.expression;
+package ast.node.expression;
 
-import main.ast.Visitor;
+import ast.Visitor;
 
 public class NewClass extends Expression {
     private Identifier className;

@@ -1,6 +1,6 @@
-package main.ast.node.declaration;
+package ast.node.declaration;
 
-import main.ast.node.Node;
+import ast.node.Node;
 
 public abstract class Declaration extends Node {
 }

@@ -1,7 +1,7 @@
-package main.ast.node.expression;
+package ast.node.expression;
 
-import main.ast.Type.Type;
-import main.ast.Visitor;
+import ast.Type.Type;
+import ast.Visitor;
 
 import java.util.ArrayList;
 

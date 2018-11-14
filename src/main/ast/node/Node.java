@@ -1,6 +1,6 @@
-package main.ast.node;
+package ast.node;
 
-import main.ast.Visitor;
+import ast.Visitor;
 
 public abstract class Node {
 }

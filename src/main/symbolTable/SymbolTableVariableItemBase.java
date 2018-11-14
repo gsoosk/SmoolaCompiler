@@ -1,32 +1,34 @@
-package main.symbolTable;
+package symbolTable;
 
-import main.ast.Type.Type;
+import ast.Type.Type;
 
 public abstract class SymbolTableVariableItemBase extends SymbolTableItem {
 
-	private int index;
-	protected Type type;
-	
-	public SymbolTableVariableItemBase(String name, Type type, int index) {
-		this.name = name;
-	    this.type = type;
-	    this.index = index;
-	}
+    private int index;
+    protected Type type;
 
-	public String getName() {
-		return name;
-	}
+    public SymbolTableVariableItemBase(String name, Type type, int index) {
+        this.name = name;
+        this.type = type;
+        this.index = index;
+    }
 
-	public Type getType() {
-		return type;
-	}
+    public String getName() {
+        return name;
+    }
 
-	@Override
-	public String getKey() {
-		return name;
-	}
+    public Type getType() {
+        return type;
+    }
+
+    @Override
+    public String getKey() {
+        return name;
+    }
 
     public int getIndex() {
         return index;
     }
+
+
 }
