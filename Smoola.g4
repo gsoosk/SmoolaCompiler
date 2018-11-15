@@ -4,7 +4,7 @@ grammar Smoola;
     ;
     mainClass:
         // name should be checked later
-        'class' ID '{' 'def' ID '()' ':' 'int' '{'  statements 'return' expression ';' '}' '}'
+        'class' ID '{' 'def' ID '(' ')' ':' 'int' '{'  statements 'return' expression ';' '}' '}'
     ;
     classDeclaration:
         'class' ID ('extends' ID)? '{' (varDeclaration)* (methodDeclaration)* '}'
@@ -13,7 +13,7 @@ grammar Smoola;
         'var' ID ':' type ';'
     ;
     methodDeclaration:
-        'def' ID ('()' | ('(' ID ':' type (',' ID ':' type)* ')')) ':' type '{'  varDeclaration* statements 'return' expression ';' '}'
+        'def' ID ('(' ')' | ('(' ID ':' type (',' ID ':' type)* ')')) ':' type '{'  varDeclaration* statements 'return' expression ';' '}'
     ;
     statements:
         (statement)*
@@ -121,14 +121,14 @@ grammar Smoola;
 	    expressionOther expressionMethodsTemp
 	;
 	expressionMethodsTemp:
-	    '.' (ID '()' | ID '(' (expression (',' expression)*) ')' | 'length') expressionMethodsTemp
+	    '.' (ID '(' ')' | ID '(' (expression (',' expression)*) ')' | 'length') expressionMethodsTemp
 	    |
 	;
     expressionOther:
 		CONST_NUM
         |	CONST_STR
         |   'new ' 'int' '[' expression ']'
-        |   'new ' ID '()'
+        |   'new ' ID '(' ')'
         |   'this'
         |   'true'
         |   'false'
@@ -140,7 +140,7 @@ grammar Smoola;
 	    'int' |
 	    'boolean' |
 	    'string' |
-	    'int[]' |
+	    'int' '[' ']' |
 	    ID
 	;
     CONST_NUM:
