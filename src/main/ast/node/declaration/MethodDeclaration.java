@@ -1,5 +1,6 @@
 package ast.node.declaration;
 
+import ast.Type.Type;
 import ast.Visitor;
 import ast.node.expression.Expression;
 import ast.node.expression.Identifier;
@@ -9,6 +10,7 @@ import java.util.ArrayList;
 
 public class MethodDeclaration extends Declaration {
     private Expression returnValue;
+    private Type returnType;
     private Identifier name;
     private ArrayList<VarDeclaration> args = new ArrayList<>();
     private ArrayList<VarDeclaration> localVars = new ArrayList<>();
@@ -24,6 +26,14 @@ public class MethodDeclaration extends Declaration {
 
     public void setReturnValue(Expression returnValue) {
         this.returnValue = returnValue;
+    }
+
+    public Type getReturnType() {
+        return returnType;
+    }
+
+    public void setReturnType(Type returnType) {
+        this.returnType = returnType;
     }
 
     public Identifier getName() {
