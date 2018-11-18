@@ -4,7 +4,7 @@ import ast.Visitor;
 
 import java.util.ArrayList;
 
-public class Block {
+public class Block extends Statement {
     private ArrayList<Statement> body = new ArrayList<>();
 
     public ArrayList<Statement> getBody() {

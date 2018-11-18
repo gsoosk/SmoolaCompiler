@@ -48,5 +48,5 @@ public class BinaryExpression extends Expression {
     }
 }
 enum BinaryOperator {
-    add, sub, mult, div, and, or, eq, lt, gt, lte, gte, assign
+    add, sub, mult, div, and, or, eq, lt, gt, assign
 }
