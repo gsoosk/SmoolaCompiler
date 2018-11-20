@@ -127,7 +127,7 @@ grammar Smoola;
     expressionOther:
 		CONST_NUM
         |	CONST_STR
-        |   'new ' 'int' '[' expression ']'
+        |   'new ' 'int' '[' CONST_NUM ']'
         |   'new ' ID '(' ')'
         |   'this'
         |   'true'
