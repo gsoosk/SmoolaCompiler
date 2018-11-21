@@ -36,7 +36,9 @@ public class SymbolTable {
 		this.items = new HashMap<String, SymbolTableItem>();
 	}
 
-	public void put(SymbolTableItem item) throws ItemAlreadyExistsException {
+	// item -> class abstract for every thing in symbol table
+	// key -> is that item exists in symbol table. every symbol table item has a key 
+	public void put(SymbolTableItem item) throws ItemAlreadyExistsException { 
 		if(items.containsKey(item.getKey()))
 			throw new ItemAlreadyExistsException();
 		items.put(item.getKey(), item);

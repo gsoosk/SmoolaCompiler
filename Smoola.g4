@@ -1,6 +1,10 @@
 grammar Smoola;
+
+@members{
+    
+}
     program:
-        mainClass (classDeclaration)* EOF
+        mainClass (classDeclaration)* EOF 
     ;
     mainClass:
         // name should be checked later

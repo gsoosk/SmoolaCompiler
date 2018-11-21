@@ -4,6 +4,7 @@ import ast.Type.Type;
 
 import java.util.ArrayList;
 
+
 public class SymbolTableMethodItem extends SymbolTableItem {
 
     ArrayList<Type> argTypes = new ArrayList<>();
@@ -14,7 +15,7 @@ public class SymbolTableMethodItem extends SymbolTableItem {
     }
 
     @Override
-    public String getKey() {
+    public String getKey() { // it can be Method:<MethodName>
         //todo
         return null;
     }

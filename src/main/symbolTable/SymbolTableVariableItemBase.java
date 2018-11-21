@@ -10,7 +10,8 @@ public abstract class SymbolTableVariableItemBase extends SymbolTableItem {
     public SymbolTableVariableItemBase(String name, Type type, int index) {
         this.name = name;
         this.type = type;
-        this.index = index;
+        this.index = index; //Index -> Every variable should have index - two vaiables should not have same index
+        
     }
 
     public String getName() {
