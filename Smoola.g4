@@ -75,20 +75,27 @@ grammar Smoola;
         }
         )*
     ;
-    statement:
-        statementBlock |
-        statementCondition |
-        statementLoop |
-        statementWrite |
-        statementAssignment
+    statement returns [Statement synStatement]:
+        stmB = statementBlock {$synStatement = $stmB.synStatementBlock} |
+        stmC = statementCondition {$synStatement = $stmC.synStatementCondition} |
+        stmL = statementLoop {$synStatement = $stmL} |
+        stmW = statementWrite {$synStatement = $stmW} |
+        stmA = statementAssignment {$synStatement = $stmA}
     ;
-    statementBlock:
-        '{'  statements '}'
+    statementBlock returns [Statement synStatementBlock]:
+        '{'  allStatements = statements {$synStatementBlock.setBody(allStatements)} '}'
     ;
-    statementCondition:
-        'if' '('expression')' 'then' statement ('else' statement)?
+    statementCondition returns [Statement synStatementCondition]:
+        'if' '(' conditionExp = expression')' 'then' consequenceBody = statement
+         {
+            $synStatementCondition = new Conditional($conditionExp , $consequenceBody.synStatement);
+         }('else' altBody = statement
+         {
+            $synStatementCondition.setAlternativeBody(altBody.synStatement);
+         }
+         )?
     ;
-    statementLoop:
+    statementLoop returns [Statement syn]:
         'while' '(' expression ')' statement
     ;
     statementWrite:
