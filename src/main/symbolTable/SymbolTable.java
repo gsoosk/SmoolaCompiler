@@ -1,6 +1,7 @@
-package symbolTable;
+package main.symbolTable;
 
 import java.util.*;
+import java.util.Stack;
 
 public class SymbolTable {
 
@@ -11,7 +12,7 @@ public class SymbolTable {
 
 	public static SymbolTable top;
 	
-	private static Stack<SymbolTable> stack = new Stack<SymbolTable>();
+	private static java.util.Stack<SymbolTable> stack = new Stack<SymbolTable>();
 
 	// Use it in pass 1 scope start
 	public static void push(SymbolTable symbolTable) {

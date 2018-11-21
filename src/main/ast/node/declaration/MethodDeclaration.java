@@ -1,10 +1,10 @@
-package ast.node.declaration;
+package main.ast.node.declaration;
 
-import ast.Type.Type;
-import ast.Visitor;
-import ast.node.expression.Expression;
-import ast.node.expression.Identifier;
-import ast.node.statement.Statement;
+import main.ast.Type.Type;
+import main.ast.Visitor;
+import main.ast.node.expression.Expression;
+import main.ast.node.expression.Identifier;
+import main.ast.node.statement.Statement;
 
 import java.util.ArrayList;
 
@@ -54,6 +54,14 @@ public class MethodDeclaration extends Declaration {
 
     public ArrayList<Statement> getBody() {
         return body;
+    }
+
+    public void setBody(ArrayList<Statement> allStatements)
+    {
+        for (int i = 0 ; i < this.body.size() ; i++)
+        {
+            this.body.add(allStatements.get(i));
+        }
     }
 
     public void addStatement(Statement statement) {

@@ -4,11 +4,28 @@ grammar Smoola;
     
 }
     program:
-        mainClass (classDeclaration)* EOF 
+        {
+        }
+        mainClass
+        {
+
+        }
+        (classDeclaration {
+
+        })*
+        {
+        }
+        EOF 
     ;
-    mainClass:
+    mainClass returns [ClassDeclaration synMainClass]
+    :
         // name should be checked later
-        'class' ID '{' 'def' ID '(' ')' ':' 'int' '{'  statements 'return' expression ';' '}' '}'
+        'class'  mainClassName = ID '{' 'def' mainMethodName = ID '(' ')' ':' 'int' '{'  allStatements = statements 'return' mainVal = expression ';' '}' '}'
+        {
+
+            $synMainClass = AstMaker.mainClass($mainClassName, $mainMethodName, $mainVal, $allStatements);
+
+        }
     ;
     classDeclaration:
         'class' ID ('extends' ID)? '{' (varDeclaration)* (methodDeclaration)* '}'

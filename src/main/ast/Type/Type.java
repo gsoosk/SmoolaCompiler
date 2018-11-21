@@ -1,4 +1,4 @@
-package ast.Type;
+package main.ast.Type;
 
 public abstract class Type {
     public abstract String toString();

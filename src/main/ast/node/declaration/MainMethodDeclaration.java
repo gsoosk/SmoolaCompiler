@@ -1,8 +1,8 @@
-package ast.node.declaration;
+package main.ast.node.declaration;
 
-import ast.Visitor;
-import ast.node.expression.Expression;
-import ast.node.statement.Statement;
+import main.ast.Visitor;
+import main.ast.node.expression.Expression;
+import main.ast.node.statement.Statement;
 
 import java.util.ArrayList;
 

@@ -1,7 +1,7 @@
-package ast.node.statement;
+package main.ast.node.statement;
 
-import ast.Visitor;
-import ast.node.expression.Expression;
+import main.ast.Visitor;
+import main.ast.node.expression.Expression;
 
 public class While extends Statement {
     private Expression condition;

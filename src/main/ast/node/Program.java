@@ -1,8 +1,8 @@
-package ast.node;
+package main.ast.node;
 
-import ast.Visitor;
+import main.ast.Visitor;
 import java.util.ArrayList;
-import ast.node.declaration.ClassDeclaration;
+import main.ast.node.declaration.ClassDeclaration;
 import java.util.List;
 
 public class Program {

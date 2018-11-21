@@ -1,11 +1,11 @@
-package ast;
+package main.ast;
 
-import ast.node.Program;
-import ast.node.Node;
-import ast.node.declaration.*;
-import ast.node.expression.*;
-import ast.node.expression.Value.*;
-import ast.node.statement.*;
+import main.ast.node.Program;
+import main.ast.node.Node;
+import main.ast.node.declaration.*;
+import main.ast.node.expression.*;
+import main.ast.node.expression.Value.*;
+import main.ast.node.statement.*;
 
 
 public interface Visitor {

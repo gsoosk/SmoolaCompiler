@@ -1,5 +1,5 @@
-package ast.node;
+package main.ast.node;
 
-import ast.Visitor;
+import main.ast.Visitor;
 
 public abstract class Node {}

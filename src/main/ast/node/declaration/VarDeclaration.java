@@ -1,8 +1,8 @@
-package ast.node.declaration;
+package main.ast.node.declaration;
 
-import ast.Type.Type;
-import ast.Visitor;
-import ast.node.expression.Identifier;
+import main.ast.Type.Type;
+import main.ast.Visitor;
+import main.ast.node.expression.Identifier;
 
 public class VarDeclaration extends Declaration {
     private Identifier identifier;
