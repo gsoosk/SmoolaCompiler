@@ -1,4 +1,4 @@
-// Generated from /Users/thesoli/Desktop/Courses/Fall97/PL/Projects/Phase2/Smoola/Smoola.g4 by ANTLR 4.7.1
+// Generated from /Users/farzad/Desktop/PLC/Projects/Phase 2/Smoola/Smoola.g4 by ANTLR 4.7.1
 import org.antlr.v4.runtime.Lexer;
 import org.antlr.v4.runtime.CharStream;
 import org.antlr.v4.runtime.Token;
@@ -86,6 +86,9 @@ public class SmoolaLexer extends Lexer {
 	public Vocabulary getVocabulary() {
 		return VOCABULARY;
 	}
+
+
+	    
 
 
 	public SmoolaLexer(CharStream input) {

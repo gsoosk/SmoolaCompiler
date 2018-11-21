@@ -4,17 +4,8 @@ grammar Smoola;
     
 }
     program:
-        {
-        }
         mainClass
-        {
-
-        }
-        (classDeclaration {
-
-        })*
-        {
-        }
+        (classDeclaration)*
         EOF 
     ;
     mainClass returns [ClassDeclaration synMainClass]
@@ -32,21 +23,57 @@ grammar Smoola;
         'class' name = ID ('extends' parrentName = ID)?
          {
             $synClassDeclaration = AstMaker.classDeclaration($name, $parrentName);
+            
          }
          '{'
-         (varDeclaration { $synClassDeclaration.})*
-         (methodDeclaration)*
+         (varDec = varDeclaration {$synClassDeclaration.addVarDeclaration(varDec)} )*
+         (methodDec = methodDeclaration {$synClassDeclaration.addMethodDeclaration(methodDec})*
          '}'
 
     ;
     varDeclaration:
         'var' ID ':' type ';'
     ;
-    methodDeclaration:
-        'def' ID ('(' ')' | ('(' ID ':' type (',' ID ':' type)* ')')) ':' type '{'  varDeclaration* statements 'return' expression ';' '}'
+    methodDeclaration returns [MethodDeclaration synMethodDeclaration]:
+        'def' methodName = ID
+        {
+            $synMethodDeclaration = new MethodDeclaration(methodName);
+        }
+        ('(' ')' | ('(' arg1Id = ID ':' arg1Type = type
+        {
+            $synMethodDeclaration.addArg(new VarDeclaration(arg1Id, arg1Type));
+        }
+        (',' argId = ID ':' argType = type
+        {
+            $synMethodDeclaration.addArg(new VarDeclaration(argId, argType));
+        }
+        )* ')')) ':' returnType = type
+        {
+            $synMethodDeclaration.setReturnType(returnType);
+        }
+        '{'  (newVar = varDeclaration
+        {
+            $synMethodDeclaration.addLocalVar(newVar);
+        }
+        )* allStatements = statements
+        {
+            $synMethodDeclaration.setBody(allStatements);
+        }
+        'return' returnVal = expression
+        {
+            $synMethodDeclaration.setReturnValue(returnVal);
+        }
+        ';' '}'
     ;
-    statements:
-        (statement)*
+    statements returns [ArrayList<Statement> synStatements]:
+        {
+            $synStatements = new ArrayList<>(); ;
+        }
+        (newStatements = statement
+        {
+            $synStatements.add(newStatements);
+        }
+        )*
     ;
     statement:
         statementBlock |
