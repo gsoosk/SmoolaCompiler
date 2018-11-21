@@ -1,4 +1,4 @@
-package main;
+package main.Tools;
 
 import main.ast.Type.PrimitiveType.IntType;
 import main.ast.node.declaration.ClassDeclaration;
