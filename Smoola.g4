@@ -65,7 +65,8 @@ grammar Smoola;
         }
         ';' '}'
     ;
-    statements returns [ArrayList<Statement> synStatements]:
+    statements returns [ArrayList<Statement> synStatements]
+    :
         {
             $synStatements = new ArrayList<>(); ;
         }
@@ -75,43 +76,67 @@ grammar Smoola;
         }
         )*
     ;
-    statement returns [Statement synStatement]:
+    statement returns [Statement synStatement]
+    :
         stmB = statementBlock {$synStatement = $stmB.synStatementBlock} |
         stmC = statementCondition {$synStatement = $stmC.synStatementCondition} |
         stmL = statementLoop {$synStatement = $stmL} |
         stmW = statementWrite {$synStatement = $stmW} |
         stmA = statementAssignment {$synStatement = $stmA}
     ;
-    statementBlock returns [Statement synStatementBlock]:
+    statementBlock returns [Statement synStatementBlock]
+    :
         '{'  allStatements = statements {$synStatementBlock.setBody(allStatements)} '}'
     ;
-    statementCondition returns [Statement synStatementCondition]:
+    statementCondition returns [Statement synStatementCondition]
+    :
         'if' '(' conditionExp = expression')' 'then' consequenceBody = statement
          {
             $synStatementCondition = new Conditional($conditionExp , $consequenceBody.synStatement);
          }('else' altBody = statement
          {
-            $synStatementCondition.setAlternativeBody(altBody.synStatement);
+            $synStatementCondition.setAlternativeBody($altBody.synStatement);
          }
          )?
     ;
-    statementLoop returns [Statement syn]:
-        'while' '(' expression ')' statement
+    statementLoop returns [Statement synStatementLoop]
+    :
+        'while' '(' loopCondition = expression ')' loopBody = statement
+        {
+            $synStatementLoop = new While($loopCondition, $loopBody.synStatement);
+        }
     ;
-    statementWrite:
-        'writeln(' expression ')' ';'
+    statementWrite returns [Statement synStatementWrite]:
+        'writeln(' arg = expression ')' ';'
+        {
+            $synStatementWrite = new Write($arg);
+        }
     ;
-    statementAssignment:
-        expression ';'
+    statementAssignment returns [Statement synStatementAssign]
+    :
+        assignExpr = expression ';'
+        {
+            $synStatementAssign = new Assign(assignExpr..getLeft(), assignExpr..getRight());
+        }
     ;
 
-    expression:
-		expressionAssignment
+    expression returns [Expression synExpression]:
+		expr = expressionAssignment
+		{
+		    $synExpression = $expr;
+		}
 	;
 
-    expressionAssignment:
-		expressionOr '=' expressionAssignment
-	    |	expressionOr
+    expressionAssignment returns [Expression synExpression]:
+		lExpr = expressionOr '=' rExpr = expressionAssignment
+		{
+		    $synExpression = new BinaryExpression(lExpr, rExpr, BinaryOperator.assign);
+
+		}
+	    |	expr = expressionOr
+	    {
+	        $synExpression = $expr;
+	    }
 	;
 
     expressionOr:
@@ -188,18 +213,18 @@ grammar Smoola;
 	    '.' (ID '(' ')' | ID '(' (expression (',' expression)*) ')' | 'length') expressionMethodsTemp
 	    |
 	;
-    expressionOther:
-		CONST_NUM
-        |	CONST_STR
-        |   'new ' 'int' '[' CONST_NUM ']'
-        |   'new ' ID '(' ')'
-        |   'this'
-        |   'true'
-        |   'false'
-        |	ID
-        |   ID '[' expression ']'
-        |	'(' expression ')'
-	;
+    expressionOther returns [Expression expr]:
+    val = CONST_NUM {$expr = new IntValue($val.int, new IntType());}
+          | val = CONST_STR {$expr = new StringValue($val.text, new StringType());}
+          |   'new ' 'int' '[' val = CONST_NUM ']' {$expr = new NewArray(); $expr.setExpression(new IntValue($val.int, new IntType()));} //TODO
+          |   'new ' clasName = ID '(' ')' {$epxr = new NewClass(new Identifier($className.text));}
+          |   'this' {$expr = new This();}
+          |   'true' {$expr = new BooleanValue(true, new BooleanType());}
+          |   'false' {$expr = new BooleanValue(false, new BooleanType());}
+          | val = ID //TODO
+          |   val = ID '[' ex = expression ']' {$expr = new ArrayCall();}
+          | '(' ex = expression ')'
+     ;
 	type:
 	    'int' |
 	    'boolean' |
