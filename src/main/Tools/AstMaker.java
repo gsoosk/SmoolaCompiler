@@ -22,4 +22,8 @@ public class AstMaker {
         mainClass.addMethodDeclaration(mainMethod);
         return mainClass;
     }
+    public static ClassDeclaration classDeclaration(Identifier name, Identifier parrentName)
+    {
+        return new ClassDeclaration(name, parrentName);
+    }
 }

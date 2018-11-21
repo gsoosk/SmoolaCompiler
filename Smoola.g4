@@ -27,8 +27,17 @@ grammar Smoola;
 
         }
     ;
-    classDeclaration:
-        'class' ID ('extends' ID)? '{' (varDeclaration)* (methodDeclaration)* '}'
+    classDeclaration returns [ClassDeclaration synClassDeclaration]
+    :
+        'class' name = ID ('extends' parrentName = ID)?
+         {
+            $synClassDeclaration = AstMaker.classDeclaration($name, $parrentName);
+         }
+         '{'
+         (varDeclaration { $synClassDeclaration.})*
+         (methodDeclaration)*
+         '}'
+
     ;
     varDeclaration:
         'var' ID ':' type ';'
