@@ -1,12 +1,15 @@
 grammar Smoola;
 
+@header {
+  import main.Tools.AstMaker;
+}
+
     program
     :
         main = mainClass ( mainDec = classDeclaration)* EOF
     ;
     mainClass returns [ClassDeclaration synMainClass]
     :
-        // name should be checked later
         'class'  mainClassName = ID '{' 'def' mainMethodName = ID '(' ')' ':' 'int' '{'  allStatements = statements 'return' mainVal = expression ';' '}' '}'
         {
             $synMainClass = AstMaker.mainClass($mainClassName.text, $mainMethodName.text, $mainVal.synExpression, $allStatements.synStatements);
@@ -19,8 +22,8 @@ grammar Smoola;
            $synClassDeclaration = AstMaker.classDeclaration($name.text, $parentName.text);
         }
         '{'
-        (varDec = varDeclaration {$synClassDeclaration.addVarDeclaration($varDec.synVarDec)} )*
-        (methodDec = methodDeclaration {$synClassDeclaration.addMethodDeclaration($methodDec.synMethodDeclaration})*
+        (varDec = varDeclaration {$synClassDeclaration.addVarDeclaration($varDec.synVarDec);} )*
+        (methodDec = methodDeclaration {$synClassDeclaration.addMethodDeclaration($methodDec.synMethodDeclaration);})*
         '}'
 
     ;
@@ -76,15 +79,15 @@ grammar Smoola;
     ;
     statement returns [Statement synStatement]
     :
-        stmB = statementBlock {$synStatement = $stmB.synStatementBlock} |
-        stmC = statementCondition {$synStatement = $stmC.synStatementCondition} |
-        stmL = statementLoop {$synStatement = $stmL.synStatementLoop} |
-        stmW = statementWrite {$synStatement = $stmW.synStatementWrite} |
-        stmA = statementAssignment {$synStatement = $stmA.synStatementAssign}
+        stmB = statementBlock {$synStatement = $stmB.synStatementBlock;} |
+        stmC = statementCondition {$synStatement = $stmC.synStatementCondition;} |
+        stmL = statementLoop {$synStatement = $stmL.synStatementLoop;} |
+        stmW = statementWrite {$synStatement = $stmW.synStatementWrite;} |
+        stmA = statementAssignment {$synStatement = $stmA.synStatementAssign;}
     ;
     statementBlock returns [Statement synStatementBlock]
     :
-        '{'  allStatements = statements {$synStatementBlock.setBody($allStatements.synStatements)} '}'
+        '{'  allStatements = statements {$synStatementBlock.setBody($allStatements.synStatements);} '}'
     ;
     statementCondition returns [Statement synStatementCondition]
     :
@@ -360,7 +363,7 @@ grammar Smoola;
             method = new MethodCall($inhExpression.synExpression, new Identifier($methodName.text));
             method.addArg($arg1.synExpression);
         }
-        (',' arg = expression {method.addArg($arg.synExpression)})*) ')'
+        (',' arg = expression {method.addArg($arg.synExpression);})*) ')'
         | 'length'
         {
             method = new Length($inhExpression.synExpression);
