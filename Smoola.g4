@@ -321,20 +321,65 @@ grammar Smoola;
         }
 	;
 
-    expressionMem:
-		expressionMethods expressionMemTemp
+    expressionMem returns [Expression synExpression]:
+		instance = expressionMethods index = expressionMemTemp
+        {
+            if($index != null)
+                $synExpression = new ArrayCall($instance, $index);
+            else
+                $synExpression = $instance;
+        }
 	;
 
-    expressionMemTemp:
-		'[' expression ']'
+    expressionMemTemp returns [Expression synExpression]:
+		'[' index = expression ']'
+		{
+		    $synExpression = $index;
+		}
 	    |
+        {
+            $synExpression = null;
+        }
 	;
-	expressionMethods:
-	    expressionOther expressionMethodsTemp
+	expressionMethods returns [Expression synExpression]:
+	    inhInstance = expressionOther method = expressionMethodsTemp[$inhInstance]
+        {
+            if($method.synExpression != null)
+                $synExpression = $method.synExpression;
+            else
+                $synExpression = $inhInstance.synExpression;
+        }
 	;
-	expressionMethodsTemp:
-	    '.' (ID '(' ')' | ID '(' (expression (',' expression)*) ')' | 'length') expressionMethodsTemp
+	expressionMethodsTemp[$inhExpression] returns [Expression synExpression]:
+	    '.' 
+        {
+            Expression method;
+        }
+        (methodName = ID '(' ')' 
+        {
+            method = new MethodCall($inhExpression, $methodName);
+        }
+        | methodName = ID '(' ( arg1 = expression
+        {
+            method = new MethodCall($inhExpression, $methodName);
+            method.addArg($arg1);
+        }
+        (',' arg = expression {method.addArg($arg)})*) ')' 
+        | 'length'
+        {
+            method = new Length($inhExpression);
+        }
+        ) expr = expressionMethodsTemp[$method]
+        {
+            if(expr != null)
+                $synExpression = $expr ;
+            else
+                $synExpression = method;
+        }
 	    |
+        {
+            $synExpression = null;
+        }
 	;
     expressionOther returns [Expression expr]:
     val = CONST_NUM {$expr = new IntValue($val.int, new IntType());}
