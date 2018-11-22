@@ -1,9 +1,8 @@
 grammar Smoola;
 
-    program:
-    mainClass
-    (classDeclaration)*
-    EOF
+    program
+    :
+        main = mainClass ( mainDec = classDeclaration)* EOF
     ;
     mainClass returns [ClassDeclaration synMainClass]
     :
@@ -20,7 +19,7 @@ grammar Smoola;
            $synClassDeclaration = AstMaker.classDeclaration($name.text, $parentName.text);
         }
         '{'
-        (varDec = varDeclaration {$synClassDeclaration.addVarDeclaration($varDec.sinVarDec)} )*
+        (varDec = varDeclaration {$synClassDeclaration.addVarDeclaration($varDec.synVarDec)} )*
         (methodDec = methodDeclaration {$synClassDeclaration.addMethodDeclaration($methodDec.synMethodDeclaration})*
         '}'
 
@@ -32,7 +31,8 @@ grammar Smoola;
             $synVarDec = AstMaker.varDeclaration(new Identifier($varName.text), $varType.synType);
         }
     ;
-    methodDeclaration returns [MethodDeclaration synMethodDeclaration]:
+    methodDeclaration returns [MethodDeclaration synMethodDeclaration]
+    :
         'def' methodName = ID
         {
             $synMethodDeclaration = new MethodDeclaration(new Identifier($methodName.text));
@@ -104,7 +104,8 @@ grammar Smoola;
             $synStatementLoop = new While($loopCondition.synExpression, $loopBody.synStatement);
         }
     ;
-    statementWrite returns [Statement synStatementWrite]:
+    statementWrite returns [Statement synStatementWrite]
+    :
         'writeln(' arg = expression ')' ';'
         {
             $synStatementWrite = new Write($arg.synExpression);
@@ -117,7 +118,6 @@ grammar Smoola;
             $synStatementAssign = new Assign($assignExpr.synExpression.getLeft(), $assignExpr.synExpression.getRight());
         }
     ;
-
     expression returns [Expression synExpression]
     :
         expr = expressionAssignment
@@ -125,7 +125,6 @@ grammar Smoola;
             $synExpression = $expr.synExpression;
         }
     ;
-
     expressionAssignment returns [Expression synExpression]
     :
         lExpr = expressionOr '=' rExpr = expressionAssignment
@@ -138,7 +137,6 @@ grammar Smoola;
             $synExpression = $expr.synExpression;
         }
     ;
-
     expressionOr returns [Expression synExpression]
     :
         lExpr = expressionAnd rExpr = expressionOrTemp
@@ -149,7 +147,6 @@ grammar Smoola;
                 $synExpression = $lExpr.synExpression;
         }
     ;
-
     expressionOrTemp returns [Expression synExpression]
     :
         '||' lExpr = expressionAnd rExpr = expressionOrTemp
@@ -164,7 +161,6 @@ grammar Smoola;
             $synExpression = null;
         }
     ;
-
     expressionAnd returns [Expression synExpression]
     :
         lExpr = expressionEq rExpr = expressionAndTemp
@@ -175,7 +171,6 @@ grammar Smoola;
                 $synExpression = $lExpr.synExpression;
         }
     ;
-
     expressionAndTemp returns [Expression synExpression]
     :
         '&&' lExpr = expressionEq rExpr = expressionAndTemp
@@ -190,7 +185,6 @@ grammar Smoola;
             $synExpression = null;
         }
     ;
-
     expressionEq returns [Expression synExpression]
     :
         lExpr = expressionCmp rExpr = expressionEqTemp
@@ -201,7 +195,6 @@ grammar Smoola;
                 $synExpression = $lExpr.synExpression;
         }
     ;
-
     expressionEqTemp returns [Expression synExpression]
     :
         ('==' | '<>') lExpr = expressionCmp rExpr = expressionEqTemp
@@ -216,8 +209,8 @@ grammar Smoola;
             $synExpression = null;
         }
     ;
-
-    expressionCmp returns [Expression synExpression]:
+    expressionCmp returns [Expression synExpression]
+    :
         lExpr =  expressionAdd rExpr = expressionCmpTemp
         {
             if($rExpr.synExpression != null)
@@ -229,8 +222,8 @@ grammar Smoola;
                 $synExpression = $lExpr.synExpression;
         }
     ;
-
-    expressionCmpTemp returns [Expression synExpression]:
+    expressionCmpTemp returns [Expression synExpression]
+    :
         ('<' | '>') lExpr = expressionAdd rExpr = expressionCmpTemp
         {
             if($rExpr.synExpression != null)
@@ -246,21 +239,21 @@ grammar Smoola;
             $synExpression = null;
         }
     ;
-
-    expressionAdd returns [Expression synExpression]:
+    expressionAdd returns [Expression synExpression]
+    :
         lExpr = expressionMult rExpr = expressionAddTemp
         {
             if($rExpr.synExpression != null)
                 if($rExpr.synExpression.getBinaryOperator() == BinaryOperator.add)
-                    $synExpression = new BinaryExpression($lExpr, $rExpr, BinaryOperator.add);
+                    $synExpression = new BinaryExpression($lExpr.synExpression, $rExpr.synExpression, BinaryOperator.add);
                 else
-                     $synExpression = new BinaryExpression($lExpr, $rExpr, BinaryOperator.sub);
+                     $synExpression = new BinaryExpression($lExpr.synExpression, $rExpr.synExpression, BinaryOperator.sub);
             else
-                $synExpression = $lExpr;
+                $synExpression = $lExpr.synExpression;
         }
     ;
-
-    expressionAddTemp returns [Expression synExpression]:
+    expressionAddTemp returns [Expression synExpression]
+    :
         ('+' | '-') lExpr = expressionMult rExpr = expressionAddTemp
         {
             if($rExpr.synExpression != null)
@@ -276,8 +269,8 @@ grammar Smoola;
             $synExpression = null;
         }
     ;
-
-    expressionMult returns [Expression synExpression] :
+    expressionMult returns [Expression synExpression]
+    :
         lExpr = expressionUnary rExpr = expressionMultTemp
         {
             if($rExpr.synExpression != null)
@@ -289,8 +282,8 @@ grammar Smoola;
                 $synExpression = $lExpr.synExpression;
         }
     ;
-
-    expressionMultTemp:
+    expressionMultTemp returns [Expression synExpression]
+    :
         ('*' | '/') lExpr = expressionUnary rExpr = expressionMultTemp
         {
             if($rExpr.synExpression != null)
@@ -306,8 +299,8 @@ grammar Smoola;
             $synExpression = null;
         }
     ;
-
-    expressionUnary returns [Expression synExpression]:
+    expressionUnary returns [Expression synExpression]
+    :
         '!' uExpr1 = expressionUnary
         {
             $synExpression = new UnaryExpression(UnaryOperator.not, $uExpr1.synExpression);
@@ -321,8 +314,8 @@ grammar Smoola;
             $synExpression = $expr.synExpression;
         }
     ;
-
-    expressionMem returns [Expression synExpression]:
+    expressionMem returns [Expression synExpression]
+    :
         instance = expressionMethods index = expressionMemTemp
         {
             if($index.synExpression != null)
@@ -331,8 +324,8 @@ grammar Smoola;
                 $synExpression = $instance.synExpression;
         }
     ;
-
-    expressionMemTemp returns [Expression synExpression]:
+    expressionMemTemp returns [Expression synExpression]
+    :
         '[' index = expression ']'
         {
             $synExpression = $index.synExpression;
@@ -342,8 +335,9 @@ grammar Smoola;
             $synExpression = null;
         }
     ;
-    expressionMethods returns [Expression synExpression]:
-        inhInstance = expressionOther method = expressionMethodsTemp[$inhInstance]
+    expressionMethods returns [Expression synExpression]
+    :
+        inhInstance = expressionOther method = expressionMethodsTemp[inhInstance]
         {
             if($method.synExpression != null)
                 $synExpression = $method.synExpression;
@@ -351,7 +345,8 @@ grammar Smoola;
                 $synExpression = $inhInstance.synExpression;
         }
     ;
-    expressionMethodsTemp[$inhExpression] returns [Expression synExpression]:
+    expressionMethodsTemp[$inhExpression] returns [Expression synExpression]
+    :
         '.'
         {
             Expression method;
@@ -370,7 +365,7 @@ grammar Smoola;
         {
             method = new Length($inhExpression.synExpression);
         }
-        ) expr = expressionMethodsTemp[$method]
+        ) expr = expressionMethodsTemp[method]
         {
             if(expr.synExpression != null)
                 $synExpression = $expr.synExpression;
@@ -382,11 +377,12 @@ grammar Smoola;
             $synExpression = null;
         }
     ;
-    expressionOther returns [Expression synExpression]:
+    expressionOther returns [Expression synExpression]
+    :
     val = CONST_NUM {$synExpression = new IntValue($val.int, new IntType());}
           |   val = CONST_STR {$synExpression = new StringValue($val.text, new StringType());}
-          |   'new ' 'int' '[' val = CONST_NUM ']' {$synExpression = new NewArray(); $expr.setExpression(new IntValue($val.int, new IntType()));}
-          |   'new ' clasName = ID '(' ')' {$synExpression = new NewClass(new Identifier($className.text));}
+          |   'new ' 'int' '[' val = CONST_NUM ']' {$synExpression = new NewArray(); $synExpression.setExpression(new IntValue($val.int, new IntType()));}
+          |   'new ' className = ID '(' ')' {$synExpression = new NewClass(new Identifier($className.text));}
           |   'this' {$synExpression = new This();}
           |   'true' {$synExpression = new BooleanValue(true, new BooleanType());}
           |   'false' {$synExpression = new BooleanValue(false, new BooleanType());}
