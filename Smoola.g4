@@ -382,18 +382,18 @@ grammar Smoola;
             $synExpression = null;
         }
     ;
-    expressionOther returns [Expression expr]:
-    val = CONST_NUM {$expr = new IntValue($val.int, new IntType());}
-          |   val = CONST_STR {$expr = new StringValue($val.text, new StringType());}
-          |   'new ' 'int' '[' val = CONST_NUM ']' {$expr = new NewArray(); $expr.setExpression(new IntValue($val.int, new IntType()));}
-          |   'new ' clasName = ID '(' ')' {$epxr = new NewClass(new Identifier($className.text));}
-          |   'this' {$expr = new This();}
-          |   'true' {$expr = new BooleanValue(true, new BooleanType());}
-          |   'false' {$expr = new BooleanValue(false, new BooleanType());}
-          |   val = ID //TODO
-          |   val = ID '[' ex = expression ']' {$expr = new ArrayCall();}
-          |   '(' ex = expression ')'
-     ;
+    expressionOther returns [Expression synExpression]:
+    val = CONST_NUM {$synExpression = new IntValue($val.int, new IntType());}
+          |   val = CONST_STR {$synExpression = new StringValue($val.text, new StringType());}
+          |   'new ' 'int' '[' val = CONST_NUM ']' {$synExpression = new NewArray(); $expr.setExpression(new IntValue($val.int, new IntType()));}
+          |   'new ' clasName = ID '(' ')' {$synExpression = new NewClass(new Identifier($className.text));}
+          |   'this' {$synExpression = new This();}
+          |   'true' {$synExpression = new BooleanValue(true, new BooleanType());}
+          |   'false' {$synExpression = new BooleanValue(false, new BooleanType());}
+          |   val = ID {$synExpression = new Identifier($val.text);}
+          |   val = ID '[' ex = expression ']' {$synExpression = new ArrayCall();}
+          |   '(' ex = expression ')' {$synExpression = $ex.synExpression;}
+    ;
     type returns [Type synType]
     :
         'int' {$synType = new IntType();} |
