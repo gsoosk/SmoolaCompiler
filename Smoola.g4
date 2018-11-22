@@ -1,64 +1,65 @@
 grammar Smoola;
 
-   program:
-        mainClass
-        (classDeclaration)*
-        EOF 
+    program:
+    mainClass
+    (classDeclaration)*
+    EOF
     ;
     mainClass returns [ClassDeclaration synMainClass]
     :
         // name should be checked later
         'class'  mainClassName = ID '{' 'def' mainMethodName = ID '(' ')' ':' 'int' '{'  allStatements = statements 'return' mainVal = expression ';' '}' '}'
         {
-
-            $synMainClass = AstMaker.mainClass($mainClassName, $mainMethodName, $mainVal, $allStatements);
-
+            $synMainClass = AstMaker.mainClass($mainClassName.text, $mainMethodName.text, $mainVal.synExpression, $allStatements.synStatements);
         }
     ;
     classDeclaration returns [ClassDeclaration synClassDeclaration]
     :
-        'class' name = ID ('extends' parrentName = ID)?
-         {
-            $synClassDeclaration = AstMaker.classDeclaration($name, $parrentName);
-            
-         }
-         '{'
-         (varDec = varDeclaration {$synClassDeclaration.addVarDeclaration(varDec)} )*
-         (methodDec = methodDeclaration {$synClassDeclaration.addMethodDeclaration(methodDec})*
-         '}'
+        'class' name = ID ('extends' parentName = ID)?
+        {
+           $synClassDeclaration = AstMaker.classDeclaration($name.text, $parentName.text);
+        }
+        '{'
+        (varDec = varDeclaration {$synClassDeclaration.addVarDeclaration($varDec.sinVarDec)} )*
+        (methodDec = methodDeclaration {$synClassDeclaration.addMethodDeclaration($methodDec.synMethodDeclaration})*
+        '}'
 
     ;
-    varDeclaration:
-        'var' ID ':' type ';'
+    varDeclaration returns [VarDeclaration synVarDec]
+    :
+        'var' varName = ID ':' varType = type ';'
+        {
+            $synVarDec = AstMaker.varDeclaration(new Identifier($varName.text), $varType.synType);
+        }
     ;
     methodDeclaration returns [MethodDeclaration synMethodDeclaration]:
         'def' methodName = ID
         {
-            $synMethodDeclaration = new MethodDeclaration(methodName);
+            $synMethodDeclaration = new MethodDeclaration(new Identifier($methodName.text));
         }
         ('(' ')' | ('(' arg1Id = ID ':' arg1Type = type
         {
-            $synMethodDeclaration.addArg(new VarDeclaration(arg1Id, arg1Type));
+            $synMethodDeclaration.addArg(new VarDeclaration(new Identifier($arg1Id.text), $arg1Type.synType));
         }
         (',' argId = ID ':' argType = type
         {
-            $synMethodDeclaration.addArg(new VarDeclaration(argId, argType));
+            $synMethodDeclaration.addArg(new VarDeclaration(new Identifier($argId.text), $argType.synType));
         }
         )* ')')) ':' returnType = type
         {
-            $synMethodDeclaration.setReturnType(returnType);
+            $synMethodDeclaration.setReturnType($returnType.synType);
         }
         '{'  (newVar = varDeclaration
         {
-            $synMethodDeclaration.addLocalVar(newVar);
+            $synMethodDeclaration.addLocalVar($newVar.synVarDec);
         }
         )* allStatements = statements
         {
-            $synMethodDeclaration.setBody(allStatements);
+            $synMethodDeclaration.setBody($allStatements.synStatements);
         }
         'return' returnVal = expression
         {
-            $synMethodDeclaration.setReturnValue(returnVal);
+            $synMethodDeclaration.setReturnValue($returnVal.synExpression);
         }
         ';' '}'
     ;
@@ -67,9 +68,9 @@ grammar Smoola;
         {
             $synStatements = new ArrayList<>(); ;
         }
-        (newStatements = statement
+        (newStatement = statement
         {
-            $synStatements.add(newStatements);
+            $synStatements.add($newStatement.synStatement);
         }
         )*
     ;
@@ -77,19 +78,19 @@ grammar Smoola;
     :
         stmB = statementBlock {$synStatement = $stmB.synStatementBlock} |
         stmC = statementCondition {$synStatement = $stmC.synStatementCondition} |
-        stmL = statementLoop {$synStatement = $stmL} |
-        stmW = statementWrite {$synStatement = $stmW} |
-        stmA = statementAssignment {$synStatement = $stmA}
+        stmL = statementLoop {$synStatement = $stmL.synStatementLoop} |
+        stmW = statementWrite {$synStatement = $stmW.synStatementWrite} |
+        stmA = statementAssignment {$synStatement = $stmA.synStatementAssign}
     ;
     statementBlock returns [Statement synStatementBlock]
     :
-        '{'  allStatements = statements {$synStatementBlock.setBody(allStatements)} '}'
+        '{'  allStatements = statements {$synStatementBlock.setBody($allStatements.synStatements)} '}'
     ;
     statementCondition returns [Statement synStatementCondition]
     :
         'if' '(' conditionExp = expression')' 'then' consequenceBody = statement
          {
-            $synStatementCondition = new Conditional($conditionExp , $consequenceBody.synStatement);
+            $synStatementCondition = new Conditional($conditionExp.synExpression, $consequenceBody.synStatement);
          }('else' altBody = statement
          {
             $synStatementCondition.setAlternativeBody($altBody.synStatement);
@@ -100,156 +101,156 @@ grammar Smoola;
     :
         'while' '(' loopCondition = expression ')' loopBody = statement
         {
-            $synStatementLoop = new While($loopCondition, $loopBody.synStatement);
+            $synStatementLoop = new While($loopCondition.synExpression, $loopBody.synStatement);
         }
     ;
     statementWrite returns [Statement synStatementWrite]:
         'writeln(' arg = expression ')' ';'
         {
-            $synStatementWrite = new Write($arg);
+            $synStatementWrite = new Write($arg.synExpression);
         }
     ;
     statementAssignment returns [Statement synStatementAssign]
     :
         assignExpr = expression ';'
         {
-            $synStatementAssign = new Assign(assignExpr..getLeft(), assignExpr..getRight());
+            $synStatementAssign = new Assign($assignExpr.synExpression.getLeft(), $assignExpr.synExpression.getRight());
         }
     ;
 
     expression returns [Expression synExpression]
     :
-		expr = expressionAssignment
-		{
-		    $synExpression = $expr;
-		}
-	;
+        expr = expressionAssignment
+        {
+            $synExpression = $expr.synExpression;
+        }
+    ;
 
     expressionAssignment returns [Expression synExpression]
     :
-		lExpr = expressionOr '=' rExpr = expressionAssignment
-		{
-		    $synExpression = new BinaryExpression($lExpr, $rExpr, BinaryOperator.assign);
+        lExpr = expressionOr '=' rExpr = expressionAssignment
+        {
+            $synExpression = new BinaryExpression($lExpr.synExpression, $rExpr.synExpression, BinaryOperator.assign);
 
-		}
-	    |	expr = expressionOr
-	    {
-	        $synExpression = $expr;
-	    }
-	;
+        }
+        |	expr = expressionOr
+        {
+            $synExpression = $expr.synExpression;
+        }
+    ;
 
     expressionOr returns [Expression synExpression]
     :
-		lExpr = expressionAnd rExpr = expressionOrTemp
-		{
-		    if(rExpr != null)
-		        $synExpression = new BinaryExpression($lExpr, $rExpr, BinaryOperator.or);
-		    else
-		        $synExpression = $lExpr;
-		}
-	;
+        lExpr = expressionAnd rExpr = expressionOrTemp
+        {
+            if(rExpr.synExpression != null)
+                $synExpression = new BinaryExpression($lExpr.synExpression, $rExpr.synExpression, BinaryOperator.or);
+            else
+                $synExpression = $lExpr.synExpression;
+        }
+    ;
 
     expressionOrTemp returns [Expression synExpression]
     :
-		'||' lExpr = expressionAnd rExpr = expressionOrTemp
-		{
-		    if($rExpr != null)
-                $synExpression = new BinaryExpression($lExpr, $rExpr, BinaryOperator.or);
+        '||' lExpr = expressionAnd rExpr = expressionOrTemp
+        {
+            if($rExpr.synExpression != null)
+                $synExpression = new BinaryExpression($lExpr.synExpression, $rExpr.synExpression, BinaryOperator.or);
             else
-                $synExpression = $lExpr;
-		}
-	    |
-	    {
-	        $synExpression = null;
-	    }
-	;
+                $synExpression = $lExpr.synExpression;
+        }
+        |
+        {
+            $synExpression = null;
+        }
+    ;
 
     expressionAnd returns [Expression synExpression]
     :
-		lExpr = expressionEq rExpr = expressionAndTemp
-		{
-            if($rExpr != null)
-                $synExpression = new BinaryExpression($lExpr, $rExpr, BinaryOperator.and);
+        lExpr = expressionEq rExpr = expressionAndTemp
+        {
+            if($rExpr.synExpression != null)
+                $synExpression = new BinaryExpression($lExpr.synExpression, $rExpr.synExpression, BinaryOperator.and);
             else
-                $synExpression = $lExpr;
+                $synExpression = $lExpr.synExpression;
         }
-	;
+    ;
 
     expressionAndTemp returns [Expression synExpression]
     :
-		'&&' lExpr = expressionEq rExpr = expressionAndTemp
-		{
-            if($rExpr != null)
-                $synExpression = new BinaryExpression($lExpr, $rExpr, BinaryOperator.and);
+        '&&' lExpr = expressionEq rExpr = expressionAndTemp
+        {
+            if($rExpr.synExpression != null)
+                $synExpression = new BinaryExpression($lExpr.synExpression, $rExpr.synExpression, BinaryOperator.and);
             else
-                $synExpression = $lExpr;
+                $synExpression = $lExpr.synExpression;
         }
-	    |
-	    {
-	        $synExpression = null ;
-	    }
-	;
+        |
+        {
+            $synExpression = null;
+        }
+    ;
 
     expressionEq returns [Expression synExpression]
     :
-		lExpr = expressionCmp rExpr = expressionEqTemp
-		{
-            if($rExpr != null)
-                $synExpression = new BinaryExpression($lExpr, $rExpr, BinaryOperator.eq);
+        lExpr = expressionCmp rExpr = expressionEqTemp
+        {
+            if($rExpr.synExpression != null)
+                $synExpression = new BinaryExpression($lExpr.synExpression, $rExpr.synExpression, BinaryOperator.eq);
             else
-                $synExpression = $lExpr;
+                $synExpression = $lExpr.synExpression;
         }
-	;
+    ;
 
     expressionEqTemp returns [Expression synExpression]
     :
-		('==' | '<>') lExpr = expressionCmp rExpr = expressionEqTemp
-		{
-            if($rExpr != null)
-                $synExpression = new BinaryExpression($lExpr, $rExpr, BinaryOperator.eq);
+        ('==' | '<>') lExpr = expressionCmp rExpr = expressionEqTemp
+        {
+            if($rExpr.synExpression != null)
+                $synExpression = new BinaryExpression($lExpr.synExpression, $rExpr.synExpression, BinaryOperator.eq);
             else
-                $synExpression = $lExpr;
+                $synExpression = $lExpr.synExpression;
         }
-	    |
-	    {
-	        $synExpression = null;
-	    }
-	;
+        |
+        {
+            $synExpression = null;
+        }
+    ;
 
     expressionCmp returns [Expression synExpression]:
-		lExpr =  expressionAdd rExpr = expressionCmpTemp
+        lExpr =  expressionAdd rExpr = expressionCmpTemp
         {
-            if($rExpr != null)
+            if($rExpr.synExpression != null)
                 if($rExpr.synExpression.getBinaryOperator() == BinaryOperator.lt)
-                    $synExpression = new BinaryExpression($lExpr, $rExpr, BinaryOperator.lt);
+                    $synExpression = new BinaryExpression($lExpr.synExpression, $rExpr.synExpression, BinaryOperator.lt);
                 else
-                     $synExpression = new BinaryExpression($lExpr, $rExpr, BinaryOperator.gt);
+                     $synExpression = new BinaryExpression($lExpr.synExpression, $rExpr.synExpression, BinaryOperator.gt);
             else
-                $synExpression = $lExpr;
+                $synExpression = $lExpr.synExpression;
         }
-	;
+    ;
 
     expressionCmpTemp returns [Expression synExpression]:
-		('<' | '>') lExpr = expressionAdd rExpr = expressionCmpTemp
+        ('<' | '>') lExpr = expressionAdd rExpr = expressionCmpTemp
         {
-            if($rExpr != null)
+            if($rExpr.synExpression != null)
                 if($rExpr.synExpression.getBinaryOperator() == BinaryOperator.lt)
-                    $synExpression = new BinaryExpression($lExpr, $rExpr, BinaryOperator.lt);
+                    $synExpression = new BinaryExpression($lExpr.synExpression, $rExpr.synExpression, BinaryOperator.lt);
                 else
-                     $synExpression = new BinaryExpression($lExpr, $rExpr, BinaryOperator.gt);
+                     $synExpression = new BinaryExpression($lExpr.synExpression, $rExpr.synExpression, BinaryOperator.gt);
             else
-                $synExpression = $lExpr;
+                $synExpression = $lExpr.synExpression;
         }
-	    |
+        |
         {
             $synExpression = null;
         }
-	;
+    ;
 
     expressionAdd returns [Expression synExpression]:
-		lExpr = expressionMult rExpr = expressionAddTemp
+        lExpr = expressionMult rExpr = expressionAddTemp
         {
-            if($rExpr != null)
+            if($rExpr.synExpression != null)
                 if($rExpr.synExpression.getBinaryOperator() == BinaryOperator.add)
                     $synExpression = new BinaryExpression($lExpr, $rExpr, BinaryOperator.add);
                 else
@@ -257,168 +258,169 @@ grammar Smoola;
             else
                 $synExpression = $lExpr;
         }
-	;
+    ;
 
     expressionAddTemp returns [Expression synExpression]:
-		('+' | '-') lExpr = expressionMult rExpr = expressionAddTemp
+        ('+' | '-') lExpr = expressionMult rExpr = expressionAddTemp
         {
-            if($rExpr != null)
+            if($rExpr.synExpression != null)
                 if($rExpr.synExpression.getBinaryOperator() == BinaryOperator.add)
-                    $synExpression = new BinaryExpression($lExpr, $rExpr, BinaryOperator.add);
+                    $synExpression = new BinaryExpression($lExpr.synExpression, $rExpr.synExpression, BinaryOperator.add);
                 else
-                     $synExpression = new BinaryExpression($lExpr, $rExpr, BinaryOperator.sub);
+                     $synExpression = new BinaryExpression($lExpr.synExpression, $rExpr.synExpression, BinaryOperator.sub);
             else
-                $synExpression = $lExpr;
+                $synExpression = $lExpr.synExpression;
         }
-	    |
+        |
         {
             $synExpression = null;
         }
-	;
+    ;
 
     expressionMult returns [Expression synExpression] :
-		lExpr = expressionUnary rExpr = expressionMultTemp
+        lExpr = expressionUnary rExpr = expressionMultTemp
         {
-            if($rExpr != null)
+            if($rExpr.synExpression != null)
                 if($rExpr.synExpression.getBinaryOperator() == BinaryOperator.mult)
-                    $synExpression = new BinaryExpression($lExpr, $rExpr, BinaryOperator.mult);
+                    $synExpression = new BinaryExpression($lExpr.synExpression, $rExpr.synExpression, BinaryOperator.mult);
                 else
-                     $synExpression = new BinaryExpression($lExpr, $rExpr, BinaryOperator.div);
+                     $synExpression = new BinaryExpression($lExpr.synExpression, $rExpr.synExpression, BinaryOperator.div);
             else
-                $synExpression = $lExpr;
+                $synExpression = $lExpr.synExpression;
         }
-	;
+    ;
 
     expressionMultTemp:
-		('*' | '/') lExpr = expressionUnary rExpr = expressionMultTemp
+        ('*' | '/') lExpr = expressionUnary rExpr = expressionMultTemp
         {
-            if($rExpr != null)
+            if($rExpr.synExpression != null)
                 if($rExpr.synExpression.getBinaryOperator() == BinaryOperator.mult)
-                    $synExpression = new BinaryExpression($lExpr, $rExpr, BinaryOperator.mult);
+                    $synExpression = new BinaryExpression($lExpr.synExpression, $rExpr.synExpression, BinaryOperator.mult);
                 else
-                     $synExpression = new BinaryExpression($lExpr, $rExpr, BinaryOperator.div);
+                     $synExpression = new BinaryExpression($lExpr.synExpression, $rExpr.synExpression, BinaryOperator.div);
             else
-                $synExpression = $lExpr;
+                $synExpression = $lExpr.synExpression;
         }
-	    |
+        |
         {
             $synExpression = null;
         }
-	;
+    ;
 
     expressionUnary returns [Expression synExpression]:
-		'!' uExpr1 = expressionUnary 
+        '!' uExpr1 = expressionUnary
         {
-            $synExpression = new UnaryExpression(UnaryOperator.not, $uExpr1);
+            $synExpression = new UnaryExpression(UnaryOperator.not, $uExpr1.synExpression);
         }
         | '-' uExpr2 = expressionUnary
         {
-            $synExpression = new UnaryExpression(UnaryOperator.minus, $uExpr2);
+            $synExpression = new UnaryExpression(UnaryOperator.minus, $uExpr2.synExpression);
         }
-	    |	expr = expressionMem
+        |	expr = expressionMem
         {
-            $synExpression = $expr;
+            $synExpression = $expr.synExpression;
         }
-	;
+    ;
 
     expressionMem returns [Expression synExpression]:
-		instance = expressionMethods index = expressionMemTemp
+        instance = expressionMethods index = expressionMemTemp
         {
-            if($index != null)
-                $synExpression = new ArrayCall($instance, $index);
+            if($index.synExpression != null)
+                $synExpression = new ArrayCall($instance.synExpression, $index.synExpression);
             else
-                $synExpression = $instance;
+                $synExpression = $instance.synExpression;
         }
-	;
+    ;
 
     expressionMemTemp returns [Expression synExpression]:
-		'[' index = expression ']'
-		{
-		    $synExpression = $index;
-		}
-	    |
+        '[' index = expression ']'
+        {
+            $synExpression = $index.synExpression;
+        }
+        |
         {
             $synExpression = null;
         }
-	;
-	expressionMethods returns [Expression synExpression]:
-	    inhInstance = expressionOther method = expressionMethodsTemp[$inhInstance]
+    ;
+    expressionMethods returns [Expression synExpression]:
+        inhInstance = expressionOther method = expressionMethodsTemp[$inhInstance]
         {
             if($method.synExpression != null)
                 $synExpression = $method.synExpression;
             else
                 $synExpression = $inhInstance.synExpression;
         }
-	;
-	expressionMethodsTemp[$inhExpression] returns [Expression synExpression]:
-	    '.' 
+    ;
+    expressionMethodsTemp[$inhExpression] returns [Expression synExpression]:
+        '.'
         {
             Expression method;
         }
-        (methodName = ID '(' ')' 
+        (methodName = ID '(' ')'
         {
-            method = new MethodCall($inhExpression, $methodName);
+            method = new MethodCall($inhExpression.synExpression, new Identifier($methodName.text));
         }
         | methodName = ID '(' ( arg1 = expression
         {
-            method = new MethodCall($inhExpression, $methodName);
-            method.addArg($arg1);
+            method = new MethodCall($inhExpression.synExpression, new Identifier($methodName.text));
+            method.addArg($arg1.synExpression);
         }
-        (',' arg = expression {method.addArg($arg)})*) ')' 
+        (',' arg = expression {method.addArg($arg.synExpression)})*) ')'
         | 'length'
         {
-            method = new Length($inhExpression);
+            method = new Length($inhExpression.synExpression);
         }
         ) expr = expressionMethodsTemp[$method]
         {
-            if(expr != null)
-                $synExpression = $expr ;
+            if(expr.synExpression != null)
+                $synExpression = $expr.synExpression;
             else
                 $synExpression = method;
         }
-	    |
+        |
         {
             $synExpression = null;
         }
-	;
+    ;
     expressionOther returns [Expression expr]:
     val = CONST_NUM {$expr = new IntValue($val.int, new IntType());}
-          | val = CONST_STR {$expr = new StringValue($val.text, new StringType());}
-          |   'new ' 'int' '[' val = CONST_NUM ']' {$expr = new NewArray(); $expr.setExpression(new IntValue($val.int, new IntType()));} //TODO
+          |   val = CONST_STR {$expr = new StringValue($val.text, new StringType());}
+          |   'new ' 'int' '[' val = CONST_NUM ']' {$expr = new NewArray(); $expr.setExpression(new IntValue($val.int, new IntType()));}
           |   'new ' clasName = ID '(' ')' {$epxr = new NewClass(new Identifier($className.text));}
           |   'this' {$expr = new This();}
           |   'true' {$expr = new BooleanValue(true, new BooleanType());}
           |   'false' {$expr = new BooleanValue(false, new BooleanType());}
-          | val = ID //TODO
+          |   val = ID //TODO
           |   val = ID '[' ex = expression ']' {$expr = new ArrayCall();}
-          | '(' ex = expression ')'
+          |   '(' ex = expression ')'
      ;
-	type:
-	    'int' |
-	    'boolean' |
-	    'string' |
-	    'int' '[' ']' |
-	    ID
-	;
+    type returns [Type synType]
+    :
+        'int' {$synType = new IntType();} |
+        'boolean' {$synType = new BooleanType();} |
+        'string' {$synType = new StringType();} |
+        'int' '[' ']' {$synType = new ArrayType();} |
+        ID {$synType = new UserDefinedType();}
+    ;
     CONST_NUM:
-		[0-9]+
-	;
+        [0-9]+
+    ;
 
     CONST_STR:
-		'"' ~('\r' | '\n' | '"')* '"'
-	;
+        '"' ~('\r' | '\n' | '"')* '"'
+    ;
     NL:
-		'\r'? '\n' -> skip
-	;
+        '\r'? '\n' -> skip
+    ;
 
     ID:
-		[a-zA-Z_][a-zA-Z0-9_]*
-	;
+        [a-zA-Z_][a-zA-Z0-9_]*
+    ;
 
     COMMENT:
-		'#'(~[\r\n])* -> skip
-	;
+        '#'(~[\r\n])* -> skip
+    ;
 
     WS:
-    	[ \t] -> skip
+        [ \t] -> skip
     ;
