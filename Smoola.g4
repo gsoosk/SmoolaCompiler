@@ -401,6 +401,10 @@ grammar Smoola;
         'int' '[' ']' {$synType = new ArrayType();} |
         ID {$synType = new UserDefinedType();}
     ;
+    id returns [Identifier synId]
+    :
+
+    ;
     CONST_NUM:
         [0-9]+
     ;

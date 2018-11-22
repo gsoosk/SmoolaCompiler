@@ -10,20 +10,26 @@ import main.ast.node.statement.Statement;
 import java.util.ArrayList;
 
 public class AstMaker {
-    public static ClassDeclaration mainClass(Identifier mainMethodName , Identifier mainClassName, Expression mainReturnVal,
+    public static ClassDeclaration mainClass(String mainMethodName , String mainClassName, Expression mainReturnVal,
                     ArrayList<Statement> mainMethodStatements)
     {
-        MethodDeclaration mainMethod = new MethodDeclaration((mainMethodName));
+        Identifier mainMethodNameId = new Identifier(mainMethodName);
+        MethodDeclaration mainMethod = new MethodDeclaration(mainMethodNameId);
         mainMethod.setReturnType(new IntType());
         mainMethod.setReturnValue(mainReturnVal);
         mainMethod.setBody(mainMethodStatements);
 
-        ClassDeclaration mainClass = new ClassDeclaration(mainMethodName, null);
+
+        Identifier mainClassNameId = new Identifier(mainClassName);
+
+        ClassDeclaration mainClass = new ClassDeclaration(mainClassNameId, null);
         mainClass.addMethodDeclaration(mainMethod);
         return mainClass;
     }
-    public static ClassDeclaration classDeclaration(Identifier name, Identifier parrentName)
+    public static ClassDeclaration classDeclaration(String name, String parrentName)
     {
-        return new ClassDeclaration(name, parrentName);
+        Identifier nameId = new Identifier(name);
+        Identifier parrentNameId = new Identifier(parrentName);
+        return new ClassDeclaration(nameId, parrentNameId );
     }
 }
