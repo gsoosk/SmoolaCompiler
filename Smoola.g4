@@ -1,9 +1,6 @@
 grammar Smoola;
 
-@members{
-    
-}
-    program:
+   program:
         mainClass
         (classDeclaration)*
         EOF 
@@ -120,17 +117,19 @@ grammar Smoola;
         }
     ;
 
-    expression returns [Expression synExpression]:
+    expression returns [Expression synExpression]
+    :
 		expr = expressionAssignment
 		{
 		    $synExpression = $expr;
 		}
 	;
 
-    expressionAssignment returns [Expression synExpression]:
+    expressionAssignment returns [Expression synExpression]
+    :
 		lExpr = expressionOr '=' rExpr = expressionAssignment
 		{
-		    $synExpression = new BinaryExpression(lExpr, rExpr, BinaryOperator.assign);
+		    $synExpression = new BinaryExpression($lExpr, $rExpr, BinaryOperator.assign);
 
 		}
 	    |	expr = expressionOr
@@ -139,63 +138,187 @@ grammar Smoola;
 	    }
 	;
 
-    expressionOr:
-		expressionAnd expressionOrTemp
+    expressionOr returns [Expression synExpression]
+    :
+		lExpr = expressionAnd rExpr = expressionOrTemp
+		{
+		    if(rExpr != null)
+		        $synExpression = new BinaryExpression($lExpr, $rExpr, BinaryOperator.or);
+		    else
+		        $synExpression = $lExpr;
+		}
 	;
 
-    expressionOrTemp:
-		'||' expressionAnd expressionOrTemp
+    expressionOrTemp returns [Expression synExpression]
+    :
+		'||' lExpr = expressionAnd rExpr = expressionOrTemp
+		{
+		    if($rExpr != null)
+                $synExpression = new BinaryExpression($lExpr, $rExpr, BinaryOperator.or);
+            else
+                $synExpression = $lExpr;
+		}
 	    |
+	    {
+	        $synExpression = null;
+	    }
 	;
 
-    expressionAnd:
-		expressionEq expressionAndTemp
+    expressionAnd returns [Expression synExpression]
+    :
+		lExpr = expressionEq rExpr = expressionAndTemp
+		{
+            if($rExpr != null)
+                $synExpression = new BinaryExpression($lExpr, $rExpr, BinaryOperator.and);
+            else
+                $synExpression = $lExpr;
+        }
 	;
 
-    expressionAndTemp:
-		'&&' expressionEq expressionAndTemp
+    expressionAndTemp returns [Expression synExpression]
+    :
+		'&&' lExpr = expressionEq rExpr = expressionAndTemp
+		{
+            if($rExpr != null)
+                $synExpression = new BinaryExpression($lExpr, $rExpr, BinaryOperator.and);
+            else
+                $synExpression = $lExpr;
+        }
 	    |
+	    {
+	        $synExpression = null ;
+	    }
 	;
 
-    expressionEq:
-		expressionCmp expressionEqTemp
+    expressionEq returns [Expression synExpression]
+    :
+		lExpr = expressionCmp rExpr = expressionEqTemp
+		{
+            if($rExpr != null)
+                $synExpression = new BinaryExpression($lExpr, $rExpr, BinaryOperator.eq);
+            else
+                $synExpression = $lExpr;
+        }
 	;
 
-    expressionEqTemp:
-		('==' | '<>') expressionCmp expressionEqTemp
+    expressionEqTemp returns [Expression synExpression]
+    :
+		('==' | '<>') lExpr = expressionCmp rExpr = expressionEqTemp
+		{
+            if($rExpr != null)
+                $synExpression = new BinaryExpression($lExpr, $rExpr, BinaryOperator.eq);
+            else
+                $synExpression = $lExpr;
+        }
 	    |
+	    {
+	        $synExpression = null;
+	    }
 	;
 
-    expressionCmp:
-		expressionAdd expressionCmpTemp
+    expressionCmp returns [Expression synExpression]:
+		lExpr =  expressionAdd rExpr = expressionCmpTemp
+        {
+            if($rExpr != null)
+                if($rExpr.synExpression.getBinaryOperator() == BinaryOperator.lt)
+                    $synExpression = new BinaryExpression($lExpr, $rExpr, BinaryOperator.lt);
+                else
+                     $synExpression = new BinaryExpression($lExpr, $rExpr, BinaryOperator.gt);
+            else
+                $synExpression = $lExpr;
+        }
 	;
 
-    expressionCmpTemp:
-		('<' | '>') expressionAdd expressionCmpTemp
+    expressionCmpTemp returns [Expression synExpression]:
+		('<' | '>') lExpr = expressionAdd rExpr = expressionCmpTemp
+        {
+            if($rExpr != null)
+                if($rExpr.synExpression.getBinaryOperator() == BinaryOperator.lt)
+                    $synExpression = new BinaryExpression($lExpr, $rExpr, BinaryOperator.lt);
+                else
+                     $synExpression = new BinaryExpression($lExpr, $rExpr, BinaryOperator.gt);
+            else
+                $synExpression = $lExpr;
+        }
 	    |
+        {
+            $synExpression = null;
+        }
 	;
 
-    expressionAdd:
-		expressionMult expressionAddTemp
+    expressionAdd returns [Expression synExpression]:
+		lExpr = expressionMult rExpr = expressionAddTemp
+        {
+            if($rExpr != null)
+                if($rExpr.synExpression.getBinaryOperator() == BinaryOperator.add)
+                    $synExpression = new BinaryExpression($lExpr, $rExpr, BinaryOperator.add);
+                else
+                     $synExpression = new BinaryExpression($lExpr, $rExpr, BinaryOperator.sub);
+            else
+                $synExpression = $lExpr;
+        }
 	;
 
-    expressionAddTemp:
-		('+' | '-') expressionMult expressionAddTemp
+    expressionAddTemp returns [Expression synExpression]:
+		('+' | '-') lExpr = expressionMult rExpr = expressionAddTemp
+        {
+            if($rExpr != null)
+                if($rExpr.synExpression.getBinaryOperator() == BinaryOperator.add)
+                    $synExpression = new BinaryExpression($lExpr, $rExpr, BinaryOperator.add);
+                else
+                     $synExpression = new BinaryExpression($lExpr, $rExpr, BinaryOperator.sub);
+            else
+                $synExpression = $lExpr;
+        }
 	    |
+        {
+            $synExpression = null;
+        }
 	;
 
-        expressionMult:
-		expressionUnary expressionMultTemp
+    expressionMult returns [Expression synExpression] :
+		lExpr = expressionUnary rExpr = expressionMultTemp
+        {
+            if($rExpr != null)
+                if($rExpr.synExpression.getBinaryOperator() == BinaryOperator.mult)
+                    $synExpression = new BinaryExpression($lExpr, $rExpr, BinaryOperator.mult);
+                else
+                     $synExpression = new BinaryExpression($lExpr, $rExpr, BinaryOperator.div);
+            else
+                $synExpression = $lExpr;
+        }
 	;
 
     expressionMultTemp:
-		('*' | '/') expressionUnary expressionMultTemp
+		('*' | '/') lExpr = expressionUnary rExpr = expressionMultTemp
+        {
+            if($rExpr != null)
+                if($rExpr.synExpression.getBinaryOperator() == BinaryOperator.mult)
+                    $synExpression = new BinaryExpression($lExpr, $rExpr, BinaryOperator.mult);
+                else
+                     $synExpression = new BinaryExpression($lExpr, $rExpr, BinaryOperator.div);
+            else
+                $synExpression = $lExpr;
+        }
 	    |
+        {
+            $synExpression = null;
+        }
 	;
 
-    expressionUnary:
-		('!' | '-') expressionUnary
-	    |	expressionMem
+    expressionUnary returns [Expression synExpression]:
+		'!' uExpr1 = expressionUnary 
+        {
+            $synExpression = new UnaryExpression(UnaryOperator.not, $uExpr1);
+        }
+        | '-' uExpr2 = expressionUnary
+        {
+            $synExpression = new UnaryExpression(UnaryOperator.minus, $uExpr2);
+        }
+	    |	expr = expressionMem
+        {
+            $synExpression = $expr;
+        }
 	;
 
     expressionMem:

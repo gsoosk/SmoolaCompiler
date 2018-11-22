@@ -88,9 +88,6 @@ public class SmoolaLexer extends Lexer {
 	}
 
 
-	    
-
-
 	public SmoolaLexer(CharStream input) {
 		super(input);
 		_interp = new LexerATNSimulator(this,_ATN,_decisionToDFA,_sharedContextCache);
