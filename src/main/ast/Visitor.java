@@ -9,7 +9,6 @@ import main.ast.node.statement.*;
 
 
 public interface Visitor {
-    void visit (Node node);
     void visit (Program program);
 
     //Declarations

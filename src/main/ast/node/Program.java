@@ -21,7 +21,7 @@ public class Program {
         classes.add(classDeclaration);
     }
 
-    public List<ClassDeclaration> getClasses() {
+    public ArrayList<ClassDeclaration> getClasses() {
         return classes;
     }
 

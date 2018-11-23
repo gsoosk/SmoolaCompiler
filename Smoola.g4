@@ -198,7 +198,10 @@ grammar Smoola;
         lExpr = expressionCmp rExpr = expressionEqTemp
         {
             if($rExpr.synExpression != null)
-                $synExpression = new BinaryExpression($lExpr.synExpression, $rExpr.synExpression, BinaryOperator.eq);
+                if($rExpr.synExpression.getBinaryOperator() == BinaryOperator.eq)
+                    $synExpression = new BinaryExpression($lExpr.synExpression, $rExpr.synExpression, BinaryOperator.eq);
+                else
+                    $synExpression = new BinaryExpression($lExpr.synExpression, $rExpr.synExpression, BinaryOperator.neq);
             else
                 $synExpression = $lExpr.synExpression;
         }
@@ -208,7 +211,10 @@ grammar Smoola;
         ('==' | '<>') lExpr = expressionCmp rExpr = expressionEqTemp
         {
             if($rExpr.synExpression != null)
-                $synExpression = new BinaryExpression($lExpr.synExpression, $rExpr.synExpression, BinaryOperator.eq);
+                if($rExpr.synExpression.getBinaryOperator() == BinaryOperator.eq)
+                    $synExpression = new BinaryExpression($lExpr.synExpression, $rExpr.synExpression, BinaryOperator.eq);
+                else
+                    $synExpression = new BinaryExpression($lExpr.synExpression, $rExpr.synExpression, BinaryOperator.neq);
             else
                 $synExpression = $lExpr.synExpression;
         }

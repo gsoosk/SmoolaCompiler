@@ -33,6 +33,7 @@ public class UnaryExpression extends Expression {
         return "UnaryExpression " + unaryOperator.name();
     }
 
+    @Override
     public void accept(Visitor visitor) {
         visitor.visit(this);
     }

@@ -24,6 +24,7 @@ public class IntValue extends Value {
         return "IntValue " + constant;
     }
 
+    @Override
     public void accept(Visitor visitor) {
         visitor.visit(this);
     }

@@ -9,12 +9,14 @@ import main.ast.node.statement.Statement;
 import java.util.ArrayList;
 
 public class MethodDeclaration extends Declaration {
-    private Expression returnValue;
-    private Type returnType;
     private Identifier name;
+    private Type returnType;
     private ArrayList<VarDeclaration> args = new ArrayList<>();
     private ArrayList<VarDeclaration> localVars = new ArrayList<>();
     private ArrayList<Statement> body = new ArrayList<>();
+    private Expression returnValue;
+
+
 
     public MethodDeclaration(Identifier name) {
         this.name = name;
@@ -81,6 +83,7 @@ public class MethodDeclaration extends Declaration {
         return "MethodDeclaration";
     }
 
+    @Override
     public void accept(Visitor visitor) {
         visitor.visit(this);
     }

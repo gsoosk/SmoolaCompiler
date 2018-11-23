@@ -31,6 +31,7 @@ public class MainMethodDeclaration extends Declaration{
         return "MainMethodDeclaration";
     }
 
+    @Override
     public void accept(Visitor visitor) {
         visitor.visit(this);
     }

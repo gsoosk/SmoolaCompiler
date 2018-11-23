@@ -53,6 +53,7 @@ public class ClassDeclaration extends Declaration{
         return "ClassDeclaration";
     }
 
+    @Override
     public void accept(Visitor visitor) {
         visitor.visit(this);
     }

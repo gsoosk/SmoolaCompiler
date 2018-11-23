@@ -24,6 +24,7 @@ public class StringValue extends Value {
         return "StringValue " + constant;
     }
 
+    @Override
     public void accept(Visitor visitor) {
         visitor.visit(this);
     }

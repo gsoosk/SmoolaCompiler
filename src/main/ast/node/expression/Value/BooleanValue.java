@@ -24,6 +24,7 @@ public class BooleanValue extends Value {
         return "BooleanValue " + constant;
     }
 
+    @Override
     public void accept(Visitor visitor) {
         visitor.visit(this);
     }

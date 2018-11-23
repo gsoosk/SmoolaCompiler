@@ -12,26 +12,63 @@ import main.ast.node.expression.Value.IntValue;
 import main.ast.node.expression.Value.StringValue;
 import main.ast.node.statement.*;
 
+import java.util.ArrayList;
+
 public class VisitorImpl implements Visitor {
     @Override
-    public void visit(Node node) {
-        //TODO: implement appropriate visit functionality
-    }
-
-    @Override
     public void visit(Program program) {
-        //TODO: implement appropriate visit functionality
-
+        System.out.println(program.toString());
+        program.getMainClass().accept(this);
+        ArrayList<ClassDeclaration> classes = program.getClasses();
+        for(int i = 0 ;  i < classes.size() ; i++)
+        {
+            classes.get(i).accept(this);
+        }
     }
 
     @Override
     public void visit(ClassDeclaration classDeclaration) {
-        //TODO: implement appropriate visit functionality
+        System.out.println(classDeclaration.toString());
+
+        classDeclaration.getName().accept(this);
+        classDeclaration.getParentName().accept(this);
+
+        ArrayList<VarDeclaration> varDeclarations = classDeclaration.getVarDeclarations();
+        for (int i = 0; i < varDeclarations.size(); i++) {
+            varDeclarations.get(i).accept(this);
+        }
+
+        ArrayList<MethodDeclaration> methodDeclarations = classDeclaration.getMethodDeclarations();
+        for (int i = 0; i < methodDeclarations.size(); i++) {
+            methodDeclarations.get(i).accept(this);
+        }
+
     }
 
     @Override
     public void visit(MethodDeclaration methodDeclaration) {
-        //TODO: implement appropriate visit functionality
+        System.out.println(methodDeclaration.toString());
+
+        methodDeclaration.getName().accept(this);
+
+        ArrayList<VarDeclaration> args = methodDeclaration.getArgs();
+        for (int i = 0; i < args.size(); i++) {
+            args.get(i).accept(this);
+        }
+
+        System.out.println(methodDeclaration.getReturnType().toString());
+
+        ArrayList<VarDeclaration> varDeclarations = methodDeclaration.getLocalVars();
+        for (int i = 0; i < varDeclarations.size(); i++) {
+            varDeclarations.get(i).accept(this);
+        }
+
+        ArrayList<Statement> statements = methodDeclaration.getBody();
+        for (int i = 0; i < statements.size(); i++) {
+            statements.get(i).accept(this);
+        }
+
+        methodDeclaration.getReturnValue().accept(this);
     }
 
     @Override

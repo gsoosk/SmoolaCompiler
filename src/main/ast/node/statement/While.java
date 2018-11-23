@@ -33,6 +33,7 @@ public class While extends Statement {
         return "While";
     }
 
+    @Override
     public void accept(Visitor visitor) {
         visitor.visit(this);
     }

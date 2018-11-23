@@ -23,6 +23,7 @@ public class Write extends Statement {
         return "Write";
     }
 
+    @Override
     public void accept(Visitor visitor) {
         visitor.visit(this);
     }

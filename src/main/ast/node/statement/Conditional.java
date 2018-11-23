@@ -42,6 +42,7 @@ public class Conditional extends Statement {
         return "Conditional";
     }
 
+    @Override
     public void accept(Visitor visitor) {
         visitor.visit(this);
     }
