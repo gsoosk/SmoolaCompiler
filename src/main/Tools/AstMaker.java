@@ -1,11 +1,14 @@
 package main.Tools;
 
 import main.ast.Type.PrimitiveType.IntType;
+import main.ast.Type.Type;
 import main.ast.node.declaration.ClassDeclaration;
 import main.ast.node.declaration.MethodDeclaration;
 import main.ast.node.expression.Expression;
 import main.ast.node.expression.Identifier;
 import main.ast.node.statement.Statement;
+import main.ast.node.declaration.VarDeclaration;
+
 
 import java.util.ArrayList;
 
@@ -31,5 +34,9 @@ public class AstMaker {
         Identifier nameId = new Identifier(name);
         Identifier parrentNameId = new Identifier(parrentName);
         return new ClassDeclaration(nameId, parrentNameId );
+    }
+    public static VarDeclaration varDeclaration(Identifier identifier, Type type)
+    {
+        return new VarDeclaration(identifier, type);
     }
 }

@@ -1,7 +1,17 @@
 grammar Smoola;
 
 @header {
-  import main.Tools.AstMaker;
+import main.Tools.AstMaker;
+import main.ast.node.*;
+import main.ast.*;
+import main.ast.node.expression.*;
+import main.ast.node.expression.Value.*;
+import main.ast.node.statement.*;
+import main.ast.node.declaration.*;
+import main.ast.Type.*;
+import main.ast.Type.ArrayType.*;
+import main.ast.Type.PrimitiveType.*;
+import main.ast.Type.UserDefinedType.*;
 }
 
     program
@@ -11,7 +21,11 @@ grammar Smoola;
             Program program = new Program();
             program.setMainClass($main.synMainClass);
         }
-        ( classDec = classDeclaration {program.addClass($classDec.synClassDeclaration)})* EOF
+        ( classDec = classDeclaration {program.addClass($classDec.synClassDeclaration);})* EOF
+        {
+            Visitor visitor = new VisitorImpl();
+            visitor.visit(program);
+        }
     ;
     mainClass returns [ClassDeclaration synMainClass]
     :
@@ -92,7 +106,14 @@ grammar Smoola;
     ;
     statementBlock returns [Statement synStatementBlock]
     :
-        '{'  allStatements = statements {$synStatementBlock.setBody($allStatements.synStatements);} '}'
+    {
+        $synStatementBlock = new Block();
+    }
+        '{'  allStatements = statements
+    {
+        $synStatementBlock.setBody($allStatements.synStatements);
+    }
+        '}'
     ;
     statementCondition returns [Statement synStatementCondition]
     :
@@ -359,7 +380,7 @@ grammar Smoola;
                 $synExpression = $inhInstance.synExpression;
         }
     ;
-    expressionMethodsTemp[$inhExpression] returns [Expression synExpression]
+    expressionMethodsTemp[Expression inhExpression] returns [Expression synExpression]
     :
         '.'
         {
@@ -367,21 +388,21 @@ grammar Smoola;
         }
         (methodName = ID '(' ')'
         {
-            method = new MethodCall($inhExpression.synExpression, new Identifier($methodName.text));
+            method = new MethodCall($inhExpression, new Identifier($methodName.text));
         }
         | methodName = ID '(' ( arg1 = expression
         {
-            method = new MethodCall($inhExpression.synExpression, new Identifier($methodName.text));
+            method = new MethodCall($inhExpression, new Identifier($methodName.text));
             method.addArg($arg1.synExpression);
         }
         (',' arg = expression {method.addArg($arg.synExpression);})*) ')'
         | 'length'
         {
-            method = new Length($inhExpression.synExpression);
+            method = new Length($inhExpression);
         }
         ) expr = expressionMethodsTemp[method]
         {
-            if(expr.synExpression != null)
+            if($expr.synExpression != null)
                 $synExpression = $expr.synExpression;
             else
                 $synExpression = method;
@@ -401,7 +422,7 @@ grammar Smoola;
           |   'true' {$synExpression = new BooleanValue(true, new BooleanType());}
           |   'false' {$synExpression = new BooleanValue(false, new BooleanType());}
           |   val = ID {$synExpression = new Identifier($val.text);}
-          |   val = ID '[' ex = expression ']' {$synExpression = new ArrayCall();}
+          |   val = ID '[' ex = expression ']' {$synExpression = new ArrayCall(new Identifier($val.text), $ex.synExpression);}
           |   '(' ex = expression ')' {$synExpression = $ex.synExpression;}
     ;
     type returns [Type synType]
