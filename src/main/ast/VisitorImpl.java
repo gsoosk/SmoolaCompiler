@@ -21,6 +21,7 @@ public class VisitorImpl implements Visitor {
     @Override
     public void visit(Program program) {
         //TODO: implement appropriate visit functionality
+
     }
 
     @Override

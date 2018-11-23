@@ -6,7 +6,12 @@ grammar Smoola;
 
     program
     :
-        main = mainClass ( mainDec = classDeclaration)* EOF
+        main = mainClass
+        {
+            Program program = new Program();
+            program.setMainClass($main.synMainClass);
+        }
+        ( classDec = classDeclaration {program.addClass($classDec.synClassDeclaration)})* EOF
     ;
     mainClass returns [ClassDeclaration synMainClass]
     :
