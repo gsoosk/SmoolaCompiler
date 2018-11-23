@@ -10,7 +10,6 @@ import main.ast.node.expression.Value.IntValue;
 import main.ast.node.expression.Value.StringValue;
 import main.ast.node.statement.*;
 
-import javax.swing.plaf.nimbus.State;
 import java.util.ArrayList;
 
 public class VisitorImpl implements Visitor {
@@ -19,9 +18,8 @@ public class VisitorImpl implements Visitor {
         System.out.println(program.toString());
         program.getMainClass().accept(this);
         ArrayList<ClassDeclaration> classes = program.getClasses();
-        for(int i = 0 ;  i < classes.size() ; i++)
-        {
-            classes.get(i).accept(this);
+        for (ClassDeclaration aClass : classes) {
+            aClass.accept(this);
         }
     }
 
@@ -33,13 +31,13 @@ public class VisitorImpl implements Visitor {
         classDeclaration.getParentName().accept(this);
 
         ArrayList<VarDeclaration> varDeclarations = classDeclaration.getVarDeclarations();
-        for (int i = 0; i < varDeclarations.size(); i++) {
-            varDeclarations.get(i).accept(this);
+        for (VarDeclaration varDeclaration : varDeclarations) {
+            varDeclaration.accept(this);
         }
 
         ArrayList<MethodDeclaration> methodDeclarations = classDeclaration.getMethodDeclarations();
-        for (int i = 0; i < methodDeclarations.size(); i++) {
-            methodDeclarations.get(i).accept(this);
+        for (MethodDeclaration methodDeclaration : methodDeclarations) {
+            methodDeclaration.accept(this);
         }
 
     }
@@ -51,20 +49,20 @@ public class VisitorImpl implements Visitor {
         methodDeclaration.getName().accept(this);
 
         ArrayList<VarDeclaration> args = methodDeclaration.getArgs();
-        for (int i = 0; i < args.size(); i++) {
-            args.get(i).accept(this);
+        for (VarDeclaration arg : args) {
+            arg.accept(this);
         }
 
         System.out.println(methodDeclaration.getReturnType().toString());
 
         ArrayList<VarDeclaration> varDeclarations = methodDeclaration.getLocalVars();
-        for (int i = 0; i < varDeclarations.size(); i++) {
-            varDeclarations.get(i).accept(this);
+        for (VarDeclaration varDeclaration : varDeclarations) {
+            varDeclaration.accept(this);
         }
 
         ArrayList<Statement> statements = methodDeclaration.getBody();
-        for (int i = 0; i < statements.size(); i++) {
-            statements.get(i).accept(this);
+        for (Statement statement : statements) {
+            statement.accept(this);
         }
 
         methodDeclaration.getReturnValue().accept(this);
@@ -113,8 +111,8 @@ public class VisitorImpl implements Visitor {
        methodCall.getMethodName().accept(this);
 
         ArrayList<Expression> args = methodCall.getArgs();
-        for (int i = 0; i < args.size(); i++) {
-            args.get(i).accept(this);
+        for (Expression arg : args) {
+            arg.accept(this);
         }
     }
 
@@ -167,8 +165,8 @@ public class VisitorImpl implements Visitor {
     public void visit(Block block) {
         System.out.println(block.toString());
         ArrayList<Statement> body =  block.getBody();
-        for (int i = 0; i < body.size(); i++) {
-            body.get(i).accept(this);
+        for (Statement aBody : body) {
+            aBody.accept(this);
         }
     }
 
