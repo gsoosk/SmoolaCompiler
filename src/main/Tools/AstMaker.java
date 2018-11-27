@@ -13,7 +13,7 @@ import main.ast.node.declaration.VarDeclaration;
 import java.util.ArrayList;
 
 public class AstMaker {
-    public static ClassDeclaration mainClass(String mainMethodName , String mainClassName, Expression mainReturnVal,
+    public static ClassDeclaration mainClass(String mainClassName, String mainMethodName, Expression mainReturnVal,
                     ArrayList<Statement> mainMethodStatements)
     {
         Identifier mainMethodNameId = new Identifier(mainMethodName);
@@ -29,11 +29,11 @@ public class AstMaker {
         mainClass.addMethodDeclaration(mainMethod);
         return mainClass;
     }
-    public static ClassDeclaration classDeclaration(String name, String parrentName)
+    public static ClassDeclaration classDeclaration(String name, String parentName)
     {
         Identifier nameId = new Identifier(name);
-        Identifier parrentNameId = new Identifier(parrentName);
-        return new ClassDeclaration(nameId, parrentNameId );
+        Identifier parentNameId = new Identifier(parentName);
+        return new ClassDeclaration(nameId, parentNameId );
     }
     public static VarDeclaration varDeclaration(Identifier identifier, Type type)
     {
