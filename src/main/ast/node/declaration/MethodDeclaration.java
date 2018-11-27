@@ -12,6 +12,7 @@ public class MethodDeclaration extends Declaration {
     private Identifier name;
     private Type returnType;
     private ArrayList<VarDeclaration> args = new ArrayList<>();
+
     private ArrayList<VarDeclaration> localVars = new ArrayList<>();
     private ArrayList<Statement> body = new ArrayList<>();
     private Expression returnValue;
@@ -58,12 +59,8 @@ public class MethodDeclaration extends Declaration {
         return body;
     }
 
-    public void setBody(ArrayList<Statement> allStatements)
-    {
-        for (int i = 0 ; i < this.body.size() ; i++)
-        {
-            this.body.add(allStatements.get(i));
-        }
+    public void setBody(ArrayList<Statement> allStatements) {
+        this.body.addAll(allStatements);
     }
 
     public void addStatement(Statement statement) {

@@ -54,7 +54,7 @@ public class VisitorImpl implements Visitor {
             arg.accept(this);
         }
 
-        System.out.println(methodDeclaration.getReturnType().toString());
+//        System.out.println(methodDeclaration.getReturnType().toString());
 
         ArrayList<VarDeclaration> varDeclarations = methodDeclaration.getLocalVars();
         for (VarDeclaration varDeclaration : varDeclarations) {
@@ -62,6 +62,7 @@ public class VisitorImpl implements Visitor {
         }
 
         ArrayList<Statement> statements = methodDeclaration.getBody();
+
         for (Statement statement : statements) {
             statement.accept(this);
         }

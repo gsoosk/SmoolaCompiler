@@ -1,6 +1,6 @@
 class Main {
     def main(): int {
     writeln("Salam");
-        return 0;
+        return 12;
     }
 }

@@ -28,6 +28,7 @@ import main.ast.node.expression.UnaryExpression.UnaryOperator;
             Visitor visitor = new VisitorImpl();
             visitor.visit(program);
         }
+
     ;
     mainClass returns [ClassDeclaration synMainClass]
     :
@@ -59,6 +60,7 @@ import main.ast.node.expression.UnaryExpression.UnaryOperator;
     :
         'def' methodName = ID
         {
+
             $synMethodDeclaration = new MethodDeclaration(new Identifier($methodName.text));
         }
         ('(' ')' | ('(' arg1Id = ID ':' arg1Type = type
