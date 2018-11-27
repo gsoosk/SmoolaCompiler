@@ -12,6 +12,8 @@ import main.ast.Type.*;
 import main.ast.Type.ArrayType.*;
 import main.ast.Type.PrimitiveType.*;
 import main.ast.Type.UserDefinedType.*;
+import main.ast.node.expression.BinaryExpression.BinaryOperator;
+import main.ast.node.expression.UnaryExpression.UnaryOperator;
 }
 
     program
@@ -107,11 +109,12 @@ import main.ast.Type.UserDefinedType.*;
     statementBlock returns [Statement synStatementBlock]
     :
     {
-        $synStatementBlock = new Block();
+        Block block = new Block();
     }
         '{'  allStatements = statements
     {
-        $synStatementBlock.setBody($allStatements.synStatements);
+        block.setBody($allStatements.synStatements);
+        $synStatementBlock = block;
     }
         '}'
     ;
@@ -119,10 +122,11 @@ import main.ast.Type.UserDefinedType.*;
     :
         'if' '(' conditionExp = expression')' 'then' consequenceBody = statement
          {
-            $synStatementCondition = new Conditional($conditionExp.synExpression, $consequenceBody.synStatement);
+            Conditional conditional = new Conditional($conditionExp.synExpression, $consequenceBody.synStatement);
          }('else' altBody = statement
          {
-            $synStatementCondition.setAlternativeBody($altBody.synStatement);
+            conditional.setAlternativeBody($altBody.synStatement);
+            $synStatementCondition = conditional;
          }
          )?
     ;
@@ -144,7 +148,7 @@ import main.ast.Type.UserDefinedType.*;
     :
         assignExpr = expression ';'
         {
-            $synStatementAssign = new Assign($assignExpr.synExpression.getLeft(), $assignExpr.synExpression.getRight());
+            $synStatementAssign = new Assign(((BinaryExpression)$assignExpr.synExpression).getLeft(), ((BinaryExpression)$assignExpr.synExpression).getRight());
         }
     ;
     expression returns [Expression synExpression]
@@ -170,7 +174,7 @@ import main.ast.Type.UserDefinedType.*;
     :
         lExpr = expressionAnd rExpr = expressionOrTemp
         {
-            if(rExpr.synExpression != null)
+            if($rExpr.synExpression != null)
                 $synExpression = new BinaryExpression($lExpr.synExpression, $rExpr.synExpression, BinaryOperator.or);
             else
                 $synExpression = $lExpr.synExpression;
@@ -219,7 +223,7 @@ import main.ast.Type.UserDefinedType.*;
         lExpr = expressionCmp rExpr = expressionEqTemp
         {
             if($rExpr.synExpression != null)
-                if($rExpr.synExpression.getBinaryOperator() == BinaryOperator.eq)
+                if(((BinaryExpression)$rExpr.synExpression).getBinaryOperator() == BinaryOperator.eq)
                     $synExpression = new BinaryExpression($lExpr.synExpression, $rExpr.synExpression, BinaryOperator.eq);
                 else
                     $synExpression = new BinaryExpression($lExpr.synExpression, $rExpr.synExpression, BinaryOperator.neq);
@@ -232,7 +236,7 @@ import main.ast.Type.UserDefinedType.*;
         ('==' | '<>') lExpr = expressionCmp rExpr = expressionEqTemp
         {
             if($rExpr.synExpression != null)
-                if($rExpr.synExpression.getBinaryOperator() == BinaryOperator.eq)
+                if(((BinaryExpression)$rExpr.synExpression).getBinaryOperator() == BinaryOperator.eq)
                     $synExpression = new BinaryExpression($lExpr.synExpression, $rExpr.synExpression, BinaryOperator.eq);
                 else
                     $synExpression = new BinaryExpression($lExpr.synExpression, $rExpr.synExpression, BinaryOperator.neq);
@@ -249,7 +253,7 @@ import main.ast.Type.UserDefinedType.*;
         lExpr =  expressionAdd rExpr = expressionCmpTemp
         {
             if($rExpr.synExpression != null)
-                if($rExpr.synExpression.getBinaryOperator() == BinaryOperator.lt)
+                if(((BinaryExpression)$rExpr.synExpression).getBinaryOperator() == BinaryOperator.lt)
                     $synExpression = new BinaryExpression($lExpr.synExpression, $rExpr.synExpression, BinaryOperator.lt);
                 else
                      $synExpression = new BinaryExpression($lExpr.synExpression, $rExpr.synExpression, BinaryOperator.gt);
@@ -262,7 +266,7 @@ import main.ast.Type.UserDefinedType.*;
         ('<' | '>') lExpr = expressionAdd rExpr = expressionCmpTemp
         {
             if($rExpr.synExpression != null)
-                if($rExpr.synExpression.getBinaryOperator() == BinaryOperator.lt)
+                if(((BinaryExpression)$rExpr.synExpression).getBinaryOperator() == BinaryOperator.lt)
                     $synExpression = new BinaryExpression($lExpr.synExpression, $rExpr.synExpression, BinaryOperator.lt);
                 else
                      $synExpression = new BinaryExpression($lExpr.synExpression, $rExpr.synExpression, BinaryOperator.gt);
@@ -279,7 +283,7 @@ import main.ast.Type.UserDefinedType.*;
         lExpr = expressionMult rExpr = expressionAddTemp
         {
             if($rExpr.synExpression != null)
-                if($rExpr.synExpression.getBinaryOperator() == BinaryOperator.add)
+                if(((BinaryExpression)$rExpr.synExpression).getBinaryOperator() == BinaryOperator.add)
                     $synExpression = new BinaryExpression($lExpr.synExpression, $rExpr.synExpression, BinaryOperator.add);
                 else
                      $synExpression = new BinaryExpression($lExpr.synExpression, $rExpr.synExpression, BinaryOperator.sub);
@@ -292,7 +296,7 @@ import main.ast.Type.UserDefinedType.*;
         ('+' | '-') lExpr = expressionMult rExpr = expressionAddTemp
         {
             if($rExpr.synExpression != null)
-                if($rExpr.synExpression.getBinaryOperator() == BinaryOperator.add)
+                if(((BinaryExpression)$rExpr.synExpression).getBinaryOperator() == BinaryOperator.add)
                     $synExpression = new BinaryExpression($lExpr.synExpression, $rExpr.synExpression, BinaryOperator.add);
                 else
                      $synExpression = new BinaryExpression($lExpr.synExpression, $rExpr.synExpression, BinaryOperator.sub);
@@ -309,7 +313,7 @@ import main.ast.Type.UserDefinedType.*;
         lExpr = expressionUnary rExpr = expressionMultTemp
         {
             if($rExpr.synExpression != null)
-                if($rExpr.synExpression.getBinaryOperator() == BinaryOperator.mult)
+                if(((BinaryExpression)$rExpr.synExpression).getBinaryOperator() == BinaryOperator.mult)
                     $synExpression = new BinaryExpression($lExpr.synExpression, $rExpr.synExpression, BinaryOperator.mult);
                 else
                      $synExpression = new BinaryExpression($lExpr.synExpression, $rExpr.synExpression, BinaryOperator.div);
@@ -322,7 +326,7 @@ import main.ast.Type.UserDefinedType.*;
         ('*' | '/') lExpr = expressionUnary rExpr = expressionMultTemp
         {
             if($rExpr.synExpression != null)
-                if($rExpr.synExpression.getBinaryOperator() == BinaryOperator.mult)
+                if(((BinaryExpression)$rExpr.synExpression).getBinaryOperator() == BinaryOperator.mult)
                     $synExpression = new BinaryExpression($lExpr.synExpression, $rExpr.synExpression, BinaryOperator.mult);
                 else
                      $synExpression = new BinaryExpression($lExpr.synExpression, $rExpr.synExpression, BinaryOperator.div);
@@ -372,7 +376,7 @@ import main.ast.Type.UserDefinedType.*;
     ;
     expressionMethods returns [Expression synExpression]
     :
-        inhInstance = expressionOther method = expressionMethodsTemp[inhInstance]
+        inhInstance = expressionOther method = expressionMethodsTemp[$inhInstance.synExpression]
         {
             if($method.synExpression != null)
                 $synExpression = $method.synExpression;
@@ -393,9 +397,9 @@ import main.ast.Type.UserDefinedType.*;
         | methodName = ID '(' ( arg1 = expression
         {
             method = new MethodCall($inhExpression, new Identifier($methodName.text));
-            method.addArg($arg1.synExpression);
+            ((MethodCall)method).addArg($arg1.synExpression);
         }
-        (',' arg = expression {method.addArg($arg.synExpression);})*) ')'
+        (',' arg = expression{((MethodCall)method).addArg($arg.synExpression);})*) ')'
         | 'length'
         {
             method = new Length($inhExpression);
@@ -416,7 +420,7 @@ import main.ast.Type.UserDefinedType.*;
     :
     val = CONST_NUM {$synExpression = new IntValue($val.int, new IntType());}
           |   val = CONST_STR {$synExpression = new StringValue($val.text, new StringType());}
-          |   'new ' 'int' '[' val = CONST_NUM ']' {$synExpression = new NewArray(); $synExpression.setExpression(new IntValue($val.int, new IntType()));}
+          |   'new ' 'int' '[' val = CONST_NUM ']' {NewArray arr = new NewArray(); arr.setExpression(new IntValue($val.int, new IntType())); $synExpression = arr;}
           |   'new ' className = ID '(' ')' {$synExpression = new NewClass(new Identifier($className.text));}
           |   'this' {$synExpression = new This();}
           |   'true' {$synExpression = new BooleanValue(true, new BooleanType());}

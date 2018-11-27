@@ -3,6 +3,9 @@ package main.ast.node.expression;
 import main.ast.Visitor;
 
 public class BinaryExpression extends Expression {
+    public enum BinaryOperator {
+        add, sub, mult, div, and, or, eq, neq, lt, gt, assign
+    }
 
     private Expression left;
     private Expression right;
@@ -48,6 +51,4 @@ public class BinaryExpression extends Expression {
         visitor.visit(this);
     }
 }
-enum BinaryOperator {
-    add, sub, mult, div, and, or, eq, neq, lt, gt, assign
-}
+

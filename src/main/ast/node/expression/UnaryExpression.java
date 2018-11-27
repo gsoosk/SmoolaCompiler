@@ -3,6 +3,9 @@ package main.ast.node.expression;
 import main.ast.Visitor;
 
 public class UnaryExpression extends Expression {
+    public enum UnaryOperator {
+        not, minus
+    }
 
     private UnaryOperator unaryOperator;
     private Expression value;
@@ -38,7 +41,5 @@ public class UnaryExpression extends Expression {
         visitor.visit(this);
     }
 }
-enum UnaryOperator {
-    not, minus
-}
+
 
