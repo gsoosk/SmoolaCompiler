@@ -28,7 +28,8 @@ public class VisitorImpl implements Visitor {
         System.out.println(classDeclaration.toString());
 
         classDeclaration.getName().accept(this);
-        classDeclaration.getParentName().accept(this);
+        if (classDeclaration.getParentName() != null)
+            classDeclaration.getParentName().accept(this);
 
         ArrayList<VarDeclaration> varDeclarations = classDeclaration.getVarDeclarations();
         for (VarDeclaration varDeclaration : varDeclarations) {

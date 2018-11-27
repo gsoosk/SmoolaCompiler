@@ -388,7 +388,7 @@ import main.ast.node.expression.UnaryExpression.UnaryOperator;
     :
         '.'
         {
-            Expression method;
+            Expression method = null;
         }
         (methodName = ID '(' ')'
         {
@@ -404,7 +404,13 @@ import main.ast.node.expression.UnaryExpression.UnaryOperator;
         {
             method = new Length($inhExpression);
         }
-        ) expr = expressionMethodsTemp[method]
+        )
+        {
+            if(method == null) {
+                method = $inhExpression;
+            }
+        }
+        expr = expressionMethodsTemp[method]
         {
             if($expr.synExpression != null)
                 $synExpression = $expr.synExpression;
