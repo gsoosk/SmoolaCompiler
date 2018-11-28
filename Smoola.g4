@@ -35,6 +35,7 @@ import main.ast.node.expression.UnaryExpression.UnaryOperator;
         'class'  mainClassName = ID '{' 'def' mainMethodName = ID '(' ')' ':' 'int' '{'  allStatements = statements 'return' mainVal = expression ';' '}' '}'
         {
             $synMainClass = AstMaker.mainClass($mainClassName.text, $mainMethodName.text, $mainVal.synExpression, $allStatements.synStatements);
+            $synMainClass.setLineNumber($mainClassName.getLine());
         }
     ;
     classDeclaration returns [ClassDeclaration synClassDeclaration]
@@ -42,6 +43,7 @@ import main.ast.node.expression.UnaryExpression.UnaryOperator;
         'class' name = ID ('extends' parentName = ID)?
         {
            $synClassDeclaration = AstMaker.classDeclaration($name.text, $parentName.text);
+           $synClassDeclaration.setLineNumber($name.getLine());
         }
         '{'
         (varDec = varDeclaration {$synClassDeclaration.addVarDeclaration($varDec.synVarDec);} )*
@@ -51,9 +53,10 @@ import main.ast.node.expression.UnaryExpression.UnaryOperator;
     ;
     varDeclaration returns [VarDeclaration synVarDec]
     :
-        'var' varName = ID ':' varType = type ';'
+        var = 'var' varName = ID ':' varType = type ';'
         {
             $synVarDec = AstMaker.varDeclaration(new Identifier($varName.text), $varType.synType);
+            $synVarDec.setLineNumber($var.getLine());
         }
     ;
     methodDeclaration returns [MethodDeclaration synMethodDeclaration]
@@ -62,14 +65,19 @@ import main.ast.node.expression.UnaryExpression.UnaryOperator;
         {
 
             $synMethodDeclaration = new MethodDeclaration(new Identifier($methodName.text));
+            $synMethodDeclaration.setLineNumber($methodName.getLine());
         }
         ('(' ')' | ('(' arg1Id = ID ':' arg1Type = type
         {
-            $synMethodDeclaration.addArg(new VarDeclaration(new Identifier($arg1Id.text), $arg1Type.synType));
+            VarDeclaration newVarDeclaration = new VarDeclaration(new Identifier($arg1Id.text), $arg1Type.synType);
+            newVarDeclaration.setLineNumber($arg1Id.getLine());
+            $synMethodDeclaration.addArg(newVarDeclaration);
         }
         (',' argId = ID ':' argType = type
         {
-            $synMethodDeclaration.addArg(new VarDeclaration(new Identifier($argId.text), $argType.synType));
+            VarDeclaration newVarDeclaration1 = new VarDeclaration(new Identifier($argId.text), $argType.synType);
+            newVarDeclaration1.setLineNumber($argId.getLine());
+            $synMethodDeclaration.addArg(newVarDeclaration1);
         }
         )* ')')) ':' returnType = type
         {
@@ -415,11 +423,13 @@ import main.ast.node.expression.UnaryExpression.UnaryOperator;
         (methodName = ID '(' ')'
         {
             method = new MethodCall($inhExpression, new Identifier($methodName.text));
+//            method.setLineNumber($methodName.getLine());
         }
         | methodName = ID '(' ( arg1 = expression
         {
             method = new MethodCall($inhExpression, new Identifier($methodName.text));
             ((MethodCall)method).addArg($arg1.synExpression);
+//            method.setLineNumber($methodName.getLine());
         }
         (',' arg = expression{((MethodCall)method).addArg($arg.synExpression);})*) ')'
         | 'length'
@@ -446,15 +456,15 @@ import main.ast.node.expression.UnaryExpression.UnaryOperator;
     ;
     expressionOther returns [Expression synExpression]
     :
-    val = CONST_NUM {$synExpression = new IntValue($val.int, new IntType());}
-          |   val = CONST_STR {$synExpression = new StringValue($val.text, new StringType());}
-          |   'new ' 'int' '[' val = CONST_NUM ']' {NewArray arr = new NewArray(); arr.setExpression(new IntValue($val.int, new IntType())); $synExpression = arr;}
-          |   'new ' className = ID '(' ')' {$synExpression = new NewClass(new Identifier($className.text));}
+    val = CONST_NUM {$synExpression = new IntValue($val.int, new IntType()); $synExpression.setLineNumber($val.getLine());}
+          |   val = CONST_STR {$synExpression = new StringValue($val.text, new StringType()); $synExpression.setLineNumber($val.getLine());}
+          |   'new ' 'int' '[' val = CONST_NUM ']' {NewArray arr = new NewArray(); arr.setExpression(new IntValue($val.int, new IntType())); arr.setLineNumber($val.getLine()); $synExpression = arr;}
+          |   'new ' className = ID '(' ')' {$synExpression = new NewClass(new Identifier($className.text)); $synExpression.setLineNumber($className.getLine());}
           |   'this' {$synExpression = new This();}
           |   'true' {$synExpression = new BooleanValue(true, new BooleanType());}
           |   'false' {$synExpression = new BooleanValue(false, new BooleanType());}
-          |   val = ID {$synExpression = new Identifier($val.text);}
-          |   val = ID '[' ex = expression ']' {$synExpression = new ArrayCall(new Identifier($val.text), $ex.synExpression);}
+          |   val = ID {$synExpression = new Identifier($val.text); $synExpression.setLineNumber($val.getLine());}
+          |   val = ID '[' ex = expression ']' {$synExpression = new ArrayCall(new Identifier($val.text), $ex.synExpression); $synExpression.setLineNumber($val.getLine());}
           |   '(' ex = expression ')' {$synExpression = $ex.synExpression;}
     ;
     type returns [Type synType]
