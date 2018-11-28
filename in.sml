@@ -1,6 +1,6 @@
 class Main {
     def main(): int {
-    writeln("Salam");
+        i = a == b;
         return 12;
     }
 }

@@ -31,8 +31,14 @@ public class AstMaker {
     }
     public static ClassDeclaration classDeclaration(String name, String parentName)
     {
+        Identifier parentNameId;
+        if(parentName != null) {
+            parentNameId = new Identifier(parentName);
+        }
+        else {
+            parentNameId = null;
+        }
         Identifier nameId = new Identifier(name);
-        Identifier parentNameId = new Identifier(parentName);
         return new ClassDeclaration(nameId, parentNameId );
     }
     public static VarDeclaration varDeclaration(Identifier identifier, Type type)
