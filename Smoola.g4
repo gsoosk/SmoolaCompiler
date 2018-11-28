@@ -148,27 +148,39 @@ import main.ast.node.expression.UnaryExpression.UnaryOperator;
     ;
     statementAssignment returns [Statement synStatementAssign]
     :
-        assignExpr = expression ';'
+        expr = expression ';'
         {
-            $synStatementAssign = new Assign(((BinaryExpression)$assignExpr.synExpression).getLeft(), ((BinaryExpression)$assignExpr.synExpression).getRight());
+            if($expr.BinaryOp != null)
+            {
+                $synStatementAssign = new Assign(((BinaryExpression)$expr.synExpression).getLeft(), ((BinaryExpression)$expr.synExpression).getRight());
+            }
+            else
+            {
+                $synStatementAssign = new Statement();
+            }
         }
     ;
-    expression returns [Expression synExpression]
+    expression returns [Expression synExpression, String BinaryOp]
     :
         expr = expressionAssignment
         {
+
             $synExpression = $expr.synExpression;
+            $BinaryOp = $expr.BinaryOp;
+
         }
     ;
-    expressionAssignment returns [Expression synExpression]
+    expressionAssignment returns [Expression synExpression, String BinaryOp]
     :
         lExpr = expressionOr '=' rExpr = expressionAssignment
         {
+            $BinaryOp = "=";
             $synExpression = new BinaryExpression($lExpr.synExpression, $rExpr.synExpression, BinaryOperator.assign);
 
         }
         |	expr = expressionOr
         {
+            $BinaryOp = null;
             $synExpression = $expr.synExpression;
         }
     ;
