@@ -90,7 +90,7 @@ public class VisitorImpl implements Visitor {
 
     @Override
     public void visit(BinaryExpression binaryExpression) {
-        System.out.print(binaryExpression.toString());
+        System.out.println(binaryExpression.toString());
         binaryExpression.getLeft().accept(this);
         binaryExpression.getRight().accept(this);
     }

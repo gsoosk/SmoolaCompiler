@@ -12,6 +12,7 @@ public class StringValue extends Value {
     }
 
     public String getConstant() {
+
         return constant;
     }
 

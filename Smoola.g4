@@ -224,8 +224,9 @@ import main.ast.node.expression.UnaryExpression.UnaryOperator;
     :
         lExpr = expressionCmp rExpr = expressionEqTemp
         {
+
             if($rExpr.synExpression != null)
-                if(((BinaryExpression)$rExpr.synExpression).getBinaryOperator() == BinaryOperator.eq)
+                if($rExpr.binaryOperator.equals("=="))
                     $synExpression = new BinaryExpression($lExpr.synExpression, $rExpr.synExpression, BinaryOperator.eq);
                 else
                     $synExpression = new BinaryExpression($lExpr.synExpression, $rExpr.synExpression, BinaryOperator.neq);
@@ -233,12 +234,16 @@ import main.ast.node.expression.UnaryExpression.UnaryOperator;
                 $synExpression = $lExpr.synExpression;
         }
     ;
-    expressionEqTemp returns [Expression synExpression]
+    expressionEqTemp returns [Expression synExpression, String binaryOperator]
     :
-        ('==' | '<>') lExpr = expressionCmp rExpr = expressionEqTemp
+        binaryOp = ('==' | '<>') lExpr = expressionCmp rExpr = expressionEqTemp
         {
+            $binaryOperator = $binaryOp.text;
+
+
             if($rExpr.synExpression != null)
-                if(((BinaryExpression)$rExpr.synExpression).getBinaryOperator() == BinaryOperator.eq)
+
+                 if($rExpr.binaryOperator.equals("=="))
                     $synExpression = new BinaryExpression($lExpr.synExpression, $rExpr.synExpression, BinaryOperator.eq);
                 else
                     $synExpression = new BinaryExpression($lExpr.synExpression, $rExpr.synExpression, BinaryOperator.neq);
@@ -255,7 +260,7 @@ import main.ast.node.expression.UnaryExpression.UnaryOperator;
         lExpr =  expressionAdd rExpr = expressionCmpTemp
         {
             if($rExpr.synExpression != null)
-                if(((BinaryExpression)$rExpr.synExpression).getBinaryOperator() == BinaryOperator.lt)
+                if($rExpr.binaryOperator.equals("<"))
                     $synExpression = new BinaryExpression($lExpr.synExpression, $rExpr.synExpression, BinaryOperator.lt);
                 else
                      $synExpression = new BinaryExpression($lExpr.synExpression, $rExpr.synExpression, BinaryOperator.gt);
@@ -263,12 +268,13 @@ import main.ast.node.expression.UnaryExpression.UnaryOperator;
                 $synExpression = $lExpr.synExpression;
         }
     ;
-    expressionCmpTemp returns [Expression synExpression]
+    expressionCmpTemp returns [Expression synExpression, String binaryOperator]
     :
-        ('<' | '>') lExpr = expressionAdd rExpr = expressionCmpTemp
+        binaryOp = ('<' | '>') lExpr = expressionAdd rExpr = expressionCmpTemp
         {
+            $binaryOperator = $binaryOp.text;
             if($rExpr.synExpression != null)
-                if(((BinaryExpression)$rExpr.synExpression).getBinaryOperator() == BinaryOperator.lt)
+                if($rExpr.binaryOperator.equals("<"))
                     $synExpression = new BinaryExpression($lExpr.synExpression, $rExpr.synExpression, BinaryOperator.lt);
                 else
                      $synExpression = new BinaryExpression($lExpr.synExpression, $rExpr.synExpression, BinaryOperator.gt);
@@ -285,7 +291,7 @@ import main.ast.node.expression.UnaryExpression.UnaryOperator;
         lExpr = expressionMult rExpr = expressionAddTemp
         {
             if($rExpr.synExpression != null)
-                if(((BinaryExpression)$rExpr.synExpression).getBinaryOperator() == BinaryOperator.add)
+                if($rExpr.binaryOperator.equals("+"))
                     $synExpression = new BinaryExpression($lExpr.synExpression, $rExpr.synExpression, BinaryOperator.add);
                 else
                      $synExpression = new BinaryExpression($lExpr.synExpression, $rExpr.synExpression, BinaryOperator.sub);
@@ -293,12 +299,13 @@ import main.ast.node.expression.UnaryExpression.UnaryOperator;
                 $synExpression = $lExpr.synExpression;
         }
     ;
-    expressionAddTemp returns [Expression synExpression]
+    expressionAddTemp returns [Expression synExpression, String binaryOperator]
     :
-        ('+' | '-') lExpr = expressionMult rExpr = expressionAddTemp
+        binaryOp = ('+' | '-') lExpr = expressionMult rExpr = expressionAddTemp
         {
+            $binaryOperator = $binaryOp.text;
             if($rExpr.synExpression != null)
-                if(((BinaryExpression)$rExpr.synExpression).getBinaryOperator() == BinaryOperator.add)
+                if($rExpr.binaryOperator.equals("+"))
                     $synExpression = new BinaryExpression($lExpr.synExpression, $rExpr.synExpression, BinaryOperator.add);
                 else
                      $synExpression = new BinaryExpression($lExpr.synExpression, $rExpr.synExpression, BinaryOperator.sub);
@@ -315,7 +322,7 @@ import main.ast.node.expression.UnaryExpression.UnaryOperator;
         lExpr = expressionUnary rExpr = expressionMultTemp
         {
             if($rExpr.synExpression != null)
-                if(((BinaryExpression)$rExpr.synExpression).getBinaryOperator() == BinaryOperator.mult)
+                if($rExpr.binaryOperator.equals("*"))
                     $synExpression = new BinaryExpression($lExpr.synExpression, $rExpr.synExpression, BinaryOperator.mult);
                 else
                      $synExpression = new BinaryExpression($lExpr.synExpression, $rExpr.synExpression, BinaryOperator.div);
@@ -323,12 +330,13 @@ import main.ast.node.expression.UnaryExpression.UnaryOperator;
                 $synExpression = $lExpr.synExpression;
         }
     ;
-    expressionMultTemp returns [Expression synExpression]
+    expressionMultTemp returns [Expression synExpression, String binaryOperator]
     :
-        ('*' | '/') lExpr = expressionUnary rExpr = expressionMultTemp
+        binaryOp = ('*' | '/') lExpr = expressionUnary rExpr = expressionMultTemp
         {
+            $binaryOperator = $binaryOp.text;
             if($rExpr.synExpression != null)
-                if(((BinaryExpression)$rExpr.synExpression).getBinaryOperator() == BinaryOperator.mult)
+                if($rExpr.binaryOperator.equals("*"))
                     $synExpression = new BinaryExpression($lExpr.synExpression, $rExpr.synExpression, BinaryOperator.mult);
                 else
                      $synExpression = new BinaryExpression($lExpr.synExpression, $rExpr.synExpression, BinaryOperator.div);
