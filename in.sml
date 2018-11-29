@@ -7,3 +7,8 @@ class MainClass {
         return 0;
     }
 }
+class MainClass {
+    def main( c : int) : int {
+        return 1;
+    }
+}

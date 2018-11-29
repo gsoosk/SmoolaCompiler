@@ -77,7 +77,7 @@ public class VisitorImpl implements Visitor {
 
         varDeclaration.getIdentifier().accept(this);
 
-        System.out.println(varDeclaration.getType().toString());
+//        System.out.println(varDeclaration.getType().toString());
 
     }
 
