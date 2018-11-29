@@ -1,6 +1,7 @@
 class MainClass
 {
     def main() : int {
+        x = new int[0];
         writeln(Second.main());
         farzad.length = 2;
         a + 3 = 4;

@@ -227,6 +227,15 @@ public class VisitorImpl implements Visitor {
 
     @Override
     public void visit(NewArray newArray) {
+        if(((IntValue) newArray.getExpression()).getConstant() <= 0)
+        {
+            isThereError = true;
+            String Error = "Line:"
+                    + Integer.toString(newArray.getLineNumber())
+                    + ":Array length should not be zero or negative";
+            System.out.println(Error);
+            ((IntValue) newArray.getExpression()).setConstant(0);
+        }
         toOut.add(newArray.toString());
         newArray.getExpression().accept(this);
     }
