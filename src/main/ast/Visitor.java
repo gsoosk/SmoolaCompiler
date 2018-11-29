@@ -7,6 +7,8 @@ import main.ast.node.expression.*;
 import main.ast.node.expression.Value.*;
 import main.ast.node.statement.*;
 
+import java.util.ArrayList;
+
 
 public interface Visitor {
     void visit (Program program);
@@ -36,4 +38,6 @@ public interface Visitor {
     void visit(Conditional conditional);
     void visit(While loop);
     void visit(Write write);
+
+
 }

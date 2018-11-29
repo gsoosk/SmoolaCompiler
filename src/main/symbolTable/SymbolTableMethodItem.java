@@ -13,10 +13,16 @@ public class SymbolTableMethodItem extends SymbolTableItem {
         this.name = name;
         this.argTypes = argTypes;
     }
+    public String setName(String name)
+    {
+        return this.name = name;
+    }
 
     @Override
     public String getKey() { // it can be Method:<MethodName>
-        //todo
-        return null;
+        String key = "Method:<";
+        key = key.concat(name);
+        key = key.concat(">");
+        return key;
     }
 }

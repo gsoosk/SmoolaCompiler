@@ -1,5 +1,6 @@
 package main.ast;
 
+import main.ast.Type.Type;
 import main.ast.node.Program;
 import main.ast.node.declaration.ClassDeclaration;
 import main.ast.node.declaration.MethodDeclaration;
@@ -9,25 +10,67 @@ import main.ast.node.expression.Value.BooleanValue;
 import main.ast.node.expression.Value.IntValue;
 import main.ast.node.expression.Value.StringValue;
 import main.ast.node.statement.*;
-import main.symbolTable.SymbolTable;
+import main.symbolTable.*;
 import sun.awt.Symbol;
+import sun.jvm.hotspot.debugger.cdbg.Sym;
 
 import java.util.ArrayList;
 
 public class VisitorImpl implements Visitor {
+    private boolean isThereError = false;
+    private ArrayList<String> toOut = new ArrayList<>();
+    private int variablesIndex = 0;
     @Override
     public void visit(Program program) {
-        System.out.println(program.toString());
+        // For making symbol table
+        SymbolTable.push(new SymbolTable());
+        // For preorder traversal
+        toOut.add(program.toString());
         program.getMainClass().accept(this);
         ArrayList<ClassDeclaration> classes = program.getClasses();
         for (ClassDeclaration aClass : classes) {
             aClass.accept(this);
         }
+
+
+        if(!isThereError)
+        {
+            for (String aToOut : toOut) {
+                System.out.println(aToOut);
+            }
+        }
     }
 
     @Override
     public void visit(ClassDeclaration classDeclaration) {
-        System.out.println(classDeclaration.toString());
+        //
+        SymbolTableClassItem classItem = new SymbolTableClassItem(classDeclaration.getName().getName());
+        boolean putSuccess = false;
+        int i = 0;
+        do {
+            try {
+                SymbolTable.top.put(classItem);
+                putSuccess = true;
+            } catch (ItemAlreadyExistsException ex) {
+                i++;
+                if(i == 1){
+                    isThereError = true;
+                    String Error = "Line:"
+                            + Integer.toString(classDeclaration.getLineNumber())
+                            + ":Redefinition of class "
+                            + classDeclaration.getName().getName();
+                    System.out.println(Error);
+                }
+                classDeclaration.setName(new Identifier("temp_class_"+ Integer.toString(i) + classDeclaration.getName().getName()));
+                classItem.setName(classDeclaration.getName().getName());
+            }
+        }while (!putSuccess);
+
+        SymbolTable classSymbolTable = new SymbolTable(SymbolTable.top);
+        SymbolTable.push(classSymbolTable);
+
+        //
+        toOut.add(classDeclaration.toString());
 
         classDeclaration.getName().accept(this);
         if (classDeclaration.getParentName() != null)
@@ -43,11 +86,47 @@ public class VisitorImpl implements Visitor {
             methodDeclaration.accept(this);
         }
 
+        //
+        SymbolTable.pop();
+
     }
 
     @Override
     public void visit(MethodDeclaration methodDeclaration) {
-        System.out.println(methodDeclaration.toString());
+        //
+        ArrayList<Type> argsType = new ArrayList<>();
+        for (VarDeclaration arg: methodDeclaration.getArgs()) {
+          argsType.add(arg.getType());
+        }
+        SymbolTableMethodItem methodItem = new SymbolTableMethodItem(methodDeclaration.getName().getName(),
+                                                                    argsType);
+        boolean putSuccess = false;
+        int i = 0;
+        do {
+            try {
+                SymbolTable.top.put(methodItem);
+                putSuccess = true;
+            } catch (ItemAlreadyExistsException ex) {
+                i++;
+                if(i == 1){
+                    isThereError = true;
+                    String Error = "Line:"
+                            + Integer.toString(methodDeclaration.getLineNumber())
+                            + ":Redefinition of method "
+                            + methodDeclaration.getName().getName();
+
+                    System.out.println(Error);
+                }
+                methodDeclaration.setName(new Identifier("temp_method_"+ Integer.toString(i) + methodDeclaration.getName().getName()));
+                methodItem.setName(methodDeclaration.getName().getName());
+            }
+        }while (!putSuccess);
+
+        SymbolTable scopeSymbolTable = new SymbolTable(SymbolTable.top);
+        SymbolTable.push(scopeSymbolTable);
+        //
+
+        toOut.add(methodDeclaration.toString());
 
         methodDeclaration.getName().accept(this);
 
@@ -56,7 +135,7 @@ public class VisitorImpl implements Visitor {
             arg.accept(this);
         }
 
-//        System.out.println(methodDeclaration.getReturnType().toString());
+//        toOut.add(methodDeclaration.getReturnType().toString());
 
         ArrayList<VarDeclaration> varDeclarations = methodDeclaration.getLocalVars();
         for (VarDeclaration varDeclaration : varDeclarations) {
@@ -70,47 +149,73 @@ public class VisitorImpl implements Visitor {
         }
 
         methodDeclaration.getReturnValue().accept(this);
+
+        //
+        SymbolTable.pop();
     }
 
 
     @Override
     public void visit(VarDeclaration varDeclaration) {
-        System.out.println(varDeclaration.toString());
 
+//        SymbolTableItem item = new SymbolTableVariableItemBase();
+//        boolean putSuccess = false;
+//        int i = 0;
+//        do {
+//            try {
+//                SymbolTable.top.put(methodItem);
+//                putSuccess = true;
+//            } catch (ItemAlreadyExistsException ex) {
+//                i++;
+//                if(i == 1){
+//                    isThereError = true;
+//                    String Error = "Line:"
+//                            + Integer.toString(methodDeclaration.getLineNumber())
+//                            + ":Redefinition of method "
+//                            + methodDeclaration.getName().getName();
+//
+//                    System.out.println(Error);
+//                }
+//                methodDeclaration.setName(new Identifier("temp_method_"+ Integer.toString(i) + methodDeclaration.getName().getName()));
+//                methodItem.setName(methodDeclaration.getName().getName());
+//            }
+//        }while (!putSuccess);
+
+        toOut.add(varDeclaration.toString());
         varDeclaration.getIdentifier().accept(this);
 
-//        System.out.println(varDeclaration.getType().toString());
+//        toOut.add(varDeclaration.getType().toString());
 
     }
 
     @Override
     public void visit(ArrayCall arrayCall) {
-        System.out.println(arrayCall.toString());
+        toOut.add(arrayCall.toString());
         arrayCall.getInstance().accept(this);
         arrayCall.getIndex().accept(this);
     }
 
     @Override
     public void visit(BinaryExpression binaryExpression) {
-        System.out.println(binaryExpression.toString());
+        toOut.add(binaryExpression.toString());
         binaryExpression.getLeft().accept(this);
         binaryExpression.getRight().accept(this);
     }
 
     @Override
     public void visit(Identifier identifier) {
-        System.out.println(identifier.toString());
+        toOut.add(identifier.toString());
     }
 
     @Override
     public void visit(Length length) {
-       System.out.println(length.toString());
+       toOut.add(length.toString());
        length.getExpression().accept(this);
     }
 
     @Override
     public void visit(MethodCall methodCall) {
-       System.out.println(methodCall.toString());
+       toOut.add(methodCall.toString());
        methodCall.getInstance().accept(this);
        methodCall.getMethodName().accept(this);
 
@@ -122,61 +227,64 @@ public class VisitorImpl implements Visitor {
 
     @Override
     public void visit(NewArray newArray) {
-        System.out.println(newArray.toString());
+        toOut.add(newArray.toString());
         newArray.getExpression().accept(this);
     }
 
     @Override
     public void visit(NewClass newClass) {
-        System.out.println(newClass.toString());
+        toOut.add(newClass.toString());
         newClass.getClassName().accept(this);
     }
 
     @Override
     public void visit(This instance) {
-        System.out.println(instance.toString());
+        toOut.add(instance.toString());
     }
 
     @Override
     public void visit(UnaryExpression unaryExpression) {
-        System.out.println(unaryExpression.toString());
+        toOut.add(unaryExpression.toString());
         unaryExpression.getValue().accept(this);
     }
 
     @Override
     public void visit(BooleanValue value) {
-        System.out.println(value.toString());
+        toOut.add(value.toString());
     }
 
     @Override
     public void visit(IntValue value) {
-        System.out.println(value.toString());
+        toOut.add(value.toString());
     }
 
     @Override
     public void visit(StringValue value) {
-        System.out.println(value.toString());
+        toOut.add(value.toString());
     }
 
     @Override
     public void visit(Assign assign) {
-        System.out.println(assign.toString());
+        toOut.add(assign.toString());
         assign.getlValue().accept(this);
         assign.getrValue().accept(this);
     }
 
     @Override
     public void visit(Block block) {
-        System.out.println(block.toString());
+
+        toOut.add(block.toString());
         ArrayList<Statement> body =  block.getBody();
         for (Statement aBody : body) {
             aBody.accept(this);
         }
+
+
     }
 
     @Override
     public void visit(Conditional conditional) {
-        System.out.println(conditional.toString());
+        toOut.add(conditional.toString());
         conditional.getExpression().accept(this);
         conditional.getConsequenceBody().accept(this);
         conditional.getAlternativeBody().accept(this);
@@ -184,14 +292,14 @@ public class VisitorImpl implements Visitor {
 
     @Override
     public void visit(While loop) {
-        System.out.println(loop.toString());
+        toOut.add(loop.toString());
         loop.getCondition().accept(this);
         loop.getBody().accept(this);
     }
 
     @Override
     public void visit(Write write) {
-        System.out.println(write.toString());
+        toOut.add(write.toString());
         write.getArg().accept(this);
     }
 }

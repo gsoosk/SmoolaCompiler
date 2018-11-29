@@ -14,12 +14,8 @@ public class Block extends Statement {
     public void addStatement(Statement statement) {
         this.body.add(statement);
     }
-    public void setBody(ArrayList<Statement> allStatements)
-    {
-        for (int i = 0 ; i < this.body.size() ; i++)
-        {
-            this.body.add(allStatements.get(i));
-        }
+    public void setBody(ArrayList<Statement> allStatements) {
+        this.body.addAll(allStatements);
     }
 
     @Override
