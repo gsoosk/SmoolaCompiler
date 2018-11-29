@@ -1,32 +1,17 @@
 class MainClass
 {
     def main() : int {
-        x = new int[0];
         writeln(Second.main());
-        farzad.length = 2;
+        x = f.length;
         a + 3 = 4;
         a = 12 = 34;
         return 0;
     }
-
 }
-class MainClass
-{
-    def main() : int {
-        writeln(Second.main());
-        farzad.length = 2;
-        a + 3 = 4;
-        a = 12 = 34;
-        return 0;
-    }
-    def foo1() : int {
-        return 0;
-    }
-}
-class MainClass {
+class SecondClass extends next{
     var test1 : int[];
     var test2 : string;
-    def foo1( c : int) : int {
+    def foo2( c : int) : int {
         return 1;
     }
     def foo1( c : int, b : string , a : boolean, x : int[]) : int {
@@ -41,10 +26,24 @@ class MainClass {
             }
             else
             {
-                a = 2;
+                arr.length;
             }
         }
             return 1;
     }
 
+
+}
+
+class next  {
+ def b (c:int, d:int, e:int) : int
+ {
+    return c - e.k()[5];
+ }
+ def foo2( c : int) : int {
+         return 1;
+     }
+ def foo1(a : int) : int{
+    return 2;
+ }
 }

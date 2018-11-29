@@ -1,5 +1,6 @@
 package main.ast;
 
+import main.Tools.PassSaver;
 import main.ast.Type.Type;
 import main.ast.node.Program;
 import main.ast.node.declaration.ClassDeclaration;
@@ -20,6 +21,19 @@ public class VisitorImpl implements Visitor {
     private boolean isThereError = false;
     private ArrayList<String> toOut = new ArrayList<>();
     private int variablesIndex = 0;
+    private String currentClassName;
+    private String currentParentName;
+    private ArrayList<PassSaver> passSavers = new ArrayList<>();
+    private boolean isItOkToAdd(String methodName, String parentName, String className, boolean methodOrNot)
+    {
+        for (PassSaver passSaver : passSavers) {
+            if (passSaver.doesItHaveConflict(methodName, className, parentName, methodOrNot))
+                return false;
+        }
+        return true;
+    }
+
+
     @Override
     public void visit(Program program) {
         // For making symbol table
@@ -29,6 +43,11 @@ public class VisitorImpl implements Visitor {
         program.getMainClass().accept(this);
         ArrayList<ClassDeclaration> classes = program.getClasses();
         for (ClassDeclaration aClass : classes) {
+            currentClassName = aClass.getName().getName();
+            if(aClass.getParentName() != null)
+                currentParentName = aClass.getParentName().getName();
+            else
+                currentParentName = null;
             aClass.accept(this);
         }
 
@@ -39,6 +58,11 @@ public class VisitorImpl implements Visitor {
                 System.out.println(aToOut);
             }
         }
+
+//        for (PassSaver passSaver : passSavers) {
+//            passSaver.print();
+//        }
+
     }
 
     @Override
@@ -104,7 +128,10 @@ public class VisitorImpl implements Visitor {
         int i = 0;
         do {
             try {
+                if(!isItOkToAdd(methodDeclaration.getName().getName(), currentParentName, currentClassName, true))
+                    throw new ItemAlreadyExistsException();
                 SymbolTable.top.put(methodItem);
+                passSavers.add(new PassSaver(methodDeclaration.getName().getName(), currentParentName, currentClassName, true));
                 putSuccess = true;
             } catch (ItemAlreadyExistsException ex) {
                 i++;

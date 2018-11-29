@@ -38,6 +38,4 @@ public interface Visitor {
     void visit(Conditional conditional);
     void visit(While loop);
     void visit(Write write);
-
-
 }
