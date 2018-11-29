@@ -2,7 +2,7 @@ package main.symbolTable;
 
 import main.ast.Type.Type;
 
-public abstract class SymbolTableVariableItemBase extends SymbolTableItem {
+public class SymbolTableVariableItemBase extends SymbolTableItem {
 
     private int index;
     protected Type type;
@@ -17,6 +17,7 @@ public abstract class SymbolTableVariableItemBase extends SymbolTableItem {
     public String getName() {
         return name;
     }
+
 
     public Type getType() {
         return type;

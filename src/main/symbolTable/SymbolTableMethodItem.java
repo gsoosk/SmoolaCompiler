@@ -13,10 +13,7 @@ public class SymbolTableMethodItem extends SymbolTableItem {
         this.name = name;
         this.argTypes = argTypes;
     }
-    public String setName(String name)
-    {
-        return this.name = name;
-    }
+
 
     @Override
     public String getKey() { // it can be Method:<MethodName>

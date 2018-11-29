@@ -24,10 +24,10 @@ public class VisitorImpl implements Visitor {
     private String currentClassName;
     private String currentParentName;
     private ArrayList<PassSaver> passSavers = new ArrayList<>();
-    private boolean isItOkToAdd(String methodName, String parentName, String className, boolean methodOrNot)
+    private boolean isItOkToAdd(String methodName, String parentName, String className)
     {
         for (PassSaver passSaver : passSavers) {
-            if (passSaver.doesItHaveConflict(methodName, className, parentName, methodOrNot))
+            if (passSaver.doesItHaveConflict(methodName, className, parentName))
                 return false;
         }
         return true;
@@ -128,10 +128,10 @@ public class VisitorImpl implements Visitor {
         int i = 0;
         do {
             try {
-                if(!isItOkToAdd(methodDeclaration.getName().getName(), currentParentName, currentClassName, true))
+                if(!isItOkToAdd(methodDeclaration.getName().getName(), currentParentName, currentClassName))
                     throw new ItemAlreadyExistsException();
                 SymbolTable.top.put(methodItem);
-                passSavers.add(new PassSaver(methodDeclaration.getName().getName(), currentParentName, currentClassName, true));
+                passSavers.add(new PassSaver(methodDeclaration.getName().getName(), currentParentName, currentClassName));
                 putSuccess = true;
             } catch (ItemAlreadyExistsException ex) {
                 i++;
@@ -185,28 +185,29 @@ public class VisitorImpl implements Visitor {
     @Override
     public void visit(VarDeclaration varDeclaration) {
 
-//        SymbolTableItem item = new SymbolTableVariableItemBase();
-//        boolean putSuccess = false;
-//        int i = 0;
-//        do {
-//            try {
-//                SymbolTable.top.put(methodItem);
-//                putSuccess = true;
-//            } catch (ItemAlreadyExistsException ex) {
-//                i++;
-//                if(i == 1){
-//                    isThereError = true;
-//                    String Error = "Line:"
-//                            + Integer.toString(methodDeclaration.getLineNumber())
-//                            + ":Redefinition of method "
-//                            + methodDeclaration.getName().getName();
-//
-//                    System.out.println(Error);
-//                }
-//                methodDeclaration.setName(new Identifier("temp_method_"+ Integer.toString(i) + methodDeclaration.getName().getName()));
-//                methodItem.setName(methodDeclaration.getName().getName());
-//            }
-//        }while (!putSuccess);
+        SymbolTableItem item = new SymbolTableVariableItemBase(varDeclaration.getIdentifier().getName(),
+                                    varDeclaration.getType(), ++variablesIndex);
+        boolean putSuccess = false;
+        int i = 0;
+        do {
+            try {
+                SymbolTable.top.put(item);
+                putSuccess = true;
+            } catch (ItemAlreadyExistsException ex) {
+                i++;
+                if(i == 1){
+                    isThereError = true;
+                    String Error = "Line:"
+                            + Integer.toString(varDeclaration.getLineNumber())
+                            + ":Redefinition of variable "
+                            + varDeclaration.getIdentifier().getName();
+
+                    System.out.println(Error);
+                }
+                varDeclaration.setIdentifier(new Identifier("temp_var_"+ Integer.toString(i) + varDeclaration.getIdentifier().getName()));
+                item.setName(varDeclaration.getIdentifier().getName());
+            }
+        }while (!putSuccess);
 
         toOut.add(varDeclaration.toString());
         varDeclaration.getIdentifier().accept(this);

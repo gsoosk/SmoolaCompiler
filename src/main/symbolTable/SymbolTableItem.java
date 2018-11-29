@@ -7,6 +7,10 @@ public abstract class SymbolTableItem {
 
 	public SymbolTableItem() {
 	}
+	public void setName(String _name)
+	{
+		name = _name;
+	}
 
 	public abstract String getKey();
 
