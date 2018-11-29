@@ -9,6 +9,8 @@ import main.ast.node.expression.Value.BooleanValue;
 import main.ast.node.expression.Value.IntValue;
 import main.ast.node.expression.Value.StringValue;
 import main.ast.node.statement.*;
+import main.symbolTable.SymbolTable;
+import sun.awt.Symbol;
 
 import java.util.ArrayList;
 
