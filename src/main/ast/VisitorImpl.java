@@ -82,7 +82,16 @@ public class VisitorImpl implements Visitor {
         SymbolTable.push(new SymbolTable());
         // For preorder traversal
         toOut.add(program.toString());
+        //Accepting main
+        currentClassName = program.getMainClass().getName().getName();
+        if(program.getMainClass().getParentName() != null)
+            currentParentName = program.getMainClass().getParentName().getName();
+        else
+            currentParentName = null;
+        Pair < String , String > mainClass = new Pair<>(currentClassName, currentParentName);
+        ArrayOfClasses.add(mainClass);
         program.getMainClass().accept(this);
+        //Accepting otherClasses;
         ArrayList<ClassDeclaration> classes = program.getClasses();
         for (ClassDeclaration aClass : classes) {
             currentClassName = aClass.getName().getName();
@@ -103,9 +112,6 @@ public class VisitorImpl implements Visitor {
             }
         }
 
-//        for (PassSaver passSaver : passSavers) {
-//            passSaver.print();
-//        }
 
     }
 
@@ -375,7 +381,8 @@ public class VisitorImpl implements Visitor {
         toOut.add(conditional.toString());
         conditional.getExpression().accept(this);
         conditional.getConsequenceBody().accept(this);
-        conditional.getAlternativeBody().accept(this);
+        if(conditional.getAlternativeBody() != null)
+            conditional.getAlternativeBody().accept(this);
     }
 
     @Override

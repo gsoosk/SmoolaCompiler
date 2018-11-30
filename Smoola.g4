@@ -131,9 +131,10 @@ import main.ast.node.expression.UnaryExpression.UnaryOperator;
     ;
     statementCondition returns [Statement synStatementCondition]
     :
-        'if' '(' conditionExp = expression')' 'then' consequenceBody = statement
+         'if' '(' conditionExp = expression')' 'then' consequenceBody = statement
          {
             Conditional conditional = new Conditional($conditionExp.synExpression, $consequenceBody.synStatement);
+            $synStatementCondition = conditional;
          }('else' altBody = statement
          {
             conditional.setAlternativeBody($altBody.synStatement);
