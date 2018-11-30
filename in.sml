@@ -50,3 +50,19 @@ class next  {
  #  return 2;
  #}
 }
+
+
+class b extends a{
+
+}
+class c extends a {
+    def foo1() : int {
+        return 1;
+    }
+}
+class a {
+    def foo1() : int {
+        return 0;
+    }
+
+}

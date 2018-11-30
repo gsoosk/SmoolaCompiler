@@ -23,8 +23,16 @@ public class PassSaver {
             if(parrentName != null)
                 if(_className.equals(parrentName))
                     return true;
+
         }
         return false;
+    }
+    public boolean isEqual(String name)
+    {
+        return key.equals(name);
+    }
+    public String getClassName(){
+        return className;
     }
     public void print(){
         System.out.println(key + " " + className + " " + parrentName );

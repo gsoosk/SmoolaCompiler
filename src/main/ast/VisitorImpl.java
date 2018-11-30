@@ -1,5 +1,6 @@
 package main.ast;
 
+import javafx.util.Pair;
 import main.Tools.PassSaver;
 import main.ast.Type.Type;
 import main.ast.node.Program;
@@ -24,11 +25,50 @@ public class VisitorImpl implements Visitor {
     private String currentClassName;
     private String currentParentName;
     private ArrayList<PassSaver> passSavers = new ArrayList<>();
+    private ArrayList< Pair<String , String> > ArrayOfClasses = new ArrayList<>();
+    private boolean reCheck(String target, String current)
+    {
+
+        for (Pair<String, String> singleClass:
+            ArrayOfClasses) {
+            if(singleClass.getKey().equals(current) && singleClass.getValue()!= null)
+                if(singleClass.getValue().equals(target))
+                    return true;
+        }
+        for (Pair<String, String> singleClass:
+             ArrayOfClasses) {
+
+            if(singleClass.getKey().equals(current))
+            {
+                if(singleClass.getValue() != null)
+                    return reCheck(target, singleClass.getValue());
+                else
+                    return false;
+            }
+        }
+        return false;
+    }
     private boolean isItOkToAdd(String methodName, String parentName, String className)
     {
         for (PassSaver passSaver : passSavers) {
             if (passSaver.doesItHaveConflict(methodName, className, parentName))
                 return false;
+        }
+
+        boolean recursionCheck = true;
+        for(PassSaver passSaver : passSavers)
+        {
+            if(passSaver.isEqual(methodName))
+            {
+                if(parentName != null) {
+                    if(reCheck(passSaver.getClassName(), className)) {
+                        return false;
+                    }
+                }
+                if(reCheck(className, passSaver.getClassName())){
+                    return false;
+                }
+            }
         }
         return true;
     }
@@ -48,6 +88,8 @@ public class VisitorImpl implements Visitor {
                 currentParentName = aClass.getParentName().getName();
             else
                 currentParentName = null;
+            Pair < String , String > newClass = new Pair<>(currentClassName, currentParentName);
+            ArrayOfClasses.add(newClass);
             aClass.accept(this);
         }
 
