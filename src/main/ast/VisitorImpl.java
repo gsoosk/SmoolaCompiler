@@ -20,12 +20,14 @@ import java.util.ArrayList;
 
 public class VisitorImpl implements Visitor {
     private boolean isThereError = false;
+    private boolean isItInClassVarDeclarations = false;
     private ArrayList<String> toOut = new ArrayList<>();
     private int variablesIndex = 0;
     private String currentClassName;
     private String currentParentName;
     private ArrayList<PassSaver> passSavers = new ArrayList<>();
     private ArrayList< Pair<String , String> > ArrayOfClasses = new ArrayList<>();
+
     private boolean reCheck(String target, String current)
     {
 
@@ -48,17 +50,17 @@ public class VisitorImpl implements Visitor {
         }
         return false;
     }
-    private boolean isItOkToAdd(String methodName, String parentName, String className)
+    private boolean isItOkToAdd(String methodName, String parentName, String className, boolean methodOrNot)
     {
         for (PassSaver passSaver : passSavers) {
-            if (passSaver.doesItHaveConflict(methodName, className, parentName))
+            if (passSaver.doesItHaveConflict(methodName, className, parentName, methodOrNot))
                 return false;
         }
 
-        boolean recursionCheck = true;
+
         for(PassSaver passSaver : passSavers)
         {
-            if(passSaver.isEqual(methodName))
+            if(passSaver.isEqual(methodName, methodOrNot))
             {
                 if(parentName != null) {
                     if(reCheck(passSaver.getClassName(), className)) {
@@ -142,10 +144,12 @@ public class VisitorImpl implements Visitor {
         if (classDeclaration.getParentName() != null)
             classDeclaration.getParentName().accept(this);
 
+        isItInClassVarDeclarations = true;
         ArrayList<VarDeclaration> varDeclarations = classDeclaration.getVarDeclarations();
         for (VarDeclaration varDeclaration : varDeclarations) {
             varDeclaration.accept(this);
         }
+        isItInClassVarDeclarations = false;
 
         ArrayList<MethodDeclaration> methodDeclarations = classDeclaration.getMethodDeclarations();
         for (MethodDeclaration methodDeclaration : methodDeclarations) {
@@ -170,10 +174,10 @@ public class VisitorImpl implements Visitor {
         int i = 0;
         do {
             try {
-                if(!isItOkToAdd(methodDeclaration.getName().getName(), currentParentName, currentClassName))
+                if(!isItOkToAdd(methodDeclaration.getName().getName(), currentParentName, currentClassName, true))
                     throw new ItemAlreadyExistsException();
                 SymbolTable.top.put(methodItem);
-                passSavers.add(new PassSaver(methodDeclaration.getName().getName(), currentParentName, currentClassName));
+                passSavers.add(new PassSaver(methodDeclaration.getName().getName(), currentParentName, currentClassName, true));
                 putSuccess = true;
             } catch (ItemAlreadyExistsException ex) {
                 i++;
@@ -233,7 +237,12 @@ public class VisitorImpl implements Visitor {
         int i = 0;
         do {
             try {
+                if(isItInClassVarDeclarations)
+                    if(!isItOkToAdd(varDeclaration.getIdentifier().getName(), currentParentName, currentClassName, false))
+                        throw new ItemAlreadyExistsException();
                 SymbolTable.top.put(item);
+                if(isItInClassVarDeclarations)
+                    passSavers.add(new PassSaver(varDeclaration.getIdentifier().getName(), currentParentName, currentClassName, false));
                 putSuccess = true;
             } catch (ItemAlreadyExistsException ex) {
                 i++;

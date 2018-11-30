@@ -9,7 +9,7 @@ class MainClass
     }
 }
 class SecondClass extends next{
-    var test1 : int[];
+    var test3 : int[];
     var test2 : string;
     def foo2( c : int) : int {
         var test1 : string;
@@ -38,9 +38,10 @@ class SecondClass extends next{
 }
 
 class next  {
-    var test1 : string;
+    var test2 : string;
  def b (c:int, d:int, e:int) : int
  {
+
     return c - e.k()[5];
  }
  #def foo2( c : int) : int {
@@ -56,9 +57,7 @@ class b extends a{
 
 }
 class c extends a {
-    def foo1() : int {
-        return 1;
-    }
+
 }
 class a {
     def foo1() : int {
