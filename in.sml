@@ -13,7 +13,7 @@ class SecondClass extends next{
     var test2 : string;
     def foo2( c : int) : int {
         var test1 : string;
-        var test1 : string;
+
         return 1;
     }
     def foo1( c : int, b : string , a : boolean, x : int[]) : int {
@@ -38,6 +38,7 @@ class SecondClass extends next{
 }
 
 class next  {
+    var test1 : string;
  def b (c:int, d:int, e:int) : int
  {
     return c - e.k()[5];
