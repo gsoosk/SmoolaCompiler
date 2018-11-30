@@ -1,8 +1,8 @@
-package symbolTable;
+package main.symbolTable;
 
-import ast.Type.Type;
+import main.ast.Type.Type;
 
-public abstract class SymbolTableVariableItemBase extends SymbolTableItem {
+public class SymbolTableVariableItemBase extends SymbolTableItem {
 
     private int index;
     protected Type type;
@@ -10,12 +10,14 @@ public abstract class SymbolTableVariableItemBase extends SymbolTableItem {
     public SymbolTableVariableItemBase(String name, Type type, int index) {
         this.name = name;
         this.type = type;
-        this.index = index;
+        this.index = index; //Index -> Every variable should have index - two vaiables should not have same index
+        
     }
 
     public String getName() {
         return name;
     }
+
 
     public Type getType() {
         return type;

@@ -1,6 +1,6 @@
-package ast.node.statement;
+package main.ast.node.statement;
 
-import ast.Visitor;
+import main.ast.Visitor;
 
 import java.util.ArrayList;
 
@@ -14,12 +14,16 @@ public class Block extends Statement {
     public void addStatement(Statement statement) {
         this.body.add(statement);
     }
+    public void setBody(ArrayList<Statement> allStatements) {
+        this.body.addAll(allStatements);
+    }
 
     @Override
     public String toString() {
         return "Block";
     }
 
+    @Override
     public void accept(Visitor visitor) {
         visitor.visit(this);
     }

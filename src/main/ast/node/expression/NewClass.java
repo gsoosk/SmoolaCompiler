@@ -1,6 +1,6 @@
-package ast.node.expression;
+package main.ast.node.expression;
 
-import ast.Visitor;
+import main.ast.Visitor;
 
 public class NewClass extends Expression {
     private Identifier className;
@@ -22,6 +22,7 @@ public class NewClass extends Expression {
         return "NewClass";
     }
 
+    @Override
     public void accept(Visitor visitor) {
         visitor.visit(this);
     }

@@ -1,6 +1,6 @@
-package ast.node.expression;
+package main.ast.node.expression;
 
-import ast.Visitor;
+import main.ast.Visitor;
 
 public class NewArray extends Expression {
     private Expression expression;
@@ -18,6 +18,7 @@ public class NewArray extends Expression {
         return "NewArray";
     }
 
+    @Override
     public void accept(Visitor visitor) {
         visitor.visit(this);
     }

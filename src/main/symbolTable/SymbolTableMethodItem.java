@@ -1,8 +1,9 @@
-package symbolTable;
+package main.symbolTable;
 
-import ast.Type.Type;
+import main.ast.Type.Type;
 
 import java.util.ArrayList;
+
 
 public class SymbolTableMethodItem extends SymbolTableItem {
 
@@ -13,9 +14,12 @@ public class SymbolTableMethodItem extends SymbolTableItem {
         this.argTypes = argTypes;
     }
 
+
     @Override
-    public String getKey() {
-        //todo
-        return null;
+    public String getKey() { // it can be Method:<MethodName>
+        String key = "Method:<";
+        key = key.concat(name);
+        key = key.concat(">");
+        return key;
     }
 }

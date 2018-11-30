@@ -1,7 +1,7 @@
-package ast.node.declaration;
+package main.ast.node.declaration;
 
-import ast.Visitor;
-import ast.node.expression.Identifier;
+import main.ast.Visitor;
+import main.ast.node.expression.Identifier;
 
 import java.util.ArrayList;
 
@@ -53,6 +53,7 @@ public class ClassDeclaration extends Declaration{
         return "ClassDeclaration";
     }
 
+    @Override
     public void accept(Visitor visitor) {
         visitor.visit(this);
     }

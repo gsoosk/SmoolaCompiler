@@ -1,4 +1,4 @@
-package symbolTable;
+package main.symbolTable;
 
 import java.util.*;
 

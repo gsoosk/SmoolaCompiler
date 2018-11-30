@@ -1,7 +1,7 @@
-package ast.node.statement;
+package main.ast.node.statement;
 
-import ast.Visitor;
-import ast.node.expression.Expression;
+import main.ast.Visitor;
+import main.ast.node.expression.Expression;
 
 public class Conditional extends Statement {
     private Expression expression;
@@ -42,6 +42,7 @@ public class Conditional extends Statement {
         return "Conditional";
     }
 
+    @Override
     public void accept(Visitor visitor) {
         visitor.visit(this);
     }

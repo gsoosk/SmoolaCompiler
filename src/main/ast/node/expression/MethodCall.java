@@ -1,7 +1,7 @@
-package ast.node.expression;
+package main.ast.node.expression;
 
-import ast.Type.Type;
-import ast.Visitor;
+import main.ast.Type.Type;
+import main.ast.Visitor;
 
 import java.util.ArrayList;
 
@@ -44,7 +44,7 @@ public class MethodCall extends Expression {
     public String toString() {
         return "MethodCall";
     }
-
+    @Override
     public void accept(Visitor visitor) {
         visitor.visit(this);
     }

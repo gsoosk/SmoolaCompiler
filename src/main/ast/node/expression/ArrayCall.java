@@ -1,6 +1,6 @@
-package ast.node.expression;
+package main.ast.node.expression;
 
-import ast.Visitor;
+import main.ast.Visitor;
 
 public class ArrayCall extends Expression {
     private Expression instance;
@@ -32,6 +32,7 @@ public class ArrayCall extends Expression {
         return "ArrayCall";
     }
 
+    @Override
     public void accept(Visitor visitor) {
         visitor.visit(this);
     }

@@ -1,7 +1,8 @@
-package ast.node.expression.Value;
+package main.ast.node.expression.Value;
 
-import ast.Type.Type;
-import ast.node.expression.Expression;
+import main.ast.Type.Type;
+import main.ast.Visitor;
+import main.ast.node.expression.Expression;
 
 public abstract class Value extends Expression {
     public Type getType() {
@@ -13,4 +14,7 @@ public abstract class Value extends Expression {
     }
 
     protected Type type;
+    @Override
+    public void accept(Visitor visitor) {}
+
 }

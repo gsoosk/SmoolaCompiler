@@ -1,7 +1,7 @@
-package ast.node.statement;
+package main.ast.node.statement;
 
-import ast.Visitor;
-import ast.node.expression.Expression;
+import main.ast.Visitor;
+import main.ast.node.expression.Expression;
 
 public class Assign extends Statement {
     private Expression lValue;
@@ -33,6 +33,7 @@ public class Assign extends Statement {
         return "Assign";
     }
 
+    @Override
     public void accept(Visitor visitor) {
         visitor.visit(this);
     }

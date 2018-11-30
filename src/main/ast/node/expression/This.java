@@ -1,6 +1,6 @@
-package ast.node.expression;
+package main.ast.node.expression;
 
-import ast.Visitor;
+import main.ast.Visitor;
 
 public class This extends Expression {
     @Override
@@ -8,6 +8,7 @@ public class This extends Expression {
         return "This";
     }
 
+    @Override
     public void accept(Visitor visitor) {
         visitor.visit(this);
     }

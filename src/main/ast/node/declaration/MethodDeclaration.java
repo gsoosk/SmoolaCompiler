@@ -1,20 +1,23 @@
-package ast.node.declaration;
+package main.ast.node.declaration;
 
-import ast.Type.Type;
-import ast.Visitor;
-import ast.node.expression.Expression;
-import ast.node.expression.Identifier;
-import ast.node.statement.Statement;
+import main.ast.Type.Type;
+import main.ast.Visitor;
+import main.ast.node.expression.Expression;
+import main.ast.node.expression.Identifier;
+import main.ast.node.statement.Statement;
 
 import java.util.ArrayList;
 
 public class MethodDeclaration extends Declaration {
-    private Expression returnValue;
-    private Type returnType;
     private Identifier name;
+    private Type returnType;
     private ArrayList<VarDeclaration> args = new ArrayList<>();
+
     private ArrayList<VarDeclaration> localVars = new ArrayList<>();
     private ArrayList<Statement> body = new ArrayList<>();
+    private Expression returnValue;
+
+
 
     public MethodDeclaration(Identifier name) {
         this.name = name;
@@ -56,6 +59,10 @@ public class MethodDeclaration extends Declaration {
         return body;
     }
 
+    public void setBody(ArrayList<Statement> allStatements) {
+        this.body.addAll(allStatements);
+    }
+
     public void addStatement(Statement statement) {
         this.body.add(statement);
     }
@@ -73,6 +80,7 @@ public class MethodDeclaration extends Declaration {
         return "MethodDeclaration";
     }
 
+    @Override
     public void accept(Visitor visitor) {
         visitor.visit(this);
     }

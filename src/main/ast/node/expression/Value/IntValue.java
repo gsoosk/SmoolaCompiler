@@ -1,7 +1,7 @@
-package ast.node.expression.Value;
+package main.ast.node.expression.Value;
 
-import ast.Type.Type;
-import ast.Visitor;
+import main.ast.Type.Type;
+import main.ast.Visitor;
 
 public class IntValue extends Value {
     private int constant;
@@ -24,6 +24,7 @@ public class IntValue extends Value {
         return "IntValue " + constant;
     }
 
+    @Override
     public void accept(Visitor visitor) {
         visitor.visit(this);
     }

@@ -1,8 +1,11 @@
-package ast.node.expression;
+package main.ast.node.expression;
 
-import ast.Visitor;
+import main.ast.Visitor;
 
 public class BinaryExpression extends Expression {
+    public enum BinaryOperator {
+        add, sub, mult, div, and, or, eq, neq, lt, gt, assign
+    }
 
     private Expression left;
     private Expression right;
@@ -43,10 +46,9 @@ public class BinaryExpression extends Expression {
         return "BinaryExpression " + binaryOperator.name();
     }
 
+    @Override
     public void accept(Visitor visitor) {
         visitor.visit(this);
     }
 }
-enum BinaryOperator {
-    add, sub, mult, div, and, or, eq, lt, gt, assign
-}
+

@@ -1,6 +1,9 @@
-package ast.node.declaration;
+package main.ast.node.declaration;
 
-import ast.node.Node;
+import main.ast.Visitor;
+import main.ast.node.Node;
 
 public abstract class Declaration extends Node {
+    @Override
+    public void accept(Visitor visitor) {}
 }

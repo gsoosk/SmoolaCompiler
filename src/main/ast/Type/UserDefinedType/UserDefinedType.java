@@ -1,8 +1,8 @@
-package ast.Type.UserDefinedType;
+package main.ast.Type.UserDefinedType;
 
-import ast.Type.Type;
-import ast.node.declaration.ClassDeclaration;
-import ast.node.expression.Identifier;
+import main.ast.Type.Type;
+import main.ast.node.declaration.ClassDeclaration;
+import main.ast.node.expression.Identifier;
 
 public class UserDefinedType extends Type {
     private ClassDeclaration classDeclaration;
