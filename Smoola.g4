@@ -29,6 +29,7 @@ import main.ast.node.expression.UnaryExpression.UnaryOperator;
             visitor.visit(program);
         }
 
+
     ;
     mainClass returns [ClassDeclaration synMainClass]
     :
