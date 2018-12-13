@@ -31,6 +31,7 @@ public class VisitorImpl implements Visitor {
     private ArrayList< Pair<String , String> > ArrayOfClasses = new ArrayList<>();
 
     private HashMap<String, SymbolTable> allClassesSymbolTable = new HashMap<String, SymbolTable>();
+    private HashMap<String, SymbolTable> allMethodsSymbolTable = new HashMap<String, SymbolTable>();
 
     private boolean reCheck(String target, String current)
     {
@@ -110,7 +111,7 @@ public class VisitorImpl implements Visitor {
         }
 
 
-        HashMaker.makeHash(ArrayOfClasses, allClassesSymbolTable);
+        allClassesSymbolTable =  HashMaker.makeHash(ArrayOfClasses, allClassesSymbolTable);
 
         if(!isThereError)
         {
@@ -241,7 +242,7 @@ public class VisitorImpl implements Visitor {
         methodDeclaration.getReturnValue().accept(this);
 
         //
-        SymbolTable.pop();
+        allMethodsSymbolTable.put(currentClassName + "-" + methodDeclaration.getName().getName() ,SymbolTable.pop());
     }
 
 
