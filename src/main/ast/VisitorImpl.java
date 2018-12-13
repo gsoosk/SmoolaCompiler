@@ -76,6 +76,7 @@ public class VisitorImpl implements Visitor {
     }
 
 
+
     @Override
     public void visit(Program program) {
         // For making symbol table
@@ -135,8 +136,12 @@ public class VisitorImpl implements Visitor {
                             + classDeclaration.getName().getName();
                     System.out.println(Error);
                 }
-                classDeclaration.setName(new Identifier("temp_class_"+ Integer.toString(i) + classDeclaration.getName().getName()));
+                String newName = "temp_class_"+ Integer.toString(i) + classDeclaration.getName().getName();
+                classDeclaration.setName(new Identifier(newName));
                 classItem.setName(classDeclaration.getName().getName());
+                Pair < String , String > newClass = new Pair<>(newName, currentParentName);
+                ArrayOfClasses.set(ArrayOfClasses.size() - 1, newClass);
+                currentClassName = newName;
             }
         }while (!putSuccess);
 
@@ -198,6 +203,7 @@ public class VisitorImpl implements Visitor {
                 }
                 methodDeclaration.setName(new Identifier("temp_method_"+ Integer.toString(i) + methodDeclaration.getName().getName()));
                 methodItem.setName(methodDeclaration.getName().getName());
+
             }
         }while (!putSuccess);
 
