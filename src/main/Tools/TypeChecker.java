@@ -7,7 +7,7 @@ import java.util.ArrayList;
  */
 public class TypeChecker {
 
-  static boolean isSubtypeOf(String type, String parent) {
+  public static boolean isSubtypeOf(String type, String parent) {
     ArrayList<String> children = HashMaker.getClassesTree().get(parent);
     if (children.contains(type)) {
       return true;
@@ -21,5 +21,9 @@ public class TypeChecker {
       }
       return contain;
     }
+  }
+
+  static boolean checkWriteArgument() {
+
   }
 }
