@@ -23,7 +23,7 @@ public class TypeChecker {
     }
   }
 
-  static boolean checkWriteArgument() {
+  // public static boolean checkWriteArgument() {
 
-  }
+  // }
 }
