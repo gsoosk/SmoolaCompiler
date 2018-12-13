@@ -46,5 +46,8 @@ public class HashMaker {
             addChildSymbolTables(child);
         }
     }
+    public static HashMap<String, ArrayList<String> > getClassesTree() {
+        return classesTree;
+    }
 
 }
