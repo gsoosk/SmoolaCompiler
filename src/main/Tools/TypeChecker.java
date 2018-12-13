@@ -114,8 +114,5 @@ public class TypeChecker {
       expr.setType(new NoType());
     return expr.getType();
   }
-
-  // public static boolean checkWriteArgument() {
-
-  // }
+  
 }

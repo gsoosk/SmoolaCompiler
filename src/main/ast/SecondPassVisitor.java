@@ -20,6 +20,7 @@ import main.symbolTable.SymbolTableVariableItemBase;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+
 public class SecondPassVisitor implements  Visitor{
 
     private HashMap<String, SymbolTable> allClassesSymbolTable ;
@@ -240,6 +241,10 @@ public class SecondPassVisitor implements  Visitor{
 
     @Override
     public void visit(Write write) {
+        Type t = TypeChecker.expressionTypeCheck(write.getArg());
+        if (!(t instanceof IntType ||  t instanceof StringType || t instanceof ArrayType)) {
+            System.out.println("Line:"+ write.getArg().getLineNumber() +":unsupported type for writeln");
+        }
         toOut.add(write.toString());
         write.getArg().accept(this);
     }
