@@ -1,6 +1,8 @@
 package main.ast;
 
+import main.Tools.TypeChecker;
 import main.ast.Type.NoType;
+import main.ast.Type.Type;
 import main.ast.node.Program;
 import main.ast.node.declaration.ClassDeclaration;
 import main.ast.node.declaration.MethodDeclaration;
@@ -177,8 +179,16 @@ public class SecondPassVisitor implements  Visitor{
 
     }
 
+    private static void handleUnsupportedOperationException(String operatorName, UnaryExpression expr)
+    {
+        System.out.println("Line:"+ expr.getLineNumber() +":unsupported operand type for "+ operatorName);
+    }
     @Override
     public void visit(UnaryExpression unaryExpression) {
+        unaryExpression.setType(TypeChecker.expressionTypeCheck(unaryExpression));
+        if(unaryExpression.getType() instanceof NoType)
+            handleUnsupportedOperationException(unaryExpression.getUnaryOperator().name(), unaryExpression);
+
         toOut.add(unaryExpression.toString());
         unaryExpression.getValue().accept(this);
     }

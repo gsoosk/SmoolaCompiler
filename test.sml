@@ -10,7 +10,7 @@ class a extends b {
     def test() : int {
         var i : int;
         var x : int;
-        i = x + y + z;
+        i = x + y + !(x+4);
         return x;
     }
 }

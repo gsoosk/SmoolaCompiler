@@ -14,6 +14,7 @@ import main.ast.node.expression.Value.IntValue;
 import main.ast.node.expression.Value.StringValue;
 import main.ast.node.statement.*;
 import main.symbolTable.*;
+import main.ast.Type.UserDefinedType.UserDefinedType;
 import sun.awt.Symbol;
 import sun.jvm.hotspot.debugger.cdbg.Sym;
 

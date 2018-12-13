@@ -352,13 +352,15 @@ import main.ast.node.expression.UnaryExpression.UnaryOperator;
     ;
     expressionUnary returns [Expression synExpression]
     :
-        '!' uExpr1 = expressionUnary
+        val = '!' uExpr1 = expressionUnary
         {
             $synExpression = new UnaryExpression(UnaryOperator.not, $uExpr1.synExpression);
+            $synExpression.setLineNumber($val.getLine());
         }
-        | '-' uExpr2 = expressionUnary
+        |val = '-' uExpr2 = expressionUnary
         {
             $synExpression = new UnaryExpression(UnaryOperator.minus, $uExpr2.synExpression);
+            $synExpression.setLineNumber($val.getLine());
         }
         |	expr = expressionMem
         {
