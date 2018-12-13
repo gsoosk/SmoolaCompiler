@@ -10,6 +10,7 @@ import main.ast.node.expression.Expression;
 
 
 import main.ast.Type.Type;
+import main.ast.node.expression.Identifier;
 import main.ast.node.expression.UnaryExpression;
 import main.ast.node.expression.UnaryExpression.UnaryOperator;
 import main.ast.node.expression.Value.BooleanValue;
@@ -88,24 +89,30 @@ public class TypeChecker {
       }
       return new OkType();
     }
-
-
+    return toReturn;
+  }
+  public static Type identifierTypeCheck(Expression expr)
+  {
+    Type toReturn = new NoType();
     return toReturn;
   }
   public static Type expressionTypeCheck(Expression expr)
   {
-    Type toReturn = new NoType();
     if(expr.getType() != null)
       return expr.getType();
     else if(expr instanceof IntValue)
-      return new IntType();
+      expr.setType(new IntType());
     else if(expr instanceof BooleanValue)
-      return new BooleanType();
+      expr.setType(new BooleanType());
     else if(expr instanceof UnaryExpression)
-      return unaryExprTypeCheck((UnaryExpression) expr);
+      expr.setType(unaryExprTypeCheck((UnaryExpression) expr));
     else if(expr instanceof BinaryExpression)
-      return binaryExprTypeCheck((BinaryExpression) expr);
-    return toReturn;
+      expr.setType(binaryExprTypeCheck((BinaryExpression) expr));
+    else if(expr instanceof Identifier)
+      expr.setType(identifierTypeCheck(expr));
+    else
+      expr.setType(new NoType());
+    return expr.getType();
   }
 
   // public static boolean checkWriteArgument() {

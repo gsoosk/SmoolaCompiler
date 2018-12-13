@@ -184,10 +184,8 @@ public class SecondPassVisitor implements  Visitor{
     }
     @Override
     public void visit(UnaryExpression unaryExpression) {
-        unaryExpression.setType(TypeChecker.expressionTypeCheck(unaryExpression));
-        if(unaryExpression.getType() instanceof NoType)
+        if(TypeChecker.expressionTypeCheck(unaryExpression) instanceof NoType)
             handleUnsupportedOperationException(unaryExpression.getUnaryOperator().name(), unaryExpression);
-
         toOut.add(unaryExpression.toString());
         unaryExpression.getValue().accept(this);
     }
