@@ -1,8 +1,11 @@
 package main.Tools;
 
 import main.ast.Type.NoType;
+import main.ast.Type.OkType;
 import main.ast.Type.PrimitiveType.BooleanType;
 import main.ast.Type.PrimitiveType.IntType;
+import main.ast.node.expression.BinaryExpression;
+import main.ast.node.expression.BinaryExpression.BinaryOperator;
 import main.ast.node.expression.Expression;
 
 
@@ -57,7 +60,38 @@ public class TypeChecker {
     }
     return toReturn;
   }
+  private static Type binaryExprTypeCheck(BinaryExpression expr)
+  {
+    Type toReturn = new NoType();
+    BinaryOperator operator = expr.getBinaryOperator();
+    if(operator == BinaryOperator.gt  || operator == BinaryOperator.add || operator == BinaryOperator.mult ||
+       operator == BinaryOperator.div || operator == BinaryOperator.sub || operator == BinaryOperator.lt){
+      if(!(expressionTypeCheck(expr.getLeft()) instanceof IntType) || !(expressionTypeCheck(expr.getRight()) instanceof IntType))
+      {
+        return new NoType();
+      }
+      return new OkType();
+    }
+    else if(operator == BinaryOperator.and || operator == BinaryOperator.or)
+    {
+      if(!(expressionTypeCheck(expr.getLeft()) instanceof BooleanType) || !(expressionTypeCheck(expr.getRight()) instanceof BooleanType))
+      {
+        return new NoType();
+      }
+      return new OkType();
+    }
+    else if(operator == BinaryOperator.eq || operator == BinaryOperator.neq)
+    {
+      if(!(expressionTypeCheck(expr.getLeft()).equals(expressionTypeCheck(expr.getRight())) ) )
+      {
+        return new NoType();
+      }
+      return new OkType();
+    }
 
+
+    return toReturn;
+  }
   public static Type expressionTypeCheck(Expression expr)
   {
     Type toReturn = new NoType();
@@ -69,6 +103,8 @@ public class TypeChecker {
       return new BooleanType();
     else if(expr instanceof UnaryExpression)
       return unaryExprTypeCheck((UnaryExpression) expr);
+    else if(expr instanceof BinaryExpression)
+      return binaryExprTypeCheck((BinaryExpression) expr);
     return toReturn;
   }
 

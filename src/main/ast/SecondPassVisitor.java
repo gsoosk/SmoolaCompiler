@@ -104,7 +104,6 @@ public class SecondPassVisitor implements  Visitor{
 
     @Override
     public void visit(VarDeclaration varDeclaration) {
-
         toOut.add(varDeclaration.toString());
         varDeclaration.getIdentifier().accept(this);
     }
