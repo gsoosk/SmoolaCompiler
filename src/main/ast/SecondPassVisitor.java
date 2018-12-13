@@ -1,5 +1,6 @@
 package main.ast;
 
+import main.ast.Type.NoType;
 import main.ast.node.Program;
 import main.ast.node.declaration.ClassDeclaration;
 import main.ast.node.declaration.MethodDeclaration;
@@ -9,7 +10,10 @@ import main.ast.node.expression.Value.BooleanValue;
 import main.ast.node.expression.Value.IntValue;
 import main.ast.node.expression.Value.StringValue;
 import main.ast.node.statement.*;
+import main.symbolTable.ItemAlreadyExistsException;
 import main.symbolTable.SymbolTable;
+import main.symbolTable.SymbolTableItem;
+import main.symbolTable.SymbolTableVariableItemBase;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -20,13 +24,15 @@ public class SecondPassVisitor implements  Visitor{
     private HashMap<String, SymbolTable> allMethodsSymbolTable ;
     private String currentClassName ;
     private boolean isThereError;
+    private boolean inMethod;
     private ArrayList<String> toOut = new ArrayList<>();
-    public SecondPassVisitor(HashMap<String, SymbolTable> allClasses, HashMap<String, SymbolTable> allMethods, boolean error)
+    private int variablesIndex;
+    public SecondPassVisitor(HashMap<String, SymbolTable> allClasses, HashMap<String, SymbolTable> allMethods, boolean error, int varIndex)
     {
         allClassesSymbolTable = allClasses;
         allMethodsSymbolTable = allMethods;
         isThereError = error;
-
+        variablesIndex = varIndex;
     }
 
     @Override
@@ -66,6 +72,7 @@ public class SecondPassVisitor implements  Visitor{
 
     @Override
     public void visit(MethodDeclaration methodDeclaration) {
+
         toOut.add(methodDeclaration.toString());
         methodDeclaration.getName().accept(this);
 
@@ -80,7 +87,7 @@ public class SecondPassVisitor implements  Visitor{
         for (VarDeclaration varDeclaration : varDeclarations) {
             varDeclaration.accept(this);
         }
-
+        inMethod = true;
         ArrayList<Statement> statements = methodDeclaration.getBody();
 
         for (Statement statement : statements) {
@@ -88,6 +95,7 @@ public class SecondPassVisitor implements  Visitor{
         }
 
         methodDeclaration.getReturnValue().accept(this);
+        inMethod = false;
     }
 
     @Override
@@ -114,11 +122,17 @@ public class SecondPassVisitor implements  Visitor{
     @Override
     public void visit(Identifier identifier) {
 
-//        if(!allClassesSymbolTable.get(currentClassName).getItems().containsKey(identifier.getName()))
-//        {
-//            isThereError = true;
-//            System.out.println("Line:" + identifier.getLineNumber() + ":variable " + identifier.getName() + " is not declared");
-//        }
+        if(inMethod)
+            if(!allClassesSymbolTable.get(currentClassName).getItems().containsKey(identifier.getName()))
+            {
+                isThereError = true;
+                System.out.println("Line:" + identifier.getLineNumber() + ":variable " + identifier.getName() + " is not declared");
+                SymbolTableItem item = new SymbolTableVariableItemBase(identifier.getName(),
+                        new NoType(), ++variablesIndex);
+                try{
+                    allClassesSymbolTable.get(currentClassName).put(item);
+                } catch (ItemAlreadyExistsException ex) {}
+            }
 
         toOut.add(identifier.toString());
     }
