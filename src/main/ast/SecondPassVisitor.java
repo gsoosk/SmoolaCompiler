@@ -23,6 +23,7 @@ public class SecondPassVisitor implements  Visitor{
     private HashMap<String, SymbolTable> allClassesSymbolTable ;
     private HashMap<String, SymbolTable> allMethodsSymbolTable ;
     private String currentClassName ;
+    private String currentMethodName;
     private boolean isThereError;
     private boolean inMethod;
     private ArrayList<String> toOut = new ArrayList<>();
@@ -88,6 +89,7 @@ public class SecondPassVisitor implements  Visitor{
             varDeclaration.accept(this);
         }
         inMethod = true;
+        currentMethodName = methodDeclaration.getName().getName();
         ArrayList<Statement> statements = methodDeclaration.getBody();
 
         for (Statement statement : statements) {
@@ -123,7 +125,8 @@ public class SecondPassVisitor implements  Visitor{
     public void visit(Identifier identifier) {
 
         if(inMethod)
-            if(!allClassesSymbolTable.get(currentClassName).getItems().containsKey(identifier.getName()))
+            if(!allClassesSymbolTable.get(currentClassName).getItems().containsKey(identifier.getName())
+                && !allMethodsSymbolTable.get(currentClassName + "-" + currentMethodName).getItems().containsKey(identifier.getName()))
             {
                 isThereError = true;
                 System.out.println("Line:" + identifier.getLineNumber() + ":variable " + identifier.getName() + " is not declared");
