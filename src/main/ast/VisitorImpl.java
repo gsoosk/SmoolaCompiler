@@ -23,7 +23,6 @@ import java.util.HashMap;
 public class VisitorImpl implements Visitor {
     private boolean isThereError = false;
     private boolean isItInClassVarDeclarations = false;
-    private ArrayList<String> toOut = new ArrayList<>();
     private int variablesIndex = 0;
     private String currentClassName;
     private String currentParentName;
@@ -33,7 +32,7 @@ public class VisitorImpl implements Visitor {
     private HashMap<String, SymbolTable> allClassesSymbolTable = new HashMap<String, SymbolTable>();
     private HashMap<String, SymbolTable> allMethodsSymbolTable = new HashMap<String, SymbolTable>();
 
-    private int passNumber = 1;
+
 
     private boolean reCheck(String target, String current)
     {
@@ -88,8 +87,7 @@ public class VisitorImpl implements Visitor {
     public void visit(Program program) {
         // For making symbol table
         SymbolTable.push(new SymbolTable());
-        // For preorder traversal
-        toOut.add(program.toString());
+
         //Accepting main
         currentClassName = program.getMainClass().getName().getName();
         if(program.getMainClass().getParentName() != null)
@@ -114,14 +112,13 @@ public class VisitorImpl implements Visitor {
 
 
         allClassesSymbolTable =  HashMaker.makeHash(ArrayOfClasses, allClassesSymbolTable);
-        passNumber = 2;
+        Visitor secondVisitor = new SecondPassVisitor(allClassesSymbolTable, allMethodsSymbolTable, isThereError);
+        secondVisitor.visit(program);
 
-        if(!isThereError)
-        {
-            for (String aToOut : toOut) {
-                System.out.println(aToOut);
-            }
-        }
+
+
+
+
 
 
     }
@@ -158,7 +155,7 @@ public class VisitorImpl implements Visitor {
         SymbolTable classSymbolTable = new SymbolTable(SymbolTable.top);
         SymbolTable.push(classSymbolTable);
         //
-        toOut.add(classDeclaration.toString());
+
 
         classDeclaration.getName().accept(this);
         if (classDeclaration.getParentName() != null)
@@ -220,7 +217,7 @@ public class VisitorImpl implements Visitor {
         SymbolTable.push(scopeSymbolTable);
         //
 
-        toOut.add(methodDeclaration.toString());
+
 
         methodDeclaration.getName().accept(this);
 
@@ -229,7 +226,7 @@ public class VisitorImpl implements Visitor {
             arg.accept(this);
         }
 
-//        toOut.add(methodDeclaration.getReturnType().toString());
+
 
         ArrayList<VarDeclaration> varDeclarations = methodDeclaration.getLocalVars();
         for (VarDeclaration varDeclaration : varDeclarations) {
@@ -281,41 +278,41 @@ public class VisitorImpl implements Visitor {
             }
         }while (!putSuccess);
 
-        toOut.add(varDeclaration.toString());
+
         varDeclaration.getIdentifier().accept(this);
 
-//        toOut.add(varDeclaration.getType().toString());
+
 
     }
 
     @Override
     public void visit(ArrayCall arrayCall) {
-        toOut.add(arrayCall.toString());
+
         arrayCall.getInstance().accept(this);
         arrayCall.getIndex().accept(this);
     }
 
     @Override
     public void visit(BinaryExpression binaryExpression) {
-        toOut.add(binaryExpression.toString());
+
         binaryExpression.getLeft().accept(this);
         binaryExpression.getRight().accept(this);
     }
 
     @Override
     public void visit(Identifier identifier) {
-        toOut.add(identifier.toString());
+
     }
 
     @Override
     public void visit(Length length) {
-       toOut.add(length.toString());
+
        length.getExpression().accept(this);
     }
 
     @Override
     public void visit(MethodCall methodCall) {
-       toOut.add(methodCall.toString());
+
        methodCall.getInstance().accept(this);
        methodCall.getMethodName().accept(this);
 
@@ -336,45 +333,45 @@ public class VisitorImpl implements Visitor {
             System.out.println(Error);
             ((IntValue) newArray.getExpression()).setConstant(0);
         }
-        toOut.add(newArray.toString());
+
         newArray.getExpression().accept(this);
     }
 
     @Override
     public void visit(NewClass newClass) {
-        toOut.add(newClass.toString());
+
         newClass.getClassName().accept(this);
     }
 
     @Override
     public void visit(This instance) {
-        toOut.add(instance.toString());
+
     }
 
     @Override
     public void visit(UnaryExpression unaryExpression) {
-        toOut.add(unaryExpression.toString());
+
         unaryExpression.getValue().accept(this);
     }
 
     @Override
     public void visit(BooleanValue value) {
-        toOut.add(value.toString());
+
     }
 
     @Override
     public void visit(IntValue value) {
-        toOut.add(value.toString());
+
     }
 
     @Override
     public void visit(StringValue value) {
-        toOut.add(value.toString());
+
     }
 
     @Override
     public void visit(Assign assign) {
-        toOut.add(assign.toString());
+
         assign.getlValue().accept(this);
         assign.getrValue().accept(this);
     }
@@ -382,7 +379,7 @@ public class VisitorImpl implements Visitor {
     @Override
     public void visit(Block block) {
 
-        toOut.add(block.toString());
+
         ArrayList<Statement> body =  block.getBody();
         for (Statement aBody : body) {
             aBody.accept(this);
@@ -393,7 +390,6 @@ public class VisitorImpl implements Visitor {
 
     @Override
     public void visit(Conditional conditional) {
-        toOut.add(conditional.toString());
         conditional.getExpression().accept(this);
         conditional.getConsequenceBody().accept(this);
         if(conditional.getAlternativeBody() != null)
@@ -402,14 +398,14 @@ public class VisitorImpl implements Visitor {
 
     @Override
     public void visit(While loop) {
-        toOut.add(loop.toString());
+
         loop.getCondition().accept(this);
         loop.getBody().accept(this);
     }
 
     @Override
     public void visit(Write write) {
-        toOut.add(write.toString());
+
         write.getArg().accept(this);
     }
 }

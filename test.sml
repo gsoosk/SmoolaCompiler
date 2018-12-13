@@ -1,4 +1,3 @@
-
 class b {
 
     def main() : int {
