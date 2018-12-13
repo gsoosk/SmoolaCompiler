@@ -15,13 +15,34 @@ import main.ast.node.expression.UnaryExpression;
 import main.ast.node.expression.UnaryExpression.UnaryOperator;
 import main.ast.node.expression.Value.BooleanValue;
 import main.ast.node.expression.Value.IntValue;
+import main.symbolTable.ItemAlreadyExistsException;
+import main.symbolTable.SymbolTable;
+import main.symbolTable.SymbolTableItem;
+import main.symbolTable.SymbolTableVariableItemBase;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 /**
  * TypeChecker
  */
 public class TypeChecker {
+
+  private static HashMap<String, SymbolTable> allClassesSymbolTable ;
+  private static HashMap<String, SymbolTable> allMethodsSymbolTable ;
+  private static String currentClassName ;
+  private static String currentMethodName;
+  public static void setHashesForIdentifier(HashMap<String, SymbolTable> c, HashMap<String, SymbolTable> m)
+  {
+    allClassesSymbolTable = c;
+    allMethodsSymbolTable = m;
+  }
+  public static void setForIdentifier( String ccN, String cmN)
+  {
+    currentClassName = ccN;
+    currentMethodName = cmN;
+  }
+
 
   public static boolean isSubtypeOf(String type, String parent) {
     ArrayList<String> children = HashMaker.getClassesTree().get(parent);
@@ -91,9 +112,19 @@ public class TypeChecker {
     }
     return toReturn;
   }
-  public static Type identifierTypeCheck(Expression expr)
+  private static Type identifierTypeCheck(Identifier identifier)
   {
     Type toReturn = new NoType();
+    if(allClassesSymbolTable.get(currentClassName).getItems().containsKey(identifier.getName()))
+    {
+       SymbolTableItem item =  allClassesSymbolTable.get(currentClassName).getInCurrentScope(identifier.getName());
+       return ((SymbolTableVariableItemBase) item).getType();
+    }
+    if(allMethodsSymbolTable.get(currentClassName + "-" + currentMethodName).getItems().containsKey(identifier.getName()))
+    {
+      SymbolTableItem item = allMethodsSymbolTable.get(currentClassName + "-" + currentMethodName).getInCurrentScope(identifier.getName());
+      return ((SymbolTableVariableItemBase) item).getType();
+    }
     return toReturn;
   }
   public static Type expressionTypeCheck(Expression expr)
@@ -109,7 +140,7 @@ public class TypeChecker {
     else if(expr instanceof BinaryExpression)
       expr.setType(binaryExprTypeCheck((BinaryExpression) expr));
     else if(expr instanceof Identifier)
-      expr.setType(identifierTypeCheck(expr));
+      expr.setType(identifierTypeCheck((Identifier) expr));
     else
       expr.setType(new NoType());
     return expr.getType();

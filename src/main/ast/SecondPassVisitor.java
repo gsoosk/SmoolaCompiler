@@ -2,6 +2,7 @@ package main.ast;
 
 import main.Tools.TypeChecker;
 import main.ast.Type.NoType;
+import main.ast.Type.OkType;
 import main.ast.Type.Type;
 import main.ast.node.Program;
 import main.ast.node.declaration.ClassDeclaration;
@@ -36,6 +37,7 @@ public class SecondPassVisitor implements  Visitor{
         allMethodsSymbolTable = allMethods;
         isThereError = error;
         variablesIndex = varIndex;
+        TypeChecker.setHashesForIdentifier(allClasses, allMethods);
     }
 
     @Override
@@ -57,6 +59,8 @@ public class SecondPassVisitor implements  Visitor{
     @Override
     public void visit(ClassDeclaration classDeclaration) {
         currentClassName = classDeclaration.getName().getName();
+        TypeChecker.setForIdentifier(currentClassName, currentMethodName);
+
         toOut.add(classDeclaration.toString());
         classDeclaration.getName().accept(this);
         if (classDeclaration.getParentName() != null)
@@ -92,6 +96,7 @@ public class SecondPassVisitor implements  Visitor{
         }
         inMethod = true;
         currentMethodName = methodDeclaration.getName().getName();
+        TypeChecker.setForIdentifier(currentClassName, currentMethodName);
         ArrayList<Statement> statements = methodDeclaration.getBody();
 
         for (Statement statement : statements) {
@@ -117,6 +122,9 @@ public class SecondPassVisitor implements  Visitor{
 
     @Override
     public void visit(BinaryExpression binaryExpression) {
+        if(!(TypeChecker.expressionTypeCheck(binaryExpression) instanceof OkType))
+            handleUnsupportedOperationException(binaryExpression.getBinaryOperator().name(), binaryExpression);
+
         toOut.add(binaryExpression.toString());
         binaryExpression.getLeft().accept(this);
         binaryExpression.getRight().accept(this);
@@ -178,8 +186,9 @@ public class SecondPassVisitor implements  Visitor{
 
     }
 
-    private static void handleUnsupportedOperationException(String operatorName, UnaryExpression expr)
+    private void handleUnsupportedOperationException(String operatorName, Expression expr)
     {
+        this.isThereError = true;
         System.out.println("Line:"+ expr.getLineNumber() +":unsupported operand type for "+ operatorName);
     }
     @Override
