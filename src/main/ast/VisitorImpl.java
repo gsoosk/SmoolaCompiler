@@ -339,13 +339,14 @@ public class VisitorImpl implements Visitor {
 
     @Override
     public void visit(NewClass newClass) {
-
         newClass.getClassName().accept(this);
     }
 
     @Override
     public void visit(This instance) {
-
+        UserDefinedType type = new UserDefinedType();
+        type.setName(new Identifier(currentClassName));
+        instance.setType(type);
     }
 
     @Override
