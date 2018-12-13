@@ -86,13 +86,16 @@ public class TypeChecker {
   {
     Type toReturn = new NoType();
     BinaryOperator operator = expr.getBinaryOperator();
-    if(operator == BinaryOperator.gt  || operator == BinaryOperator.add || operator == BinaryOperator.mult ||
-       operator == BinaryOperator.div || operator == BinaryOperator.sub || operator == BinaryOperator.lt){
+    if( operator == BinaryOperator.add || operator == BinaryOperator.mult ||  operator == BinaryOperator.gt  ||
+       operator == BinaryOperator.div || operator == BinaryOperator.sub || operator == BinaryOperator.lt ){
       if(!(expressionTypeCheck(expr.getLeft()) instanceof IntType) || !(expressionTypeCheck(expr.getRight()) instanceof IntType))
       {
         return new NoType();
       }
-      return new OkType();
+      if(operator == BinaryOperator.gt  || operator == BinaryOperator.lt)
+        return new BooleanType();
+      return new IntType();
+
     }
     else if(operator == BinaryOperator.and || operator == BinaryOperator.or)
     {

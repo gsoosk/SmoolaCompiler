@@ -3,6 +3,7 @@ package main.ast;
 import main.Tools.TypeChecker;
 import main.ast.Type.NoType;
 import main.ast.Type.OkType;
+import main.ast.Type.PrimitiveType.BooleanType;
 import main.ast.Type.Type;
 import main.ast.node.Program;
 import main.ast.node.declaration.ClassDeclaration;
@@ -230,9 +231,17 @@ public class SecondPassVisitor implements  Visitor{
             aBody.accept(this);
         }
     }
-
+    private void conditionCheck(Expression cond)
+    {
+        if(!(TypeChecker.expressionTypeCheck(cond) instanceof BooleanType))
+        {
+            isThereError = true;
+            System.out.println("Line:" + cond.getLineNumber() + ":condition type must be boolean");
+        }
+    }
     @Override
     public void visit(Conditional conditional) {
+        conditionCheck(conditional.getExpression());
         toOut.add(conditional.toString());
         conditional.getExpression().accept(this);
         conditional.getConsequenceBody().accept(this);
@@ -242,6 +251,7 @@ public class SecondPassVisitor implements  Visitor{
 
     @Override
     public void visit(While loop) {
+        conditionCheck(loop.getCondition());
         toOut.add(loop.toString());
         loop.getCondition().accept(this);
         loop.getBody().accept(this);
