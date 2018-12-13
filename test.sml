@@ -16,9 +16,9 @@ class r extends a {
         return arr[009+i];
     }
 }
-class r extends a {
-    var x : int;
-    def test() : int[] {
+class t extends a {
+    var x2 : int;
+    def test2() : int[] {
         return arr[009+i];
     }
 }

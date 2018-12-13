@@ -1,5 +1,7 @@
 package main.symbolTable;
 
+import sun.jvm.hotspot.debugger.cdbg.Sym;
+
 import java.util.*;
 import java.util.Stack;
 
@@ -22,8 +24,10 @@ public class SymbolTable {
 	}
 
 	// Use it in pass1 scope end
-	public static void pop() {
+	public static SymbolTable pop() {
+		SymbolTable last = top;
 		top = stack.pop();
+		return last;
 	}
 
 	// End of static members region
@@ -44,7 +48,14 @@ public class SymbolTable {
 			throw new ItemAlreadyExistsException();
 		items.put(item.getKey(), item);
 	}
-
+	public void putMultiple(HashMap<String, SymbolTableItem> i)
+	{
+		items.putAll(i);
+	}
+	public HashMap<String, SymbolTableItem> getItems()
+	{
+		return items;
+	}
 	public SymbolTableItem getInCurrentScope(String key) {
 		return items.get(key);
 	}

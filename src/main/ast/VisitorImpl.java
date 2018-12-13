@@ -1,6 +1,7 @@
 package main.ast;
 
 import javafx.util.Pair;
+import main.Tools.HashMaker;
 import main.Tools.PassSaver;
 import main.ast.Type.Type;
 import main.ast.node.Program;
@@ -17,6 +18,7 @@ import sun.awt.Symbol;
 import sun.jvm.hotspot.debugger.cdbg.Sym;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 public class VisitorImpl implements Visitor {
     private boolean isThereError = false;
@@ -27,6 +29,8 @@ public class VisitorImpl implements Visitor {
     private String currentParentName;
     private ArrayList<PassSaver> passSavers = new ArrayList<>();
     private ArrayList< Pair<String , String> > ArrayOfClasses = new ArrayList<>();
+
+    private HashMap<String, SymbolTable> allClassesSymbolTable = new HashMap<String, SymbolTable>();
 
     private boolean reCheck(String target, String current)
     {
@@ -106,6 +110,8 @@ public class VisitorImpl implements Visitor {
         }
 
 
+        HashMaker.makeHash(ArrayOfClasses, allClassesSymbolTable);
+
         if(!isThereError)
         {
             for (String aToOut : toOut) {
@@ -144,10 +150,9 @@ public class VisitorImpl implements Visitor {
                 currentClassName = newName;
             }
         }while (!putSuccess);
-
+        // Adding SymbolTable
         SymbolTable classSymbolTable = new SymbolTable(SymbolTable.top);
         SymbolTable.push(classSymbolTable);
-
         //
         toOut.add(classDeclaration.toString());
 
@@ -168,7 +173,7 @@ public class VisitorImpl implements Visitor {
         }
 
         //
-        SymbolTable.pop();
+        allClassesSymbolTable.put(currentClassName, SymbolTable.pop());
 
     }
 
