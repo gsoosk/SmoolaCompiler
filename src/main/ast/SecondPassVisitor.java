@@ -122,7 +122,7 @@ public class SecondPassVisitor implements  Visitor{
 
     @Override
     public void visit(BinaryExpression binaryExpression) {
-        if(!(TypeChecker.expressionTypeCheck(binaryExpression) instanceof OkType))
+        if(TypeChecker.expressionTypeCheck(binaryExpression) instanceof NoType)
             handleUnsupportedOperationException(binaryExpression.getBinaryOperator().name(), binaryExpression);
 
         toOut.add(binaryExpression.toString());

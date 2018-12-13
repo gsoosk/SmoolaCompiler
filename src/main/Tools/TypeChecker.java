@@ -104,11 +104,15 @@ public class TypeChecker {
     }
     else if(operator == BinaryOperator.eq || operator == BinaryOperator.neq)
     {
-      if(!(expressionTypeCheck(expr.getLeft()).equals(expressionTypeCheck(expr.getRight())) ) )
+      Type leftType = expressionTypeCheck(expr.getLeft());
+      Type rightType = expressionTypeCheck(expr.getRight());
+      if(!(leftType.getClass().equals(rightType.getClass())))
       {
         return new NoType();
       }
-      return new OkType();
+      if(leftType instanceof NoType || rightType instanceof NoType)
+        return new NoType();
+      return new BooleanType();
     }
     return toReturn;
   }

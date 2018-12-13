@@ -9,9 +9,8 @@ class a extends b {
 
     def test() : int {
         #var i : int;
-        var x : boolean;
-        var y : boolean;
-        i = x && y;
+
+        i = x && (y == x) ;
         return x;
     }
 }
