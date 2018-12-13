@@ -33,6 +33,8 @@ public class VisitorImpl implements Visitor {
     private HashMap<String, SymbolTable> allClassesSymbolTable = new HashMap<String, SymbolTable>();
     private HashMap<String, SymbolTable> allMethodsSymbolTable = new HashMap<String, SymbolTable>();
 
+    private int passNumber = 1;
+
     private boolean reCheck(String target, String current)
     {
 
@@ -112,6 +114,7 @@ public class VisitorImpl implements Visitor {
 
 
         allClassesSymbolTable =  HashMaker.makeHash(ArrayOfClasses, allClassesSymbolTable);
+        passNumber = 2;
 
         if(!isThereError)
         {
