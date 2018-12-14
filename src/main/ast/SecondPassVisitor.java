@@ -162,7 +162,11 @@ public class SecondPassVisitor implements  Visitor{
     public void visit(MethodCall methodCall) {
         inMethodCall = true;
         if(TypeChecker.expressionTypeCheck(methodCall) instanceof NoType)
+        {
             isThereError = true;
+            System.out.println(((NoType)methodCall.getType()).getTypeErrorMsg());
+        }
+
         toOut.add(methodCall.toString());
         methodCall.getInstance().accept(this);
         methodCall.getMethodName().accept(this);

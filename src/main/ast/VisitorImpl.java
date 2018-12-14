@@ -187,7 +187,7 @@ public class VisitorImpl implements Visitor {
           argsType.add(arg.getType());
         }
         SymbolTableMethodItem methodItem = new SymbolTableMethodItem(methodDeclaration.getName().getName(),
-                                                                    argsType);
+                                                                    argsType, methodDeclaration.getReturnType());
         boolean putSuccess = false;
         int i = 0;
         do {

@@ -5,7 +5,7 @@ class b {
         return 2;
     }
 }
-class c {
+class c extends b{
 
     def test2() : int {
 
@@ -20,6 +20,7 @@ class a extends c {
         var b1 : int;
         var b2 : boolean;
         var x : int;
+        var m : c;
         i = (x + y + b1) ;
 
         while(x == ( x + y + x + 2 * x / i ) ){
@@ -32,7 +33,7 @@ class a extends c {
              b1 = true;
         }
 
-        l = (2+3).a(3+2);
+        l = (m).main(3+2);
 
 
         return x;
