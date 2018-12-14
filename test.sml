@@ -21,6 +21,8 @@ class a extends c {
         var b2 : boolean;
         var x : int;
         var m : c;
+        var arr : int[];
+        var l : int;
         i = (x + y + b1) ;
 
         while(x == ( x + y + x + 2 * x / i ) ){
@@ -34,7 +36,7 @@ class a extends c {
         }
 
         l = (m).test2(b1);
-
+        l = arr.length;
 
         return x;
     }

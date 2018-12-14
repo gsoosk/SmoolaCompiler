@@ -210,7 +210,7 @@ import main.ast.node.expression.UnaryExpression.UnaryOperator;
         {
 
                Expression expr = new BinaryExpression($inhExpression, $lExpr.synExpression , BinaryOperator.or);
-               $synExpression.setLineNumber($val.getLine());
+               expr.setLineNumber($val.getLine());
         }
         rExpr = expressionOrTemp[expr]
         {
@@ -424,9 +424,10 @@ import main.ast.node.expression.UnaryExpression.UnaryOperator;
             method.setLineNumber($methodName.getLine());
         }
         (',' arg = expression{((MethodCall)method).addArg($arg.synExpression);})*) ')'
-        | 'length'
+        | val = 'length'
         {
             method = new Length($inhExpression);
+            method.setLineNumber($val.getLine());
         }
         )
         {

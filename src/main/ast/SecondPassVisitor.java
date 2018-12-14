@@ -153,6 +153,12 @@ public class SecondPassVisitor implements  Visitor{
 
     @Override
     public void visit(Length length) {
+        TypeChecker.expressionTypeCheck(length);
+        if(length.getType() instanceof NoType)
+        {
+            isThereError = true;
+            System.out.println(((NoType)length.getType()).getTypeErrorMsg());
+        }
         toOut.add(length.toString());
         length.getExpression().accept(this);
 

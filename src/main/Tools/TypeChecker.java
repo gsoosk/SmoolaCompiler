@@ -1,5 +1,6 @@
 package main.Tools;
 
+import main.ast.Type.ArrayType.ArrayType;
 import main.ast.Type.NoType;
 import main.ast.Type.OkType;
 import main.ast.Type.PrimitiveType.BooleanType;
@@ -39,7 +40,7 @@ public class TypeChecker {
   }
 
 
-  public static boolean isSubtypeOf(String type, String parent) {
+  private static boolean isSubtypeOf(String type, String parent) {
     ArrayList<String> children = HashMaker.getClassesTree().get(parent);
     if (children.contains(type)) {
       return true;
@@ -139,7 +140,7 @@ public class TypeChecker {
   private static Type methodCallTypeCheck(MethodCall methodCall)
   {
     //NOTE: This method handle error inside of itself and don't need to handle it outside
-    //instace checking
+    //instance checking
     Type instanceType = expressionTypeCheck(methodCall.getInstance());
     if(!(instanceType instanceof UserDefinedType))
     {
@@ -153,6 +154,7 @@ public class TypeChecker {
     {
       return new NoType("Line:"+ methodCall.getLineNumber() +":class "+ instanceClassName + " is not declared");
     }
+    //methodname checking
     String methodName = methodCall.getMethodName().getName();
     if(!allClassesSymbolTable.get(instanceClassName).getItems().containsKey("Method:<"+methodName+">"))
     {
@@ -164,7 +166,6 @@ public class TypeChecker {
 
     } catch (ItemNotFoundException e)
     {
-      methodItem = null;
       return new NoType();
     }
     ArrayList<Expression> methodCallArgs = methodCall.getArgs();
@@ -186,6 +187,16 @@ public class TypeChecker {
     }
     return methodItem.getReturnType();
   }
+  private static Type lengthTypeCheck(Length length)
+  {
+    //instance checking
+    Type instanceType = expressionTypeCheck(length.getExpression());
+    if(!(instanceType instanceof ArrayType))
+    {
+      return new NoType("Line:"+ length.getLineNumber() +":"+ "uncorrect usage of length");
+    }
+    return new IntType();
+  }
   public static Type expressionTypeCheck(Expression expr)
   {
     if(expr.getType() != null)
@@ -202,6 +213,8 @@ public class TypeChecker {
       expr.setType(identifierTypeCheck((Identifier) expr));
     else if(expr instanceof MethodCall)
       expr.setType(methodCallTypeCheck((MethodCall) expr));
+    else if(expr instanceof Length)
+      expr.setType(lengthTypeCheck((Length) expr));
     else
       expr.setType(new NoType());
     return expr.getType();
