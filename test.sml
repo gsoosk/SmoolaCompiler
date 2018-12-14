@@ -7,7 +7,7 @@ class b {
 }
 class c extends b{
 
-    def test2() : int {
+    def test2(x1 : int) : int {
 
         return 2;
     }
@@ -33,7 +33,7 @@ class a extends c {
              b1 = true;
         }
 
-        l = (m).main(3+2);
+        l = (m).test2(b1);
 
 
         return x;
