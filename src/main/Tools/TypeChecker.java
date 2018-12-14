@@ -4,14 +4,12 @@ import main.ast.Type.NoType;
 import main.ast.Type.OkType;
 import main.ast.Type.PrimitiveType.BooleanType;
 import main.ast.Type.PrimitiveType.IntType;
-import main.ast.node.expression.BinaryExpression;
+import main.ast.Type.UserDefinedType.UserDefinedType;
+import main.ast.node.expression.*;
 import main.ast.node.expression.BinaryExpression.BinaryOperator;
-import main.ast.node.expression.Expression;
 
 
 import main.ast.Type.Type;
-import main.ast.node.expression.Identifier;
-import main.ast.node.expression.UnaryExpression;
 import main.ast.node.expression.UnaryExpression.UnaryOperator;
 import main.ast.node.expression.Value.BooleanValue;
 import main.ast.node.expression.Value.IntValue;
@@ -20,6 +18,7 @@ import main.symbolTable.SymbolTable;
 import main.symbolTable.SymbolTableItem;
 import main.symbolTable.SymbolTableVariableItemBase;
 
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -132,7 +131,40 @@ public class TypeChecker {
       SymbolTableItem item = allMethodsSymbolTable.get(currentClassName + "-" + currentMethodName).getInCurrentScope(identifier.getName());
       return ((SymbolTableVariableItemBase) item).getType();
     }
+    if(allClassesSymbolTable.containsKey(identifier.getName()))
+    {
+      UserDefinedType classType = new UserDefinedType();
+      classType.setName(identifier);
+      return classType;
+    }
     return toReturn;
+  }
+  private static Type methodCallTypeCheck(MethodCall methodCall)
+  {
+    //NOTE: This method handle error inside of itself and don't need to handle it outside
+    Type instanceType = expressionTypeCheck(methodCall.getInstance());
+    if(!(instanceType instanceof UserDefinedType))
+    {
+      if(methodCall.getInstance() instanceof Identifier)
+        System.out.println("Line:"+ methodCall.getLineNumber() +":class "+ ((Identifier) methodCall.getInstance()).getName() + " is not declared");
+      else
+        System.out.println("Line:"+ methodCall.getLineNumber() +":"+ methodCall.getInstance().toString() + " is not a class");
+      return new NoType();
+    }
+    String instanceClassName = ((UserDefinedType)instanceType).getName().getName();
+    if(!allClassesSymbolTable.containsKey(instanceClassName))
+    {
+      System.out.println("Line:"+ methodCall.getLineNumber() +":class "+ instanceClassName + " is not declared");
+      return new NoType();
+    }
+    String methodName = methodCall.getMethodName().getName();
+    if(!allClassesSymbolTable.get(instanceClassName).getItems().containsKey("Method:<"+methodName+">"))
+    {
+      System.out.println("Line:"+ methodCall.getLineNumber()+":there is no method named "+ methodName +" in class "+ instanceClassName);
+      return new NoType();
+    }
+    //Todo : args checking
+    return new NoType();
   }
   public static Type expressionTypeCheck(Expression expr)
   {
@@ -148,6 +180,8 @@ public class TypeChecker {
       expr.setType(binaryExprTypeCheck((BinaryExpression) expr));
     else if(expr instanceof Identifier)
       expr.setType(identifierTypeCheck((Identifier) expr));
+    else if(expr instanceof MethodCall)
+      expr.setType(methodCallTypeCheck((MethodCall) expr));
     else
       expr.setType(new NoType());
     return expr.getType();

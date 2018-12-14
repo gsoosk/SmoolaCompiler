@@ -30,6 +30,7 @@ public class SecondPassVisitor implements  Visitor{
     private String currentMethodName;
     private boolean isThereError;
     private boolean inMethod;
+    private boolean inMethodCall = false;
     private ArrayList<String> toOut = new ArrayList<>();
     private int variablesIndex;
     public SecondPassVisitor(HashMap<String, SymbolTable> allClasses, HashMap<String, SymbolTable> allMethods, boolean error, int varIndex)
@@ -134,7 +135,7 @@ public class SecondPassVisitor implements  Visitor{
     @Override
     public void visit(Identifier identifier) {
 
-        if(inMethod)
+        if(inMethod && !inMethodCall)
             if(!allClassesSymbolTable.get(currentClassName).getItems().containsKey(identifier.getName())
                 && !allMethodsSymbolTable.get(currentClassName + "-" + currentMethodName).getItems().containsKey(identifier.getName()))
             {
@@ -159,6 +160,9 @@ public class SecondPassVisitor implements  Visitor{
 
     @Override
     public void visit(MethodCall methodCall) {
+        inMethodCall = true;
+        if(TypeChecker.expressionTypeCheck(methodCall) instanceof NoType)
+            isThereError = true;
         toOut.add(methodCall.toString());
         methodCall.getInstance().accept(this);
         methodCall.getMethodName().accept(this);
@@ -167,6 +171,7 @@ public class SecondPassVisitor implements  Visitor{
         for (Expression arg : args) {
             arg.accept(this);
         }
+        inMethodCall = false;
     }
 
     @Override
