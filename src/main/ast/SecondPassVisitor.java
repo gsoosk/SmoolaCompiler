@@ -260,9 +260,21 @@ public class SecondPassVisitor implements  Visitor{
     @Override
     public void visit(Assign assign) {
         Expression lvalue = assign.getlValue();
-//        if (lvalue.) {
-//
-//        }
+        Expression rvalue = assign.getrValue();
+        Type l = TypeChecker.expressionTypeCheck(lvalue);
+        Type r = TypeChecker.expressionTypeCheck(rvalue);
+        //TODO: check lvalues not to be rvalues
+        if (!l.getClass().equals(r.getClass())) {
+            if (l instanceof UserDefinedType && r instanceof UserDefinedType) {
+                if (TypeChecker.isSubtypeOf(((UserDefinedType)r).getName().getName(), ((UserDefinedType)l).getName().getName())) {
+                    isThereError = true;
+                    System.out.println("Line:" + lvalue.getLineNumber() + ":both sides of assignment should be of the same type");
+                }
+            } else {
+                isThereError = true;
+                System.out.println("Line:" + lvalue.getLineNumber() + ":both sides of assignment should be of the same type");
+            }
+        }
         toOut.add(assign.toString());
         assign.getlValue().accept(this);
         assign.getrValue().accept(this);

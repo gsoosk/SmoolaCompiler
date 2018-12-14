@@ -24,8 +24,9 @@ class CC extends BC {
 class a extends c {
 
     def test() : AC {
-        var d: CC;
-        d = 1;
+        var d: AC;
+        var h: CC;
+        d = h;
         return d;
     }
 }
