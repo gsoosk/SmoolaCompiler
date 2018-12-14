@@ -2,7 +2,9 @@ package main.ast;
 
 import main.Tools.TypeChecker;
 import main.ast.Type.NoType;
-import main.ast.Type.Type;
+import main.ast.Type.*;
+import main.ast.Type.PrimitiveType.*;
+import main.ast.Type.ArrayType.*;
 import main.ast.node.Program;
 import main.ast.node.declaration.ClassDeclaration;
 import main.ast.node.declaration.MethodDeclaration;

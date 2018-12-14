@@ -11,6 +11,8 @@ class a extends b {
         var i : int;
         var x : int;
         i = x + y;
+
+        writeln(this);
         return x;
     }
 }
