@@ -94,8 +94,6 @@ public class SecondPassVisitor implements  Visitor{
             arg.accept(this);
         }
 
-
-
         ArrayList<VarDeclaration> varDeclarations = methodDeclaration.getLocalVars();
         for (VarDeclaration varDeclaration : varDeclarations) {
             varDeclaration.accept(this);
@@ -103,6 +101,13 @@ public class SecondPassVisitor implements  Visitor{
         inMethod = true;
         currentMethodName = methodDeclaration.getName().getName();
         TypeChecker.setForIdentifier(currentClassName, currentMethodName);
+        Type returnType = methodDeclaration.getReturnType();
+        Expression returnValue = methodDeclaration.getReturnValue();
+        Type eReturnType = TypeChecker.expressionTypeCheck(returnValue);
+        if (!(returnType.getClass().equals(eReturnType.getClass()))) {
+            System.out.println("Line:" + returnValue.getLineNumber() + ":" + methodDeclaration.getName().getName()
+                + " return type must be " + returnType.toString());
+        }
         ArrayList<Statement> statements = methodDeclaration.getBody();
 
         for (Statement statement : statements) {
