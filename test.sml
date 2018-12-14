@@ -5,9 +5,9 @@ class b {
         return 2;
     }
 }
-class c {
+class c extends b{
 
-    def test2() : int {
+    def test2(x1 : int) : int {
 
         return 2;
     }

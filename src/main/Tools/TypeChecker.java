@@ -1,5 +1,6 @@
 package main.Tools;
 
+import main.ast.Type.ArrayType.ArrayType;
 import main.ast.Type.NoType;
 import main.ast.Type.OkType;
 import main.ast.Type.PrimitiveType.BooleanType;
@@ -13,12 +14,8 @@ import main.ast.Type.Type;
 import main.ast.node.expression.UnaryExpression.UnaryOperator;
 import main.ast.node.expression.Value.BooleanValue;
 import main.ast.node.expression.Value.IntValue;
-import main.symbolTable.ItemAlreadyExistsException;
-import main.symbolTable.SymbolTable;
-import main.symbolTable.SymbolTableItem;
-import main.symbolTable.SymbolTableVariableItemBase;
+import main.symbolTable.*;
 
-import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -133,40 +130,74 @@ public class TypeChecker {
       SymbolTableItem item = allMethodsSymbolTable.get(currentClassName + "-" + currentMethodName).getInCurrentScope(identifier.getName());
       return ((SymbolTableVariableItemBase) item).getType();
     }
-    if(allClassesSymbolTable.containsKey(identifier.getName()))
-    {
-      UserDefinedType classType = new UserDefinedType();
-      classType.setName(identifier);
-      return classType;
-    }
+//    For Static Method support. Smoola doesn't support it!
+//    if(allClassesSymbolTable.containsKey(identifier.getName()))
+//    {
+//      UserDefinedType classType = new UserDefinedType();
+//      classType.setName(identifier);
+//      return classType;
+//    }
     return toReturn;
   }
   private static Type methodCallTypeCheck(MethodCall methodCall)
   {
     //NOTE: This method handle error inside of itself and don't need to handle it outside
+    //instance checking
     Type instanceType = expressionTypeCheck(methodCall.getInstance());
     if(!(instanceType instanceof UserDefinedType))
     {
       if(methodCall.getInstance() instanceof Identifier)
-        System.out.println("Line:"+ methodCall.getLineNumber() +":class "+ ((Identifier) methodCall.getInstance()).getName() + " is not declared");
-      else
-        System.out.println("Line:"+ methodCall.getLineNumber() +":"+ methodCall.getInstance().toString() + " is not a class");
-      return new NoType();
+        return new NoType("Line:"+ methodCall.getLineNumber() +":class "+ ((Identifier) methodCall.getInstance()).getName() + " is not declared");
+      return new NoType("Line:"+ methodCall.getLineNumber() +":"+ methodCall.getInstance().toString() + " is not a class");
+
     }
     String instanceClassName = ((UserDefinedType)instanceType).getName().getName();
     if(!allClassesSymbolTable.containsKey(instanceClassName))
     {
-      System.out.println("Line:"+ methodCall.getLineNumber() +":class "+ instanceClassName + " is not declared");
-      return new NoType();
+      return new NoType("Line:"+ methodCall.getLineNumber() +":class "+ instanceClassName + " is not declared");
     }
+    //methodname checking
     String methodName = methodCall.getMethodName().getName();
     if(!allClassesSymbolTable.get(instanceClassName).getItems().containsKey("Method:<"+methodName+">"))
     {
-      System.out.println("Line:"+ methodCall.getLineNumber()+":there is no method named "+ methodName +" in class "+ instanceClassName);
+      return new NoType("Line:"+ methodCall.getLineNumber()+":there is no method named "+ methodName +" in class "+ instanceClassName);
+    }
+    SymbolTableMethodItem methodItem;
+    try{
+      methodItem =(SymbolTableMethodItem) allClassesSymbolTable.get(instanceClassName).get("Method:<"+methodName+">");
+
+    } catch (ItemNotFoundException e)
+    {
       return new NoType();
     }
-    //Todo : args checking
-    return new NoType();
+    ArrayList<Expression> methodCallArgs = methodCall.getArgs();
+    ArrayList<Type> methodItemArgsType = methodItem.getArgTypes();
+    if(methodCallArgs.size() != methodItemArgsType.size())
+      return new NoType("Line:" + methodCall.getLineNumber() + ":arguments number is not matching to method definition");
+    for(int i = 0; i < methodCallArgs.size(); i++)
+    {
+      expressionTypeCheck(methodCallArgs.get(i));
+      if( !methodCallArgs.get(i).getType().getClass().equals(methodItemArgsType.get(i).getClass()))
+        return new NoType("Line:" + methodCall.getLineNumber() + ":argument number " + Integer.toString(i) + " does not have correct type");
+      if(methodCallArgs.get(i).getType() instanceof UserDefinedType)
+      {
+        String child = ((UserDefinedType)methodCallArgs.get(i).getType()).getName().getName();
+        String parent = ((UserDefinedType) methodItemArgsType.get(i)).getName().getName();
+        if(!isSubtypeOf(child, parent))
+          return new NoType("Line:" + methodCall.getLineNumber() + ":argument number " + Integer.toString(i) + " does not have correct type");;
+      }
+    }
+    return methodItem.getReturnType();
+  }
+  private static Type lengthTypeCheck(Length length)
+  {
+    //instance checking
+    Type instanceType = expressionTypeCheck(length.getExpression());
+    if(!(instanceType instanceof ArrayType))
+    {
+      return new NoType("Line:"+ length.getLineNumber() +":"+ "uncorrect usage of length");
+    }
+    return new IntType();
   }
   public static Type expressionTypeCheck(Expression expr)
   {
@@ -184,6 +215,8 @@ public class TypeChecker {
       expr.setType(identifierTypeCheck((Identifier) expr));
     else if(expr instanceof MethodCall)
       expr.setType(methodCallTypeCheck((MethodCall) expr));
+    else if(expr instanceof Length)
+      expr.setType(lengthTypeCheck((Length) expr));
     else
       expr.setType(new NoType());
     return expr.getType();
