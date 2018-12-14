@@ -195,7 +195,7 @@ public class TypeChecker {
     Type instanceType = expressionTypeCheck(length.getExpression());
     if(!(instanceType instanceof ArrayType))
     {
-      return new NoType("Line:"+ length.getLineNumber() +":"+ "uncorrect usage of length");
+      return new NoType("Line:"+ length.getLineNumber() +":"+ "incorrect usage of length");
     }
     return new IntType();
   }

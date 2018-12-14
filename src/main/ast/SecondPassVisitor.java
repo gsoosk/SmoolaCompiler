@@ -28,7 +28,6 @@ import java.util.HashMap;
 
 
 public class SecondPassVisitor implements  Visitor{
-    private Program program;
     private HashMap<String, SymbolTable> allClassesSymbolTable ;
     private HashMap<String, SymbolTable> allMethodsSymbolTable ;
     private String currentClassName ;
@@ -46,17 +45,9 @@ public class SecondPassVisitor implements  Visitor{
         variablesIndex = varIndex;
         TypeChecker.setHashesForIdentifier(allClasses, allMethods);
     }
-    private void setUserDefinedTypeClassDeclaration(Type udt) {
-        for (ClassDeclaration classDeclaration : program.getClasses()) {
-            if (classDeclaration.getName().getName() == ((UserDefinedType)udt).getName().getName()) {
-                ((UserDefinedType)udt).setClassDeclaration(classDeclaration);
-            }
-        }
-    }
 
     @Override
     public void visit(Program program) {
-        this.program = program;
         toOut.add(program.toString());
         program.getMainClass().accept(this);
         for (ClassDeclaration aClass : program.getClasses()) {
@@ -114,13 +105,21 @@ public class SecondPassVisitor implements  Visitor{
         Expression returnValue = methodDeclaration.getReturnValue();
         Type eReturnType = TypeChecker.expressionTypeCheck(returnValue);
         if (!returnType.getClass().equals(eReturnType.getClass())) {
+            isThereError = true;
+            String returnTypeString;
+            if (returnType instanceof UserDefinedType) {
+                returnTypeString = ((UserDefinedType)returnType).getName().getName();
+            } else {
+                returnTypeString = returnType.toString();
+            }
             System.out.println("Line:" + returnValue.getLineNumber() + ":" + methodDeclaration.getName().getName()
-                    + " return type must be " + ((UserDefinedType)returnType).getName().getName());
+                    + " return type must be " + returnTypeString);
         } else {
             if (returnType instanceof UserDefinedType) {
                 String t = ((UserDefinedType)eReturnType).getName().getName();
                 String p = ((UserDefinedType)returnType).getName().getName();
                 if (!TypeChecker.isSubtypeOf(t, p)) {
+                    isThereError = true;
                     System.out.println("Line:" + returnValue.getLineNumber() + ":" + methodDeclaration.getName().getName()
                     + " return type must be " + ((UserDefinedType)returnType).getName().getName());
                 }
@@ -260,6 +259,10 @@ public class SecondPassVisitor implements  Visitor{
 
     @Override
     public void visit(Assign assign) {
+        Expression lvalue = assign.getlValue();
+//        if (lvalue.) {
+//
+//        }
         toOut.add(assign.toString());
         assign.getlValue().accept(this);
         assign.getrValue().accept(this);
