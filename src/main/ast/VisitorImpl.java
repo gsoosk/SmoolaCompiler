@@ -111,16 +111,9 @@ public class VisitorImpl implements Visitor {
             aClass.accept(this);
         }
 
-
         allClassesSymbolTable =  HashMaker.makeHash(ArrayOfClasses, allClassesSymbolTable);
         Visitor secondVisitor = new SecondPassVisitor(allClassesSymbolTable, allMethodsSymbolTable, isThereError, variablesIndex);
         secondVisitor.visit(program);
-
-
-
-
-
-
 
     }
 

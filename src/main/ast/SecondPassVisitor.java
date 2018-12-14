@@ -7,6 +7,7 @@ import main.ast.Type.PrimitiveType.*;
 import main.ast.Type.ArrayType.*;
 import main.ast.Type.OkType;
 import main.ast.Type.PrimitiveType.BooleanType;
+import main.ast.Type.UserDefinedType.UserDefinedType;
 import main.ast.Type.Type;
 import main.ast.node.Program;
 import main.ast.node.declaration.ClassDeclaration;
@@ -27,7 +28,7 @@ import java.util.HashMap;
 
 
 public class SecondPassVisitor implements  Visitor{
-
+    private Program program;
     private HashMap<String, SymbolTable> allClassesSymbolTable ;
     private HashMap<String, SymbolTable> allMethodsSymbolTable ;
     private String currentClassName ;
@@ -45,9 +46,17 @@ public class SecondPassVisitor implements  Visitor{
         variablesIndex = varIndex;
         TypeChecker.setHashesForIdentifier(allClasses, allMethods);
     }
+    private void setUserDefinedTypeClassDeclaration(Type udt) {
+        for (ClassDeclaration classDeclaration : program.getClasses()) {
+            if (classDeclaration.getName().getName() == ((UserDefinedType)udt).getName().getName()) {
+                ((UserDefinedType)udt).setClassDeclaration(classDeclaration);
+            }
+        }
+    }
 
     @Override
     public void visit(Program program) {
+        this.program = program;
         toOut.add(program.toString());
         program.getMainClass().accept(this);
         for (ClassDeclaration aClass : program.getClasses()) {
@@ -104,9 +113,18 @@ public class SecondPassVisitor implements  Visitor{
         Type returnType = methodDeclaration.getReturnType();
         Expression returnValue = methodDeclaration.getReturnValue();
         Type eReturnType = TypeChecker.expressionTypeCheck(returnValue);
-        if (!(returnType.getClass().equals(eReturnType.getClass()))) {
+        if (!returnType.getClass().equals(eReturnType.getClass())) {
             System.out.println("Line:" + returnValue.getLineNumber() + ":" + methodDeclaration.getName().getName()
-                + " return type must be " + returnType.toString());
+                    + " return type must be " + ((UserDefinedType)returnType).getName().getName());
+        } else {
+            if (returnType instanceof UserDefinedType) {
+                String t = ((UserDefinedType)eReturnType).getName().getName();
+                String p = ((UserDefinedType)returnType).getName().getName();
+                if (!TypeChecker.isSubtypeOf(t, p)) {
+                    System.out.println("Line:" + returnValue.getLineNumber() + ":" + methodDeclaration.getName().getName()
+                    + " return type must be " + ((UserDefinedType)returnType).getName().getName());
+                }
+            }
         }
         ArrayList<Statement> statements = methodDeclaration.getBody();
 

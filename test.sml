@@ -12,11 +12,20 @@ class c {
         return 2;
     }
 }
+class AC {
+
+}
+class BC extends AC {
+
+}
+class CC extends BC {
+
+}
 class a extends c {
 
-    def test() : int {
-        var d: c;
-        d = new c();
-        return 1 + "Hello";
+    def test() : AC {
+        var d: AC;
+        d = new AC();
+        return d;
     }
 }
