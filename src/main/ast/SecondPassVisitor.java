@@ -5,6 +5,9 @@ import main.ast.Type.NoType;
 import main.ast.Type.*;
 import main.ast.Type.PrimitiveType.*;
 import main.ast.Type.ArrayType.*;
+import main.ast.Type.OkType;
+import main.ast.Type.PrimitiveType.BooleanType;
+import main.ast.Type.Type;
 import main.ast.node.Program;
 import main.ast.node.declaration.ClassDeclaration;
 import main.ast.node.declaration.MethodDeclaration;
@@ -31,6 +34,7 @@ public class SecondPassVisitor implements  Visitor{
     private String currentMethodName;
     private boolean isThereError;
     private boolean inMethod;
+    private boolean inMethodCall = false;
     private ArrayList<String> toOut = new ArrayList<>();
     private int variablesIndex;
     public SecondPassVisitor(HashMap<String, SymbolTable> allClasses, HashMap<String, SymbolTable> allMethods, boolean error, int varIndex)
@@ -39,6 +43,7 @@ public class SecondPassVisitor implements  Visitor{
         allMethodsSymbolTable = allMethods;
         isThereError = error;
         variablesIndex = varIndex;
+        TypeChecker.setHashesForIdentifier(allClasses, allMethods);
     }
 
     @Override
@@ -60,6 +65,8 @@ public class SecondPassVisitor implements  Visitor{
     @Override
     public void visit(ClassDeclaration classDeclaration) {
         currentClassName = classDeclaration.getName().getName();
+        TypeChecker.setForIdentifier(currentClassName, currentMethodName);
+
         toOut.add(classDeclaration.toString());
         classDeclaration.getName().accept(this);
         if (classDeclaration.getParentName() != null)
@@ -95,6 +102,7 @@ public class SecondPassVisitor implements  Visitor{
         }
         inMethod = true;
         currentMethodName = methodDeclaration.getName().getName();
+        TypeChecker.setForIdentifier(currentClassName, currentMethodName);
         ArrayList<Statement> statements = methodDeclaration.getBody();
 
         for (Statement statement : statements) {
@@ -120,6 +128,9 @@ public class SecondPassVisitor implements  Visitor{
 
     @Override
     public void visit(BinaryExpression binaryExpression) {
+        if(TypeChecker.expressionTypeCheck(binaryExpression) instanceof NoType)
+            handleUnsupportedOperationException(binaryExpression.getBinaryOperator().name(), binaryExpression);
+
         toOut.add(binaryExpression.toString());
         binaryExpression.getLeft().accept(this);
         binaryExpression.getRight().accept(this);
@@ -128,7 +139,7 @@ public class SecondPassVisitor implements  Visitor{
     @Override
     public void visit(Identifier identifier) {
 
-        if(inMethod)
+        if(inMethod && !inMethodCall)
             if(!allClassesSymbolTable.get(currentClassName).getItems().containsKey(identifier.getName())
                 && !allMethodsSymbolTable.get(currentClassName + "-" + currentMethodName).getItems().containsKey(identifier.getName()))
             {
@@ -153,6 +164,9 @@ public class SecondPassVisitor implements  Visitor{
 
     @Override
     public void visit(MethodCall methodCall) {
+        inMethodCall = true;
+        if(TypeChecker.expressionTypeCheck(methodCall) instanceof NoType)
+            isThereError = true;
         toOut.add(methodCall.toString());
         methodCall.getInstance().accept(this);
         methodCall.getMethodName().accept(this);
@@ -161,6 +175,7 @@ public class SecondPassVisitor implements  Visitor{
         for (Expression arg : args) {
             arg.accept(this);
         }
+        inMethodCall = false;
     }
 
     @Override
@@ -181,8 +196,9 @@ public class SecondPassVisitor implements  Visitor{
 
     }
 
-    private static void handleUnsupportedOperationException(String operatorName, UnaryExpression expr)
+    private void handleUnsupportedOperationException(String operatorName, Expression expr)
     {
+        this.isThereError = true;
         System.out.println("Line:"+ expr.getLineNumber() +":unsupported operand type for "+ operatorName);
     }
     @Override
@@ -224,9 +240,17 @@ public class SecondPassVisitor implements  Visitor{
             aBody.accept(this);
         }
     }
-
+    private void conditionCheck(Expression cond)
+    {
+        if(!(TypeChecker.expressionTypeCheck(cond) instanceof BooleanType))
+        {
+            isThereError = true;
+            System.out.println("Line:" + cond.getLineNumber() + ":condition type must be boolean");
+        }
+    }
     @Override
     public void visit(Conditional conditional) {
+        conditionCheck(conditional.getExpression());
         toOut.add(conditional.toString());
         conditional.getExpression().accept(this);
         conditional.getConsequenceBody().accept(this);
@@ -236,6 +260,7 @@ public class SecondPassVisitor implements  Visitor{
 
     @Override
     public void visit(While loop) {
+        conditionCheck(loop.getCondition());
         toOut.add(loop.toString());
         loop.getCondition().accept(this);
         loop.getBody().accept(this);
