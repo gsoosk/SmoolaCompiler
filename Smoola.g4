@@ -152,9 +152,10 @@ import main.ast.node.expression.UnaryExpression.UnaryOperator;
     ;
     statementWrite returns [Statement synStatementWrite]
     :
-        'writeln(' arg = expression ')' ';'
+        val = 'writeln(' arg = expression ')' ';'
         {
             $synStatementWrite = new Write($arg.synExpression);
+            $synStatementWrite.setLineNumber($val.getLine());
         }
     ;
     statementAssignment returns [Statement synStatementAssign]

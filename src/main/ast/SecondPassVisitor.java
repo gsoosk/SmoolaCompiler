@@ -325,8 +325,8 @@ public class SecondPassVisitor implements  Visitor{
     @Override
     public void visit(Write write) {
         Type t = TypeChecker.expressionTypeCheck(write.getArg());
-        if (!(t instanceof IntType ||  t instanceof StringType || t instanceof ArrayType )) {
-            System.out.println("Line:"+ write.getArg().getLineNumber() +":unsupported type for writeln");
+        if (!(t instanceof IntType ||  t instanceof StringType || t instanceof ArrayType || t instanceof NoType )) {
+            System.out.println("Line:"+ write.getLineNumber() +":unsupported type for writeln");
         }
         toOut.add(write.toString());
         write.getArg().accept(this);

@@ -23,6 +23,8 @@ class c extends b{
 
         }
 
+        writeln(true);
+
 
         return 2;
     }
