@@ -82,14 +82,17 @@ public class TypeChecker {
   }
   private static Type binaryExprTypeCheck(BinaryExpression expr)
   {
-    Type toReturn = new NoType();
+
     BinaryOperator operator = expr.getBinaryOperator();
+    Type leftType = expressionTypeCheck(expr.getLeft());
+    Type rightType = expressionTypeCheck(expr.getRight());
+
     if( operator == BinaryOperator.add || operator == BinaryOperator.mult ||  operator == BinaryOperator.gt  ||
        operator == BinaryOperator.div || operator == BinaryOperator.sub || operator == BinaryOperator.lt ){
-      if(!(expressionTypeCheck(expr.getLeft()) instanceof IntType) || !(expressionTypeCheck(expr.getRight()) instanceof IntType))
-      {
+      if(!(leftType instanceof IntType) && !(leftType instanceof  NoType))
         return new NoType();
-      }
+      if(!(rightType instanceof IntType) && !(rightType instanceof  NoType))
+        return new NoType();
       if(operator == BinaryOperator.gt  || operator == BinaryOperator.lt)
         return new BooleanType();
       return new IntType();
@@ -97,25 +100,23 @@ public class TypeChecker {
     }
     else if(operator == BinaryOperator.and || operator == BinaryOperator.or)
     {
-      if(!(expressionTypeCheck(expr.getLeft()) instanceof BooleanType) || !(expressionTypeCheck(expr.getRight()) instanceof BooleanType))
-      {
+      if(!(leftType instanceof BooleanType) && !(leftType instanceof NoType))
         return new NoType();
-      }
-      return new OkType();
+      if(!(rightType instanceof BooleanType) && !(rightType instanceof NoType))
+        return new NoType();
+
+      return new BooleanType();
     }
     else if(operator == BinaryOperator.eq || operator == BinaryOperator.neq)
     {
-      Type leftType = expressionTypeCheck(expr.getLeft());
-      Type rightType = expressionTypeCheck(expr.getRight());
-      if(!(leftType.getClass().equals(rightType.getClass())))
+      if(!(leftType.getClass().equals(rightType.getClass())) && (leftType instanceof NoType || rightType instanceof NoType))
       {
         return new NoType();
       }
-      if(leftType instanceof NoType || rightType instanceof NoType)
-        return new NoType();
+
       return new BooleanType();
     }
-    return toReturn;
+    return new NoType();
   }
   private static Type identifierTypeCheck(Identifier identifier)
   {

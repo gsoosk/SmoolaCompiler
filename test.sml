@@ -8,7 +8,8 @@ class b {
 class c extends b{
 
     def test2(x1 : int) : int {
-
+        var x : int ;
+        v = y ;
         return 2;
     }
 }
