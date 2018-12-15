@@ -60,25 +60,24 @@ public class TypeChecker {
 
   private static Type unaryExprTypeCheck(UnaryExpression expr)
   {
-    Type toReturn = new NoType();
+    Type expressionType =  expressionTypeCheck(expr.getValue());
     if(expr.getUnaryOperator() == UnaryOperator.minus)
     {
-      if(!(expressionTypeCheck(expr.getValue()) instanceof IntType))
-      {
+      if(expressionType instanceof NoType)
+        return new IntType();
+      if(!(expressionType instanceof IntType))
         return new NoType();
-      }
-
       return new IntType();
     }
     else if(expr.getUnaryOperator() == UnaryOperator.not)
     {
-      if(!(expressionTypeCheck(expr.getValue()) instanceof BooleanType))
-      {
+      if(expressionType instanceof NoType)
+        return new BooleanType();
+      if(!(expressionType instanceof BooleanType))
         return new NoType();
-      }
       return new BooleanType();
     }
-    return toReturn;
+    return new NoType();
   }
   private static Type binaryExprTypeCheck(BinaryExpression expr)
   {

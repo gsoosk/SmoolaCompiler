@@ -9,7 +9,7 @@ class c extends b{
 
     def test2(x1 : int) : int {
         var x : int ;
-        v = y ;
+        v = y + x ;
         return 2;
     }
 }
