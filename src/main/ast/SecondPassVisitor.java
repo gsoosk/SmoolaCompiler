@@ -271,15 +271,12 @@ public class SecondPassVisitor implements  Visitor{
         Type l = TypeChecker.expressionTypeCheck(lvalue);
         Type r = TypeChecker.expressionTypeCheck(rvalue);
         //TODO: check lvalues not to be rvalues
-        if (!l.getClass().equals(r.getClass())) {
-            if (l instanceof UserDefinedType && r instanceof UserDefinedType) {
-                if (TypeChecker.isSubtypeOf(((UserDefinedType)r).getName().getName(), ((UserDefinedType)l).getName().getName())) {
-                    isThereError = true;
-                    System.out.println("Line:" + lvalue.getLineNumber() + ":both sides of assignment should be of the same type");
-                }
-            } else {
-                isThereError = true;
-                System.out.println("Line:" + lvalue.getLineNumber() + ":both sides of assignment should be of the same type");
+        if (!l.getClass().equals(r.getClass()) && !(r instanceof NoType))
+        {
+            handleUnsupportedOperationException("assign", lvalue);
+        } else if (l instanceof UserDefinedType && r instanceof UserDefinedType) {
+            if(!TypeChecker.isSubtypeOf(((UserDefinedType)r).getName().getName(), ((UserDefinedType)l).getName().getName())) {
+                handleUnsupportedOperationException("assign", lvalue );
             }
         }
         toOut.add(assign.toString());

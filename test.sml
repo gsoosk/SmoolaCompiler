@@ -18,15 +18,16 @@ class c extends b{
         var b1 : boolean;
         var b2 : boolean;
 
-        v = y.test2(u);
-        if( cl1 == cl2) then {
+
+        cl1 = cl3;
+        if( cl1 == cl3) then {
 
         }
 
         writeln(true);
 
 
-        return cl2;
+        return false;
     }
 }
 class AC {
