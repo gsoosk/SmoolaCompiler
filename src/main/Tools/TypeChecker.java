@@ -146,9 +146,11 @@ public class TypeChecker {
     Type instanceType = expressionTypeCheck(methodCall.getInstance());
     if(!(instanceType instanceof UserDefinedType))
     {
+//      if(!(instanceType instanceof NoType))
+//        return new NoType("Line:"+ methodCall.getLineNumber() +":class "+ instanceType.getClass() + " is not declared");
       if(methodCall.getInstance() instanceof Identifier)
-        return new NoType("Line:"+ methodCall.getLineNumber() +":class "+ ((Identifier) methodCall.getInstance()).getName() + " is not declared");
-      return new NoType("Line:"+ methodCall.getLineNumber() +":"+ methodCall.getInstance().toString() + " is not a class");
+        return new NoType("Line:" + methodCall.getLineNumber() + ":variable " + ((Identifier) methodCall.getInstance()).getName() + " is not declared");
+      return new NoType("Line:"+ methodCall.getLineNumber() +":"+ methodCall.getInstance().toString() + " is not a class instance");
 
     }
     String instanceClassName = ((UserDefinedType)instanceType).getName().getName();
@@ -188,6 +190,7 @@ public class TypeChecker {
       }
     }
     return methodItem.getReturnType();
+
   }
   private static Type lengthTypeCheck(Length length)
   {
@@ -201,6 +204,7 @@ public class TypeChecker {
   }
   public static Type expressionTypeCheck(Expression expr)
   {
+
     if(expr.getType() != null)
       return expr.getType();
     else if(expr instanceof IntValue)

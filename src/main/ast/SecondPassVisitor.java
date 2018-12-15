@@ -212,6 +212,7 @@ public class SecondPassVisitor implements  Visitor{
 
     @Override
     public void visit(NewArray newArray) {
+
         toOut.add(newArray.toString());
         newArray.getExpression().accept(this);
     }

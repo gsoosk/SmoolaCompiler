@@ -1,6 +1,7 @@
 class MainClass
 {
     def main() : int {
+
         writeln(Second.main());
         x = f.length;
         a + 3 = 4;
