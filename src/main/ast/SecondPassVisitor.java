@@ -101,36 +101,38 @@ public class SecondPassVisitor implements  Visitor{
         inMethod = true;
         currentMethodName = methodDeclaration.getName().getName();
         TypeChecker.setForIdentifier(currentClassName, currentMethodName);
+
+        ArrayList<Statement> statements = methodDeclaration.getBody();
+
+        for (Statement statement : statements) {
+            statement.accept(this);
+        }
         Type returnType = methodDeclaration.getReturnType();
         Expression returnValue = methodDeclaration.getReturnValue();
         Type eReturnType = TypeChecker.expressionTypeCheck(returnValue);
         if (!returnType.getClass().equals(eReturnType.getClass())) {
-            isThereError = true;
-            String returnTypeString;
-            if (returnType instanceof UserDefinedType) {
-                returnTypeString = ((UserDefinedType)returnType).getName().getName();
-            } else {
-                returnTypeString = returnType.toString();
+            if(!(eReturnType instanceof NoType)) {
+                isThereError = true;
+                String returnTypeString;
+                if (returnType instanceof UserDefinedType) {
+                    returnTypeString = ((UserDefinedType) returnType).getName().getName();
+                } else {
+                    returnTypeString = returnType.toString();
+                }
+                System.out.println("Line:" + returnValue.getLineNumber() + ":" + methodDeclaration.getName().getName()
+                        + " return type must be " + returnTypeString);
             }
-            System.out.println("Line:" + returnValue.getLineNumber() + ":" + methodDeclaration.getName().getName()
-                    + " return type must be " + returnTypeString);
-        } else {
+        } else if(!(eReturnType instanceof NoType)) {
             if (returnType instanceof UserDefinedType) {
                 String t = ((UserDefinedType)eReturnType).getName().getName();
                 String p = ((UserDefinedType)returnType).getName().getName();
                 if (!TypeChecker.isSubtypeOf(t, p)) {
                     isThereError = true;
                     System.out.println("Line:" + returnValue.getLineNumber() + ":" + methodDeclaration.getName().getName()
-                    + " return type must be " + ((UserDefinedType)returnType).getName().getName());
+                            + " return type must be " + ((UserDefinedType)returnType).getName().getName());
                 }
             }
         }
-        ArrayList<Statement> statements = methodDeclaration.getBody();
-
-        for (Statement statement : statements) {
-            statement.accept(this);
-        }
-
         methodDeclaration.getReturnValue().accept(this);
         inMethod = false;
     }

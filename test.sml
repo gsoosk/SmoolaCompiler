@@ -7,7 +7,7 @@ class b {
 }
 class c extends b{
 
-    def test2(x1 : int) : int {
+    def test2(x1 : int) : AC {
         var x : int ;
         var y : int ;
         var z : int ;
@@ -26,7 +26,7 @@ class c extends b{
         writeln(true);
 
 
-        return 2;
+        return cl2;
     }
 }
 class AC {

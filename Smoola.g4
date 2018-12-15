@@ -454,9 +454,9 @@ import main.ast.node.expression.UnaryExpression.UnaryOperator;
           |   val = CONST_STR {$synExpression = new StringValue($val.text, new StringType()); $synExpression.setLineNumber($val.getLine());}
           |   'new ' 'int' '[' val = CONST_NUM ']' {NewArray arr = new NewArray(); arr.setExpression(new IntValue($val.int, new IntType())); arr.setLineNumber($val.getLine()); $synExpression = arr;}
           |   'new ' className = ID '(' ')' {$synExpression = new NewClass(new Identifier($className.text)); $synExpression.setLineNumber($className.getLine());}
-          |   'this' {$synExpression = new This();}
-          |   'true' {$synExpression = new BooleanValue(true, new BooleanType());}
-          |   'false' {$synExpression = new BooleanValue(false, new BooleanType());}
+          |   val = 'this' {$synExpression = new This(); $synExpression.setLineNumber($val.getLine());}
+          |   val = 'true' {$synExpression = new BooleanValue(true, new BooleanType()); $synExpression.setLineNumber($val.getLine());}
+          |   val = 'false' {$synExpression = new BooleanValue(false, new BooleanType()); $synExpression.setLineNumber($val.getLine());}
           |   val = ID {$synExpression = new Identifier($val.text); $synExpression.setLineNumber($val.getLine());}
           |   val = ID '[' ex = expression ']' {$synExpression = new ArrayCall(new Identifier($val.text), $ex.synExpression); $synExpression.setLineNumber($val.getLine());}
           |   '(' ex = expression ')' {$synExpression = $ex.synExpression;}
