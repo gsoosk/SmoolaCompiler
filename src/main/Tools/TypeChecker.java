@@ -57,7 +57,12 @@ public class TypeChecker {
       return contain;
     }
   }
-
+  private static boolean checkSubTyping(String type, String parent)
+  {
+    if(isSubtypeOf(type, parent))
+      return  true;
+    return isSubtypeOf(parent, type);
+  }
   private static Type unaryExprTypeCheck(UnaryExpression expr)
   {
     Type expressionType =  expressionTypeCheck(expr.getValue());
@@ -108,11 +113,20 @@ public class TypeChecker {
     }
     else if(operator == BinaryOperator.eq || operator == BinaryOperator.neq)
     {
-      if(!(leftType.getClass().equals(rightType.getClass())) && (leftType instanceof NoType || rightType instanceof NoType))
-      {
+      if(leftType instanceof BooleanType || rightType instanceof BooleanType)
         return new NoType();
-      }
 
+      if(leftType instanceof NoType || rightType instanceof NoType)
+        return new BooleanType();
+
+      if(!(leftType.getClass().equals(rightType.getClass())) )
+        return new NoType();
+
+      if(leftType instanceof UserDefinedType && rightType instanceof UserDefinedType)
+      {
+        if(!checkSubTyping(((UserDefinedType) leftType).getName().getName(), ((UserDefinedType) rightType).getName().getName()))
+          return new NoType();
+      }
       return new BooleanType();
     }
     return new NoType();
@@ -141,24 +155,25 @@ public class TypeChecker {
   }
   private static Type methodCallTypeCheck(MethodCall methodCall)
   {
-    //NOTE: This method handle error inside of itself and don't need to handle it outside
-    //instance checking
+    //NOTE: This method handle error inside of itself and don't need to handle it outside. just should print NoType error
+
+    //instance checking.
     Type instanceType = expressionTypeCheck(methodCall.getInstance());
+    if(instanceType instanceof NoType)
+      return new NoType();
+
     if(!(instanceType instanceof UserDefinedType))
     {
-//      if(!(instanceType instanceof NoType))
-//        return new NoType("Line:"+ methodCall.getLineNumber() +":class "+ instanceType.getClass() + " is not declared");
-      if(methodCall.getInstance() instanceof Identifier)
-        return new NoType("Line:" + methodCall.getLineNumber() + ":variable " + ((Identifier) methodCall.getInstance()).getName() + " is not declared");
       return new NoType("Line:"+ methodCall.getLineNumber() +":"+ methodCall.getInstance().toString() + " is not a class instance");
-
     }
+
     String instanceClassName = ((UserDefinedType)instanceType).getName().getName();
     if(!allClassesSymbolTable.containsKey(instanceClassName))
     {
       return new NoType("Line:"+ methodCall.getLineNumber() +":class "+ instanceClassName + " is not declared");
     }
-    //methodname checking
+
+    //MethodName checking
     String methodName = methodCall.getMethodName().getName();
     if(!allClassesSymbolTable.get(instanceClassName).getItems().containsKey("Method:<"+methodName+">"))
     {
@@ -172,6 +187,7 @@ public class TypeChecker {
     {
       return new NoType();
     }
+
     ArrayList<Expression> methodCallArgs = methodCall.getArgs();
     ArrayList<Type> methodItemArgsType = methodItem.getArgTypes();
     if(methodCallArgs.size() != methodItemArgsType.size())
@@ -179,14 +195,16 @@ public class TypeChecker {
     for(int i = 0; i < methodCallArgs.size(); i++)
     {
       expressionTypeCheck(methodCallArgs.get(i));
+      if(methodCallArgs.get(i).getType() instanceof NoType)
+        continue;
       if( !methodCallArgs.get(i).getType().getClass().equals(methodItemArgsType.get(i).getClass()))
-        return new NoType("Line:" + methodCall.getLineNumber() + ":argument number " + Integer.toString(i) + " does not have correct type");
+        return new NoType("Line:" + methodCall.getLineNumber() + ":argument number " + Integer.toString(i + 1) + " does not have correct type");
       if(methodCallArgs.get(i).getType() instanceof UserDefinedType)
       {
         String child = ((UserDefinedType)methodCallArgs.get(i).getType()).getName().getName();
         String parent = ((UserDefinedType) methodItemArgsType.get(i)).getName().getName();
         if(!isSubtypeOf(child, parent))
-          return new NoType("Line:" + methodCall.getLineNumber() + ":argument number " + Integer.toString(i) + " does not have correct type");;
+          return new NoType("Line:" + methodCall.getLineNumber() + ":argument number " + Integer.toString(i + 1) + " does not have correct type");;
       }
     }
     return methodItem.getReturnType();

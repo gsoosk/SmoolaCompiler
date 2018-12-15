@@ -192,8 +192,9 @@ public class SecondPassVisitor implements  Visitor{
 
     @Override
     public void visit(MethodCall methodCall) {
-        inMethodCall = true;
-        if(TypeChecker.expressionTypeCheck(methodCall) instanceof NoType)
+
+        TypeChecker.expressionTypeCheck(methodCall);
+        if(methodCall.getType() instanceof NoType && ((NoType) methodCall.getType()).hasError())
         {
             isThereError = true;
             System.out.println(((NoType)methodCall.getType()).getTypeErrorMsg());
@@ -201,13 +202,16 @@ public class SecondPassVisitor implements  Visitor{
 
         toOut.add(methodCall.toString());
         methodCall.getInstance().accept(this);
+
+        inMethodCall = true;
         methodCall.getMethodName().accept(this);
+        inMethodCall = false;
 
         ArrayList<Expression> args = methodCall.getArgs();
         for (Expression arg : args) {
             arg.accept(this);
         }
-        inMethodCall = false;
+
     }
 
     @Override
@@ -291,7 +295,8 @@ public class SecondPassVisitor implements  Visitor{
     }
     private void conditionCheck(Expression cond)
     {
-        if(!(TypeChecker.expressionTypeCheck(cond) instanceof BooleanType))
+        Type exprType = TypeChecker.expressionTypeCheck(cond);
+        if(!(exprType instanceof BooleanType) && !(exprType instanceof NoType))
         {
             isThereError = true;
             System.out.println("Line:" + cond.getLineNumber() + ":condition type must be boolean");
@@ -300,6 +305,7 @@ public class SecondPassVisitor implements  Visitor{
     @Override
     public void visit(Conditional conditional) {
         conditionCheck(conditional.getExpression());
+
         toOut.add(conditional.toString());
         conditional.getExpression().accept(this);
         conditional.getConsequenceBody().accept(this);
@@ -310,6 +316,7 @@ public class SecondPassVisitor implements  Visitor{
     @Override
     public void visit(While loop) {
         conditionCheck(loop.getCondition());
+
         toOut.add(loop.toString());
         loop.getCondition().accept(this);
         loop.getBody().accept(this);
@@ -318,7 +325,7 @@ public class SecondPassVisitor implements  Visitor{
     @Override
     public void visit(Write write) {
         Type t = TypeChecker.expressionTypeCheck(write.getArg());
-        if (!(t instanceof IntType ||  t instanceof StringType || t instanceof ArrayType)) {
+        if (!(t instanceof IntType ||  t instanceof StringType || t instanceof ArrayType )) {
             System.out.println("Line:"+ write.getArg().getLineNumber() +":unsupported type for writeln");
         }
         toOut.add(write.toString());

@@ -1,7 +1,7 @@
 package main.ast.Type;
 
 public class NoType extends Type {
-    String typeErrorMsg = "";
+    String typeErrorMsg;
 
     @Override
     public String toString() {
@@ -10,6 +10,10 @@ public class NoType extends Type {
     public NoType()
     {
         typeErrorMsg = "";
+    }
+    public boolean hasError()
+    {
+        return !typeErrorMsg.equals("");
     }
     public NoType(String _typeErrorMsg)
     {
