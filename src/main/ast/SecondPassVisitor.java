@@ -340,6 +340,10 @@ public class SecondPassVisitor implements  Visitor{
             if(!TypeChecker.isSubtypeOf(((UserDefinedType)r).getName().getName(), ((UserDefinedType)l).getName().getName())) {
                 handleUnsupportedOperationException("assign", lvalue );
             }
+        } else if (l instanceof ArrayType && r instanceof ArrayType) {
+            if (((ArrayType)l).getSize() != ((ArrayType)r).getSize()) {
+                System.out.println("Line:" + lvalue.getLineNumber() + ":both arrays should have the same size");
+            }
         }
         toOut.add(assign.toString());
         assign.getlValue().accept(this);
