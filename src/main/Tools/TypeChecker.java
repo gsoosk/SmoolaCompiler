@@ -241,6 +241,17 @@ public class TypeChecker {
       return new NoType();
     return new ArrayType();
   }
+  private static Type newClassTypeCheck(NewClass newClass)
+  {
+    String className = newClass.getClassName().getName();
+    if (!allClassesSymbolTable.containsKey(className)) {
+      return NoType();
+    } else {
+      Type t = new UserDefinedType();
+      t.setName(newClass.getClassName());
+      return t;
+    }
+  }
   public static Type expressionTypeCheck(Expression expr)
   {
 
@@ -264,6 +275,8 @@ public class TypeChecker {
       expr.setType(arrayCallTypeCheck((ArrayCall) expr));
     else if(expr instanceof NewArray)
       expr.setType(newArrayTypeCheck((NewArray) expr));
+    else if(expr instanceof NewClass)
+      expr.setType(newClassTypeCheck((NewClass) expr));
     else
       expr.setType(new NoType());
     return expr.getType();
