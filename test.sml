@@ -17,6 +17,7 @@ class c extends b{
         var cl4 : y;
         var b1 : boolean;
         var b2 : boolean;
+        cl1 = new AC();
 
         x = new int[1];
         x[2] = y+x[3];

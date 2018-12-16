@@ -245,10 +245,10 @@ public class TypeChecker {
   {
     String className = newClass.getClassName().getName();
     if (!allClassesSymbolTable.containsKey(className)) {
-      return NoType();
+      return new NoType();
     } else {
       Type t = new UserDefinedType();
-      t.setName(newClass.getClassName());
+      ((UserDefinedType)t).setName(newClass.getClassName());
       return t;
     }
   }
