@@ -1,6 +1,7 @@
 class b {
     def main() : int {
-        new c().test();
+
+        new c().test().test();
         return 1;
     }
 }

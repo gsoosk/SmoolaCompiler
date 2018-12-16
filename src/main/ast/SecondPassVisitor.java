@@ -230,19 +230,11 @@ public class SecondPassVisitor implements  Visitor{
 
     @Override
     public void visit(MethodCall methodCall) {
-        if(!inMain)
+        TypeChecker.expressionTypeCheck(methodCall);
+        if(methodCall.getType() instanceof NoType && ((NoType) methodCall.getType()).hasError())
         {
-            methodCall.setType(new NoType());
-            System.out.println("Line:" + methodCall.getLineNumber()+":method " + methodCall.getMethodName().getName() + " is called out of main");
-        }
-        else
-        {
-            TypeChecker.expressionTypeCheck(methodCall);
-            if(methodCall.getType() instanceof NoType && ((NoType) methodCall.getType()).hasError())
-            {
-                isThereError = true;
-                System.out.println(((NoType)methodCall.getType()).getTypeErrorMsg());
-            }
+            isThereError = true;
+            System.out.println(((NoType)methodCall.getType()).getTypeErrorMsg());
         }
 
         toOut.add(methodCall.toString());
