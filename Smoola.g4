@@ -478,7 +478,7 @@ import main.ast.node.expression.UnaryExpression.UnaryOperator;
         'int' {$synType = new IntType();} |
         'boolean' {$synType = new BooleanType();} |
         'string' {$synType = new StringType();} |
-        'int' '[' ']' {$synType = new ArrayType();} |
+        'int' '[' ']' {$synType = new ArrayType(); $synType.setSize(-1)} |
         val = ID {$synType = new UserDefinedType(); ((UserDefinedType)$synType).setName(new Identifier($val.text));}
     ;
     CONST_NUM:

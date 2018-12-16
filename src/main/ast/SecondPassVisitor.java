@@ -51,6 +51,7 @@ public class SecondPassVisitor implements  Visitor{
 
     @Override
     public void visit(Program program) {
+
         toOut.add(program.toString());
         program.getMainClass().accept(this);
         for (ClassDeclaration aClass : program.getClasses()) {
@@ -98,12 +99,12 @@ public class SecondPassVisitor implements  Visitor{
             statement.getExpression().accept(this);
         else if (inMain)
         {
-            System.out.println("Line:" + statement.getLineNumber() + ":this kind of statement doesn't supported in main method");
+            System.out.println("Line:" + statement.getLineNumber() + ":this kind of statement isn't supported in main method");
             isThereError = true;
         }
         else
         {
-            System.out.println("Line:" + statement.getLineNumber() + ":this kind of statement doesn't supported");
+            System.out.println("Line:" + statement.getLineNumber() + ":this kind of statement isn't supported");
             isThereError = true;
         }
     }
@@ -253,6 +254,7 @@ public class SecondPassVisitor implements  Visitor{
 
     @Override
     public void visit(NewArray newArray) {
+
         TypeChecker.expressionTypeCheck(newArray);
         if(newArray.getType() instanceof NoType)
         {
@@ -319,6 +321,9 @@ public class SecondPassVisitor implements  Visitor{
         Expression rvalue = assign.getrValue();
         Type l = TypeChecker.expressionTypeCheck(lvalue);
         Type r = TypeChecker.expressionTypeCheck(rvalue);
+        if(l instanceof ArrayType && r instanceof ArrayType)
+            lvalue.setType(r);
+
         if(!(lvalue instanceof Identifier || lvalue instanceof ArrayCall))
         {
             isThereError = true;
@@ -331,10 +336,6 @@ public class SecondPassVisitor implements  Visitor{
         } else if (l instanceof UserDefinedType && r instanceof UserDefinedType) {
             if(!TypeChecker.isSubtypeOf(((UserDefinedType)r).getName().getName(), ((UserDefinedType)l).getName().getName())) {
                 handleUnsupportedOperationException("assign", lvalue );
-            }
-        } else if (l instanceof ArrayType && r instanceof ArrayType) {
-            if (((ArrayType)l).getSize() != ((ArrayType)r).getSize()) {
-                System.out.println("Line:" + lvalue.getLineNumber() + ":both arrays should have the same size");
             }
         }
         toOut.add(assign.toString());

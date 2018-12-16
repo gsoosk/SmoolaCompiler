@@ -114,6 +114,11 @@ public class TypeChecker {
     }
     else if(operator == BinaryOperator.eq || operator == BinaryOperator.neq)
     {
+      if(leftType instanceof ArrayType && rightType instanceof ArrayType)
+      {
+        if(((ArrayType) leftType).getSize() != ((ArrayType) rightType).getSize())
+          return new NoType();
+      }
       if(leftType instanceof BooleanType || rightType instanceof BooleanType)
         return new NoType();
 
@@ -239,6 +244,8 @@ public class TypeChecker {
       return new ArrayType();
     if(!(newArray.getExpression().getType() instanceof IntType))
       return new NoType();
+    ArrayType toReturn = new ArrayType();
+    toReturn.setSize(((IntValue) newArray.getExpression()).getConstant());
     return new ArrayType();
   }
   private static Type newClassTypeCheck(NewClass newClass)

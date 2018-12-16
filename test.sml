@@ -24,6 +24,7 @@ class A{
         return new A();
     }
     def h() :int{
+
         return 0;
     }
 }
