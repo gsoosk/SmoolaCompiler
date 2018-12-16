@@ -92,6 +92,21 @@ public class SecondPassVisitor implements  Visitor{
             methodDeclaration.accept(this);
         }
     }
+    @Override
+    public void visit(Statement statement) {
+        if(statement.getExpression() != null)
+            statement.getExpression().accept(this);
+        else if (inMain)
+        {
+            System.out.println("Line:" + statement.getLineNumber() + ":this kind of statement doesn't supported in main method");
+            isThereError = true;
+        }
+        else
+        {
+            System.out.println("Line:" + statement.getLineNumber() + ":this kind of statement doesn't supported");
+            isThereError = true;
+        }
+    }
 
     @Override
     public void visit(MethodDeclaration methodDeclaration) {

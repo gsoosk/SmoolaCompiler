@@ -15,17 +15,19 @@ import main.ast.Type.UserDefinedType.*;
 import main.ast.node.expression.BinaryExpression.BinaryOperator;
 import main.ast.node.expression.UnaryExpression.UnaryOperator;
 }
-
+@members {
+ boolean inMain;
+}
     program
     :
         {
-            boolean inMain = true;
+            inMain = true;
         }
         main = mainClass
         {
             Program program = new Program();
             program.setMainClass($main.synMainClass);
-            inMain = false
+            inMain = false;
         }
 
         ( classDec = classDeclaration {program.addClass($classDec.synClassDeclaration);})* EOF
@@ -165,7 +167,7 @@ import main.ast.node.expression.UnaryExpression.UnaryOperator;
     ;
     statementAssignment returns [Statement synStatementAssign]
     :
-        expr = expression ';'
+        expr = expression val = ';'
         {
             if($expr.BinaryOp != null)
             {
@@ -173,8 +175,11 @@ import main.ast.node.expression.UnaryExpression.UnaryOperator;
             }
             else
             {
-
                 $synStatementAssign = new Statement();
+                if(inMain && $expr.synExpression instanceof MethodCall)
+                    $synStatementAssign.setExpression($expr.synExpression);
+
+                $synStatementAssign.setLineNumber($val.getLine());
             }
         }
     ;

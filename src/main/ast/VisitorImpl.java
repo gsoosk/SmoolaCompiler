@@ -403,4 +403,10 @@ public class VisitorImpl implements Visitor {
 
         write.getArg().accept(this);
     }
+
+    @Override
+    public void visit(Statement statement) {
+
+    }
+
 }

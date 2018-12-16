@@ -21,5 +21,5 @@ public class Statement extends Node {
         return expression;
     }
     @Override
-    public void accept(Visitor visitor) {}
+    public void accept(Visitor visitor) {visitor.visit(this);}
 }
