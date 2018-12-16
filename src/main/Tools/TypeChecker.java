@@ -232,6 +232,15 @@ public class TypeChecker {
 
     return new IntType();
   }
+  private static Type newArrayTypeCheck(NewArray newArray)
+  {
+    expressionTypeCheck(newArray.getExpression());
+    if(newArray.getExpression().getType() instanceof NoType)
+      return new ArrayType();
+    if(!(newArray.getExpression().getType() instanceof IntType))
+      return new NoType();
+    return new ArrayType();
+  }
   public static Type expressionTypeCheck(Expression expr)
   {
 
@@ -253,6 +262,8 @@ public class TypeChecker {
       expr.setType(lengthTypeCheck((Length) expr));
     else if(expr instanceof ArrayCall)
       expr.setType(arrayCallTypeCheck((ArrayCall) expr));
+    else if(expr instanceof NewArray)
+      expr.setType(newArrayTypeCheck((NewArray) expr));
     else
       expr.setType(new NoType());
     return expr.getType();

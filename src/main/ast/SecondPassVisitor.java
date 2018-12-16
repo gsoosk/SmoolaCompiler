@@ -222,13 +222,19 @@ public class SecondPassVisitor implements  Visitor{
 
     @Override
     public void visit(NewArray newArray) {
-
+        TypeChecker.expressionTypeCheck(newArray);
+        if(newArray.getType() instanceof NoType)
+        {
+            isThereError = true;
+            System.out.println("Line:" + newArray.getLineNumber() + ":array size should be int");
+        }
         toOut.add(newArray.toString());
         newArray.getExpression().accept(this);
     }
 
     @Override
     public void visit(NewClass newClass) {
+
         toOut.add(newClass.toString());
         newClass.getClassName().accept(this);
     }
@@ -277,8 +283,8 @@ public class SecondPassVisitor implements  Visitor{
         //TODO: check lvalues not to be rvalues
         if(!(lvalue instanceof Identifier || lvalue instanceof ArrayCall))
         {
+            isThereError = true;
             System.out.println("Line:" + lvalue.getLineNumber() +  ":left side of assignment must be a valid lvalue");
-
         }
         if (!l.getClass().equals(r.getClass()) && !(r instanceof NoType))
         {

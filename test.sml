@@ -18,7 +18,7 @@ class c extends b{
         var b1 : boolean;
         var b2 : boolean;
 
-
+        x = new int[y];
         x[2] = y+x[3];
         if( cl1 == cl3) then {
 
