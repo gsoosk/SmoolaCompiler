@@ -381,6 +381,7 @@ import main.ast.node.expression.UnaryExpression.UnaryOperator;
             if($index.synExpression != null)
             {
                 $synExpression = new ArrayCall($instance.synExpression, $index.synExpression);
+                $synExpression.setLineNumber($instance.synExpression.getLineNumber());
             }
             else
                 $synExpression = $instance.synExpression;

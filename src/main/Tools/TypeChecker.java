@@ -16,6 +16,7 @@ import main.ast.node.expression.Value.BooleanValue;
 import main.ast.node.expression.Value.IntValue;
 import main.symbolTable.*;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -220,6 +221,17 @@ public class TypeChecker {
     }
     return new IntType();
   }
+  private static Type arrayCallTypeCheck(ArrayCall arrayCall)
+  {
+    Type indexType = expressionTypeCheck(arrayCall.getIndex());
+    Type instanceType = expressionTypeCheck(arrayCall.getInstance());
+    if(!(indexType instanceof NoType) && !(indexType instanceof IntType))
+      return new NoType("type of index should be int");
+    if(!(instanceType instanceof NoType) && !(instanceType instanceof ArrayType))
+      return new NoType("type of instance should be array");
+
+    return new IntType();
+  }
   public static Type expressionTypeCheck(Expression expr)
   {
 
@@ -239,6 +251,8 @@ public class TypeChecker {
       expr.setType(methodCallTypeCheck((MethodCall) expr));
     else if(expr instanceof Length)
       expr.setType(lengthTypeCheck((Length) expr));
+    else if(expr instanceof ArrayCall)
+      expr.setType(arrayCallTypeCheck((ArrayCall) expr));
     else
       expr.setType(new NoType());
     return expr.getType();

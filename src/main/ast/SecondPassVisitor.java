@@ -145,6 +145,10 @@ public class SecondPassVisitor implements  Visitor{
 
     @Override
     public void visit(ArrayCall arrayCall) {
+        TypeChecker.expressionTypeCheck(arrayCall);
+        if(arrayCall.getType() instanceof NoType)
+            System.out.println("Line:" + arrayCall.getInstance().getLineNumber() + ":" + ((NoType) arrayCall.getType()).getTypeErrorMsg());
+
         toOut.add(arrayCall.toString());
         arrayCall.getInstance().accept(this);
         arrayCall.getIndex().accept(this);
@@ -271,6 +275,11 @@ public class SecondPassVisitor implements  Visitor{
         Type l = TypeChecker.expressionTypeCheck(lvalue);
         Type r = TypeChecker.expressionTypeCheck(rvalue);
         //TODO: check lvalues not to be rvalues
+        if(!(lvalue instanceof Identifier || lvalue instanceof ArrayCall))
+        {
+            System.out.println("Line:" + lvalue.getLineNumber() +  ":left side of assignment must be a valid lvalue");
+
+        }
         if (!l.getClass().equals(r.getClass()) && !(r instanceof NoType))
         {
             handleUnsupportedOperationException("assign", lvalue);

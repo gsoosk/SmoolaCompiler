@@ -8,7 +8,7 @@ class b {
 class c extends b{
 
     def test2(x1 : int) : AC {
-        var x : int ;
+        var x : int[] ;
         var y : int ;
         var z : int ;
         var cl1 : AC;
@@ -19,7 +19,7 @@ class c extends b{
         var b2 : boolean;
 
 
-        cl1 = cl3;
+        x[2] = y+x[3];
         if( cl1 == cl3) then {
 
         }
