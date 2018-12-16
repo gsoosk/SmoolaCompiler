@@ -1,4 +1,19 @@
-// Generated from /Users/farzad/Desktop/PLC/Projects/Phase 2/Smoola/Smoola.g4 by ANTLR 4.7.1
+// Generated from /Users/thesoli/Desktop/Courses/Fall97/PL/Projects/Phase3/Smoola/Smoola.g4 by ANTLR 4.7.1
+
+import main.Tools.AstMaker;
+import main.ast.node.*;
+import main.ast.*;
+import main.ast.node.expression.*;
+import main.ast.node.expression.Value.*;
+import main.ast.node.statement.*;
+import main.ast.node.declaration.*;
+import main.ast.Type.*;
+import main.ast.Type.ArrayType.*;
+import main.ast.Type.PrimitiveType.*;
+import main.ast.Type.UserDefinedType.*;
+import main.ast.node.expression.BinaryExpression.BinaryOperator;
+import main.ast.node.expression.UnaryExpression.UnaryOperator;
+
 import org.antlr.v4.runtime.Lexer;
 import org.antlr.v4.runtime.CharStream;
 import org.antlr.v4.runtime.Token;

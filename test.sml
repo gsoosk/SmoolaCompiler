@@ -1,5 +1,45 @@
+class Main {
+    def main() : int {
+        1+2;
+        new A().g(1);
+        return 0;
+    }
+}
+
+class NotMain{
+    def f(x : int) : int{
+        var arr : int[];
+        var a : int;
+        arr = new int[5];
+        arr[x] = 3;
+        a = new A().g(2,2);
+        2+3;
+        return arr[x];
+    }
+}
+
+class A{
+    var x : NotMain;
+    def g(x: int, y:int) : A {
+        return new A();
+    }
+    def h() :int{
+
+        return 0;
+    }
+}
+
+class B extends A {
+    def x() : int {
+        x = new NotMain();
+        return x.f(5);
+    }
+
+}
+
 class b {
     def main() : int {
+
         return arr[009+i];
     }
 }
@@ -39,15 +79,14 @@ class a extends b {
         var x : string;
 
         if(
-             !x == 1 ||
+            !x == 1 ||
             x[x*2 + 5*x] == true &&
             a+b+c+d /d/ c +d ||
             a / b * c + d - e ||
             a > b ||
             b < d
-
         ) then {
-            a = b;
+            writeln(class2.main((2 * (((3))) + x)));
         }
 
         while(a[34 + 4 + 3 + 3 ]) {
@@ -245,7 +284,7 @@ class Test1{
 
 class Test2 {
   def main() : int {
-    arr = new int[1];
+    arr = new int[0];
     return 0;
   }
 }

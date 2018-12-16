@@ -15,19 +15,27 @@ import main.ast.Type.UserDefinedType.*;
 import main.ast.node.expression.BinaryExpression.BinaryOperator;
 import main.ast.node.expression.UnaryExpression.UnaryOperator;
 }
-
+@members {
+ boolean inMain;
+}
     program
     :
+        {
+            inMain = true;
+        }
         main = mainClass
         {
             Program program = new Program();
             program.setMainClass($main.synMainClass);
+            inMain = false;
         }
+
         ( classDec = classDeclaration {program.addClass($classDec.synClassDeclaration);})* EOF
         {
             Visitor visitor = new VisitorImpl();
             visitor.visit(program);
         }
+
 
     ;
     mainClass returns [ClassDeclaration synMainClass]
@@ -131,9 +139,10 @@ import main.ast.node.expression.UnaryExpression.UnaryOperator;
     ;
     statementCondition returns [Statement synStatementCondition]
     :
-        'if' '(' conditionExp = expression')' 'then' consequenceBody = statement
+         'if' '(' conditionExp = expression')' 'then' consequenceBody = statement
          {
             Conditional conditional = new Conditional($conditionExp.synExpression, $consequenceBody.synStatement);
+            $synStatementCondition = conditional;
          }('else' altBody = statement
          {
             conditional.setAlternativeBody($altBody.synStatement);
@@ -150,14 +159,15 @@ import main.ast.node.expression.UnaryExpression.UnaryOperator;
     ;
     statementWrite returns [Statement synStatementWrite]
     :
-        'writeln(' arg = expression ')' ';'
+        val = 'writeln(' arg = expression ')' ';'
         {
             $synStatementWrite = new Write($arg.synExpression);
+            $synStatementWrite.setLineNumber($val.getLine());
         }
     ;
     statementAssignment returns [Statement synStatementAssign]
     :
-        expr = expression ';'
+        expr = expression val = ';'
         {
             if($expr.BinaryOp != null)
             {
@@ -166,9 +176,14 @@ import main.ast.node.expression.UnaryExpression.UnaryOperator;
             else
             {
                 $synStatementAssign = new Statement();
+                if(inMain && $expr.synExpression instanceof MethodCall)
+                    $synStatementAssign.setExpression($expr.synExpression);
+
+                $synStatementAssign.setLineNumber($val.getLine());
             }
         }
     ;
+    //Todo : check all lines number in all rules to be correct
     expression returns [Expression synExpression, String BinaryOp]
     :
         expr = expressionAssignment
@@ -181,10 +196,11 @@ import main.ast.node.expression.UnaryExpression.UnaryOperator;
     ;
     expressionAssignment returns [Expression synExpression, String BinaryOp]
     :
-        lExpr = expressionOr '=' rExpr = expressionAssignment
+        lExpr = expressionOr val = '=' rExpr = expressionAssignment
         {
             $BinaryOp = "=";
             $synExpression = new BinaryExpression($lExpr.synExpression, $rExpr.synExpression, BinaryOperator.assign);
+            $synExpression.setLineNumber($val.getLine());
 
         }
         |	expr = expressionOr
@@ -202,10 +218,11 @@ import main.ast.node.expression.UnaryExpression.UnaryOperator;
     ;
     expressionOrTemp[Expression inhExpression] returns [Expression synExpression]
     :
-        '||' lExpr = expressionAnd
+        val = '||' lExpr = expressionAnd
         {
 
                Expression expr = new BinaryExpression($inhExpression, $lExpr.synExpression , BinaryOperator.or);
+               expr.setLineNumber($val.getLine());
         }
         rExpr = expressionOrTemp[expr]
         {
@@ -225,10 +242,11 @@ import main.ast.node.expression.UnaryExpression.UnaryOperator;
     ;
     expressionAndTemp[Expression inhExpression] returns [Expression synExpression]
     :
-        '&&' lExpr = expressionEq
+        val = '&&' lExpr = expressionEq
         {
 
                Expression expr = new BinaryExpression($inhExpression, $lExpr.synExpression, BinaryOperator.and);
+               expr.setLineNumber($val.getLine());
         }
          rExpr = expressionAndTemp[expr]
         {
@@ -256,7 +274,7 @@ import main.ast.node.expression.UnaryExpression.UnaryOperator;
                 expr = new BinaryExpression($inhExpression, $lExpr.synExpression, BinaryOperator.eq);
             else
                 expr = new BinaryExpression($inhExpression, $lExpr.synExpression, BinaryOperator.neq);
-
+            expr.setLineNumber($binaryOp.getLine());
         }
         rExpr = expressionEqTemp[expr]
         {
@@ -283,11 +301,12 @@ import main.ast.node.expression.UnaryExpression.UnaryOperator;
                 expr = new BinaryExpression($inhExpression, $lExpr.synExpression, BinaryOperator.lt);
             else
                 expr = new BinaryExpression($inhExpression, $lExpr.synExpression, BinaryOperator.gt);
-
+            expr.setLineNumber($binaryOp.getLine());
         }
         rExpr = expressionCmpTemp[expr]
         {
             $synExpression = $rExpr.synExpression;
+
         }
         |
         {
@@ -310,11 +329,12 @@ import main.ast.node.expression.UnaryExpression.UnaryOperator;
                 expr = new BinaryExpression($inhExpression, $lExpr.synExpression, BinaryOperator.add);
             else
                 expr = new BinaryExpression($inhExpression, $lExpr.synExpression, BinaryOperator.sub);
-
+            expr.setLineNumber($binaryOp.getLine());
         }
         rExpr = expressionAddTemp[expr]
         {
             $synExpression = $rExpr.synExpression;
+
         }
         |
         {
@@ -337,7 +357,7 @@ import main.ast.node.expression.UnaryExpression.UnaryOperator;
                 expr = new BinaryExpression($inhExpression, $lExpr.synExpression, BinaryOperator.mult);
             else
                  expr = new BinaryExpression($inhExpression, $lExpr.synExpression, BinaryOperator.div);
-
+            expr.setLineNumber($binaryOp.getLine());
         }
         rExpr = expressionMultTemp[expr]
         {
@@ -350,13 +370,15 @@ import main.ast.node.expression.UnaryExpression.UnaryOperator;
     ;
     expressionUnary returns [Expression synExpression]
     :
-        '!' uExpr1 = expressionUnary
+        val = '!' uExpr1 = expressionUnary
         {
             $synExpression = new UnaryExpression(UnaryOperator.not, $uExpr1.synExpression);
+            $synExpression.setLineNumber($val.getLine());
         }
-        | '-' uExpr2 = expressionUnary
+        |val = '-' uExpr2 = expressionUnary
         {
             $synExpression = new UnaryExpression(UnaryOperator.minus, $uExpr2.synExpression);
+            $synExpression.setLineNumber($val.getLine());
         }
         |	expr = expressionMem
         {
@@ -368,7 +390,10 @@ import main.ast.node.expression.UnaryExpression.UnaryOperator;
         instance = expressionMethods index = expressionMemTemp
         {
             if($index.synExpression != null)
+            {
                 $synExpression = new ArrayCall($instance.synExpression, $index.synExpression);
+                $synExpression.setLineNumber($instance.synExpression.getLineNumber());
+            }
             else
                 $synExpression = $instance.synExpression;
         }
@@ -403,18 +428,19 @@ import main.ast.node.expression.UnaryExpression.UnaryOperator;
         (methodName = ID '(' ')'
         {
             method = new MethodCall($inhExpression, new Identifier($methodName.text));
-//            method.setLineNumber($methodName.getLine());
+            method.setLineNumber($methodName.getLine());
         }
         | methodName = ID '(' ( arg1 = expression
         {
             method = new MethodCall($inhExpression, new Identifier($methodName.text));
             ((MethodCall)method).addArg($arg1.synExpression);
-//            method.setLineNumber($methodName.getLine());
+            method.setLineNumber($methodName.getLine());
         }
         (',' arg = expression{((MethodCall)method).addArg($arg.synExpression);})*) ')'
-        | 'length'
+        | val = 'length'
         {
             method = new Length($inhExpression);
+            method.setLineNumber($val.getLine());
         }
         )
         {
@@ -440,9 +466,9 @@ import main.ast.node.expression.UnaryExpression.UnaryOperator;
           |   val = CONST_STR {$synExpression = new StringValue($val.text, new StringType()); $synExpression.setLineNumber($val.getLine());}
           |   'new ' 'int' '[' val = CONST_NUM ']' {NewArray arr = new NewArray(); arr.setExpression(new IntValue($val.int, new IntType())); arr.setLineNumber($val.getLine()); $synExpression = arr;}
           |   'new ' className = ID '(' ')' {$synExpression = new NewClass(new Identifier($className.text)); $synExpression.setLineNumber($className.getLine());}
-          |   'this' {$synExpression = new This();}
-          |   'true' {$synExpression = new BooleanValue(true, new BooleanType());}
-          |   'false' {$synExpression = new BooleanValue(false, new BooleanType());}
+          |   val = 'this' {$synExpression = new This(); $synExpression.setLineNumber($val.getLine());}
+          |   val = 'true' {$synExpression = new BooleanValue(true, new BooleanType()); $synExpression.setLineNumber($val.getLine());}
+          |   val = 'false' {$synExpression = new BooleanValue(false, new BooleanType()); $synExpression.setLineNumber($val.getLine());}
           |   val = ID {$synExpression = new Identifier($val.text); $synExpression.setLineNumber($val.getLine());}
           |   val = ID '[' ex = expression ']' {$synExpression = new ArrayCall(new Identifier($val.text), $ex.synExpression); $synExpression.setLineNumber($val.getLine());}
           |   '(' ex = expression ')' {$synExpression = $ex.synExpression;}
@@ -452,8 +478,8 @@ import main.ast.node.expression.UnaryExpression.UnaryOperator;
         'int' {$synType = new IntType();} |
         'boolean' {$synType = new BooleanType();} |
         'string' {$synType = new StringType();} |
-        'int' '[' ']' {$synType = new ArrayType();} |
-        ID {$synType = new UserDefinedType();}
+        'int' '[' ']' {$synType = new ArrayType(); $synType.setSize(-1)} |
+        val = ID {$synType = new UserDefinedType(); ((UserDefinedType)$synType).setName(new Identifier($val.text));}
     ;
     CONST_NUM:
         [0-9]+

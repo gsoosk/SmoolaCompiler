@@ -1,13 +1,28 @@
-## PHASE2 ( Semantics )
+# Smoola Compiler
 ### What does it do ? 
-This is a Lexer and Parser for Smoola language.
-In this Phase of project it makes AST from lexer analysis and make SymbolTable. At last it shows up semantic Errors.
+This is a compiler for Smoola language.
 
+In Phase 2 of project it makes AST from lexer analysis and make SymbolTable. At last it shows up semantic Errors.
+
+In Phase 3 of project it shows remaining errors and do type checking.
+
+## PHASE2 ( Semantics )
 ### Errors 
 * Redefination of Methods 
 * Redefination of Variables
 * Redefination of Classes
 * New Array zero length 
+
+## PHASE3 ( Type Checking )
+### Errors ( Main Errors ) 
+* Refrence to a undeclared variable
+* Unsupported operand type using 
+* Type checking all conditions and statements
+* Unsupported usage of method calls
+* writeln type check
+* Not validation of left side of assignment
+* return type validation
+* and all other compile errors...
 
 ## How to run ? 
 You should at first `generate` Smoola.g4 grammer using Antlr. and then running whole project. 

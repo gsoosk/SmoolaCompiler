@@ -4,18 +4,22 @@ public class PassSaver {
     private String key;
     private String parrentName;
     private String className;
-    public  PassSaver(String _key, String _parrentName, String _className){
+    private boolean methodOrNot;
+
+    public  PassSaver(String _key, String _parrentName, String _className, boolean _methodOrNot){
         key = _key;
         parrentName = _parrentName;
         className = _className;
+        methodOrNot = _methodOrNot;
     }
     public PassSaver(String _key, String _className, boolean _methodVar){
         key = _key;
         parrentName = null;
         className = _className;
+        methodOrNot = _methodVar;
     }
-    public boolean doesItHaveConflict(String name, String _className, String _parrentName){
-        if(key.equals(name))
+    public boolean doesItHaveConflict(String name, String _className, String _parrentName, boolean type){
+        if(key.equals(name) && type == methodOrNot)
         {
             if(_parrentName != null)
                 if(_parrentName.equals(className))
@@ -27,9 +31,9 @@ public class PassSaver {
         }
         return false;
     }
-    public boolean isEqual(String name)
+    public boolean isEqual(String name, boolean type)
     {
-        return key.equals(name);
+        return key.equals(name) && type == methodOrNot;
     }
     public String getClassName(){
         return className;
