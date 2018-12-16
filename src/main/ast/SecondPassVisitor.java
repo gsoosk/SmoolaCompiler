@@ -238,7 +238,7 @@ public class SecondPassVisitor implements  Visitor{
         if(newClass.getType() instanceof NoType)
         {
             isThereError = true;
-            System.out.println("Line:" + newClass.getLineNumber() + ":this class is not declared");
+            System.out.println("Line:"+ newClass.getLineNumber() +":class " + newClass.getClassName().getName() + " is not declared");
         }
         toOut.add(newClass.toString());
         newClass.getClassName().accept(this);
