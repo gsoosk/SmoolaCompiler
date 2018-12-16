@@ -319,7 +319,8 @@ public class SecondPassVisitor implements  Visitor{
         }
         if (!l.getClass().equals(r.getClass()) && !(r instanceof NoType))
         {
-            handleUnsupportedOperationException("assign", lvalue);
+            if (!(l instanceof NoType))
+                handleUnsupportedOperationException("assign", lvalue);
         } else if (l instanceof UserDefinedType && r instanceof UserDefinedType) {
             if(!TypeChecker.isSubtypeOf(((UserDefinedType)r).getName().getName(), ((UserDefinedType)l).getName().getName())) {
                 handleUnsupportedOperationException("assign", lvalue );
