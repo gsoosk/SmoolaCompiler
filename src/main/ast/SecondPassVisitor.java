@@ -1,11 +1,10 @@
 package main.ast;
 
+import main.Tools.HashMaker;
 import main.Tools.TypeChecker;
 import main.ast.Type.NoType;
-import main.ast.Type.*;
 import main.ast.Type.PrimitiveType.*;
 import main.ast.Type.ArrayType.*;
-import main.ast.Type.OkType;
 import main.ast.Type.PrimitiveType.BooleanType;
 import main.ast.Type.UserDefinedType.UserDefinedType;
 import main.ast.Type.Type;
@@ -35,8 +34,12 @@ public class SecondPassVisitor implements  Visitor{
     private boolean isThereError;
     private boolean inMethod;
     private boolean inMethodCall = false;
+    private boolean inNewClass = false;
+    private boolean mainInput = false;
+    private boolean inMain = false;
     private ArrayList<String> toOut = new ArrayList<>();
     private int variablesIndex;
+
     public SecondPassVisitor(HashMap<String, SymbolTable> allClasses, HashMap<String, SymbolTable> allMethods, boolean error, int varIndex)
     {
         allClassesSymbolTable = allClasses;
@@ -66,6 +69,13 @@ public class SecondPassVisitor implements  Visitor{
     public void visit(ClassDeclaration classDeclaration) {
         currentClassName = classDeclaration.getName().getName();
         TypeChecker.setForIdentifier(currentClassName, currentMethodName);
+        if(HashMaker.involvedBadParent.containsKey(currentClassName))
+            if(HashMaker.involvedBadParent.get(currentClassName))
+                System.out.println("Line:" + classDeclaration.getLineNumber() + ":parent class " + classDeclaration.getParentName().getName() +" is not declared");
+        if(HashMaker.involvedCircularInh.containsKey(currentClassName))
+            if(HashMaker.involvedCircularInh.get(currentClassName))
+                System.out.println("Line:" + classDeclaration.getLineNumber() + ":circular inheritance detected in class " + currentClassName);
+
 
         toOut.add(classDeclaration.toString());
         classDeclaration.getName().accept(this);
@@ -85,6 +95,11 @@ public class SecondPassVisitor implements  Visitor{
 
     @Override
     public void visit(MethodDeclaration methodDeclaration) {
+        if(!mainInput)
+        {
+            mainInput = true;
+            inMain  = true;
+        }
 
         toOut.add(methodDeclaration.toString());
         methodDeclaration.getName().accept(this);
@@ -135,6 +150,8 @@ public class SecondPassVisitor implements  Visitor{
         }
         methodDeclaration.getReturnValue().accept(this);
         inMethod = false;
+        if(inMain)
+            inMain = false;
     }
 
     @Override
@@ -167,7 +184,7 @@ public class SecondPassVisitor implements  Visitor{
     @Override
     public void visit(Identifier identifier) {
 
-        if(inMethod && !inMethodCall)
+        if(inMethod && !inMethodCall && !inNewClass)
             if(!allClassesSymbolTable.get(currentClassName).getItems().containsKey(identifier.getName())
                 && !allMethodsSymbolTable.get(currentClassName + "-" + currentMethodName).getItems().containsKey(identifier.getName()))
             {
@@ -198,12 +215,19 @@ public class SecondPassVisitor implements  Visitor{
 
     @Override
     public void visit(MethodCall methodCall) {
-
-        TypeChecker.expressionTypeCheck(methodCall);
-        if(methodCall.getType() instanceof NoType && ((NoType) methodCall.getType()).hasError())
+        if(!inMain)
         {
-            isThereError = true;
-            System.out.println(((NoType)methodCall.getType()).getTypeErrorMsg());
+            methodCall.setType(new NoType());
+            System.out.println("Line:" + methodCall.getLineNumber()+":method " + methodCall.getMethodName().getName() + " is called out of main");
+        }
+        else
+        {
+            TypeChecker.expressionTypeCheck(methodCall);
+            if(methodCall.getType() instanceof NoType && ((NoType) methodCall.getType()).hasError())
+            {
+                isThereError = true;
+                System.out.println(((NoType)methodCall.getType()).getTypeErrorMsg());
+            }
         }
 
         toOut.add(methodCall.toString());
@@ -234,20 +258,23 @@ public class SecondPassVisitor implements  Visitor{
 
     @Override
     public void visit(NewClass newClass) {
+
         TypeChecker.expressionTypeCheck(newClass);
         if(newClass.getType() instanceof NoType)
         {
             isThereError = true;
             System.out.println("Line:"+ newClass.getLineNumber() +":class " + newClass.getClassName().getName() + " is not declared");
         }
+        inNewClass = true;
         toOut.add(newClass.toString());
         newClass.getClassName().accept(this);
+        inNewClass = false;
     }
 
     @Override
     public void visit(This instance) {
+        TypeChecker.expressionTypeCheck(instance);
         toOut.add(instance.toString());
-
     }
 
     private void handleUnsupportedOperationException(String operatorName, Expression expr)
@@ -285,7 +312,6 @@ public class SecondPassVisitor implements  Visitor{
         Expression rvalue = assign.getrValue();
         Type l = TypeChecker.expressionTypeCheck(lvalue);
         Type r = TypeChecker.expressionTypeCheck(rvalue);
-        //TODO: check lvalues not to be rvalues
         if(!(lvalue instanceof Identifier || lvalue instanceof ArrayCall))
         {
             isThereError = true;

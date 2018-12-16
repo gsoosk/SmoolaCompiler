@@ -1,13 +1,23 @@
 class b {
-
     def main() : int {
-
-        return 2;
+        writeln(false);
+        return new c2().test2(1);
     }
 }
-class c extends b{
 
-    def test2(x1 : int) : AC {
+class t extends u {
+
+}
+class i extends t{
+
+}
+class u extends i {
+
+}
+
+class c2 extends b2{
+
+    def test2(x1 : int) : int {
         var x : int[] ;
         var y : int ;
         var z : int ;
@@ -17,9 +27,10 @@ class c extends b{
         var cl4 : y;
         var b1 : boolean;
         var b2 : boolean;
-        cl1 = new AC();
+        cl1 = new NoClass();
 
         x = new int[1];
+        y = cl3.test();
         x[2] = y+x[3];
         if( cl1 == cl3) then {
 
@@ -28,7 +39,7 @@ class c extends b{
         writeln(true);
 
 
-        return false;
+        return 2;
     }
 }
 class AC {
@@ -40,7 +51,7 @@ class BC extends AC {
 class CC extends BC {
 
 }
-class a extends c {
+class a extends c2 {
 
     def test() : AC {
         var d: AC;

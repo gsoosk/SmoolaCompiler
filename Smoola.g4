@@ -18,11 +18,16 @@ import main.ast.node.expression.UnaryExpression.UnaryOperator;
 
     program
     :
+        {
+            boolean inMain = true;
+        }
         main = mainClass
         {
             Program program = new Program();
             program.setMainClass($main.synMainClass);
+            inMain = false
         }
+
         ( classDec = classDeclaration {program.addClass($classDec.synClassDeclaration);})* EOF
         {
             Visitor visitor = new VisitorImpl();
@@ -168,6 +173,7 @@ import main.ast.node.expression.UnaryExpression.UnaryOperator;
             }
             else
             {
+
                 $synStatementAssign = new Statement();
             }
         }

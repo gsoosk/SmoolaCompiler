@@ -252,6 +252,12 @@ public class TypeChecker {
       return t;
     }
   }
+  private static Type thisTypeCheck(This instance)
+  {
+    UserDefinedType toReturn = new UserDefinedType();
+    toReturn.setName(new Identifier(currentClassName));
+    return toReturn;
+  }
   public static Type expressionTypeCheck(Expression expr)
   {
 
@@ -277,6 +283,8 @@ public class TypeChecker {
       expr.setType(newArrayTypeCheck((NewArray) expr));
     else if(expr instanceof NewClass)
       expr.setType(newClassTypeCheck((NewClass) expr));
+    else if(expr instanceof This)
+      expr.setType(thisTypeCheck((This) expr));
     else
       expr.setType(new NoType());
     return expr.getType();
