@@ -18,7 +18,7 @@ import main.ast.node.expression.UnaryExpression.UnaryOperator;
 @members {
  boolean inMain;
 }
-    program
+    program returns [Program p]
     :
         {
             inMain = true;
@@ -32,8 +32,7 @@ import main.ast.node.expression.UnaryExpression.UnaryOperator;
 
         ( classDec = classDeclaration {program.addClass($classDec.synClassDeclaration);})* EOF
         {
-            Visitor visitor = new VisitorImpl();
-            visitor.visit(program);
+            $p = program;
         }
 
 
@@ -478,7 +477,7 @@ import main.ast.node.expression.UnaryExpression.UnaryOperator;
         'int' {$synType = new IntType();} |
         'boolean' {$synType = new BooleanType();} |
         'string' {$synType = new StringType();} |
-        'int' '[' ']' {$synType = new ArrayType(); $synType.setSize(-1)} |
+        'int' '[' ']' {$synType = new ArrayType(); ((ArrayType)$synType).setSize(-1);} |
         val = ID {$synType = new UserDefinedType(); ((UserDefinedType)$synType).setName(new Identifier($val.text));}
     ;
     CONST_NUM:
