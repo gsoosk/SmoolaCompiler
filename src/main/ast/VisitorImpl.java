@@ -89,12 +89,18 @@ public class VisitorImpl implements Visitor {
         // For making symbol table
         SymbolTable.push(new SymbolTable());
 
+        //Making Object
+        currentClassName = "Object";
+        ClassDeclaration object = new ClassDeclaration(new Identifier("Object"), null);
+        Pair < String , String > objectClass = new Pair<>("Object", null);
+        ArrayOfClasses.add(objectClass);
+        object.accept(this);
         //Accepting main
         currentClassName = program.getMainClass().getName().getName();
         if(program.getMainClass().getParentName() != null)
             currentParentName = program.getMainClass().getParentName().getName();
         else
-            currentParentName = null;
+            currentParentName = "Object";
         Pair < String , String > mainClass = new Pair<>(currentClassName, currentParentName);
         ArrayOfClasses.add(mainClass);
         program.getMainClass().accept(this);
@@ -105,7 +111,7 @@ public class VisitorImpl implements Visitor {
             if(aClass.getParentName() != null)
                 currentParentName = aClass.getParentName().getName();
             else
-                currentParentName = null;
+                currentParentName = "Object";
             Pair < String , String > newClass = new Pair<>(currentClassName, currentParentName);
             ArrayOfClasses.add(newClass);
             aClass.accept(this);
