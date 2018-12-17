@@ -471,7 +471,7 @@ import main.ast.node.expression.UnaryExpression.UnaryOperator;
           |   val = 'false' {$synExpression = new BooleanValue(false, new BooleanType()); $synExpression.setLineNumber($val.getLine());}
           |   val = ID {$synExpression = new Identifier($val.text); $synExpression.setLineNumber($val.getLine());}
           |   val = ID '[' ex = expression ']' {$synExpression = new ArrayCall(new Identifier($val.text), $ex.synExpression); $synExpression.setLineNumber($val.getLine());}
-          |   '(' ex = expression ')' {$synExpression = $ex.synExpression;}
+          |   '(' ex = expression ')' {$synExpression = $ex.synExpression; }
     ;
     type returns [Type synType]
     :
