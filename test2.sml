@@ -2,10 +2,6 @@ class MainClass
 {
     def main() : int {
 
-        writeln(Second.main());
-        x = f.length;
-        a + 3 = 4;
-        a = 12 = 34;
         return 0;
     }
 }
@@ -13,6 +9,9 @@ class SecondClass {
     var test1 : int[];
     var test2 : string;
     def foo2( c : int) : int {
+     var a : int;
+            var b : int;
+            a = b = c;
         return 1;
     }
     def foo1( c : int, b : string , a : boolean, x : int[]) : int {

@@ -51,19 +51,20 @@ public class SecondPassVisitor implements  Visitor{
 
     @Override
     public void visit(Program program) {
-
-        toOut.add(program.toString());
-        program.getMainClass().accept(this);
-        for (ClassDeclaration aClass : program.getClasses()) {
-            aClass.accept(this);
+        if(!isThereError) {
+            toOut.add(program.toString());
+            program.getMainClass().accept(this);
+            for (ClassDeclaration aClass : program.getClasses()) {
+                aClass.accept(this);
+            }
         }
-
         if(!isThereError)
         {
             for (String aToOut : toOut) {
                 System.out.println(aToOut);
             }
         }
+
     }
 
     @Override
@@ -190,7 +191,14 @@ public class SecondPassVisitor implements  Visitor{
     @Override
     public void visit(BinaryExpression binaryExpression) {
         if(TypeChecker.expressionTypeCheck(binaryExpression) instanceof NoType)
+        {
+            if(((NoType)binaryExpression.getType()).hasError())
+            {
+                isThereError = true;
+                System.out.println(((NoType)binaryExpression.getType()).getTypeErrorMsg());
+            }
             handleUnsupportedOperationException(binaryExpression.getBinaryOperator().name(), binaryExpression);
+        }
 
         toOut.add(binaryExpression.toString());
         binaryExpression.getLeft().accept(this);

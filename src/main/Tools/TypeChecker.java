@@ -135,6 +135,14 @@ public class TypeChecker {
       }
       return new BooleanType();
     }
+    else if(operator == BinaryOperator.assign)
+    {
+      if(!(expr.getLeft() instanceof Identifier || expr.getLeft() instanceof ArrayCall))
+      {
+        return new NoType("Line:" + expr.getLeft().getLineNumber() +  ":left side of assignment must be a valid lvalue");
+      }
+      return expr.getLeft().getType();
+    }
     return new NoType();
   }
   private static Type identifierTypeCheck(Identifier identifier)
