@@ -2,9 +2,14 @@
 ### What does it do ? 
 This is a compiler for Smoola language.
 
+In Phase 1 lexer of smoola made in smoola.g4 using Antlr
+
 In Phase 2 of project it makes AST from lexer analysis and make SymbolTable. At last it shows up semantic Errors.
 
 In Phase 3 of project it shows remaining errors and do type checking.
+
+## PHASE1 (LEXER)
+checking grammer of language.
 
 ## PHASE2 ( Semantics )
 ### Errors 
