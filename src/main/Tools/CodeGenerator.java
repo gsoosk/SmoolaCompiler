@@ -1,5 +1,6 @@
 package main.Tools;
 
+import main.ast.CodeGenerationVisitor;
 import main.ast.Type.ArrayType.ArrayType;
 import main.ast.Type.PrimitiveType.BooleanType;
 import main.ast.Type.PrimitiveType.IntType;
@@ -54,13 +55,21 @@ public class CodeGenerator {
     public static String generateCode(MethodDeclaration methodDeclaration)
     {
 
-
         String returnTypeCode = generateCode(methodDeclaration.getReturnType());
-        String code = ".method public "+methodDeclaration.getName().getName()+"("+ ")" + returnTypeCode +"\n";
+        String methodName = methodDeclaration.getName().getName();
+        String args = "";
+        String staticy = "";
+        if(CodeGenerationVisitor.inMain)
+        {
+            returnTypeCode = "V";
+            args = "[Ljava/lang/String;";
+            staticy = "static ";
+        }
+        String code = ".method public " + staticy + methodName +"("+args+ ")" + returnTypeCode +"\n";
         code += "   .limit stack " + stackSize  +"\n" +
                 "   .limit locals "+ stackSize  +"\n";
 
-        // TODO : contents
+        // TODO : Statements
         code += "   return\n";
         code += ".end method\n";
 

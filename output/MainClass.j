@@ -8,7 +8,7 @@
    return
 .end method
 
-.method public main()I
+.method public static main([Ljava/lang/String;)V
    .limit stack 100
    .limit locals 100
    return
