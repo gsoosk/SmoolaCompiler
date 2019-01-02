@@ -1,5 +1,7 @@
 package main.ast;
 
+import com.sun.tools.javac.jvm.Code;
+import main.Tools.CodeGenerator;
 import main.ast.node.Program;
 import main.ast.node.declaration.ClassDeclaration;
 import main.ast.node.declaration.MethodDeclaration;
@@ -23,6 +25,8 @@ public class CodeGenerationVisitor implements Visitor {
 
     @Override
     public void visit(ClassDeclaration classDeclaration) {
+
+
         classDeclaration.getName().accept(this);
         if (classDeclaration.getParentName() != null)
             classDeclaration.getParentName().accept(this);
@@ -36,10 +40,38 @@ public class CodeGenerationVisitor implements Visitor {
         for (MethodDeclaration methodDeclaration : methodDeclarations) {
             methodDeclaration.accept(this);
         }
+
+
+        String classCode = CodeGenerator.generateCode(classDeclaration);
+        CodeGenerator.jasminFileCreator(classCode, classDeclaration.getName().getName());
     }
 
     @Override
     public void visit(MethodDeclaration methodDeclaration) {
+
+        methodDeclaration.getName().accept(this);
+
+        ArrayList<VarDeclaration> args = methodDeclaration.getArgs();
+        for (VarDeclaration arg : args) {
+            arg.accept(this);
+        }
+
+
+
+        ArrayList<VarDeclaration> varDeclarations = methodDeclaration.getLocalVars();
+        for (VarDeclaration varDeclaration : varDeclarations) {
+            varDeclaration.accept(this);
+        }
+
+        ArrayList<Statement> statements = methodDeclaration.getBody();
+
+        for (Statement statement : statements) {
+            statement.accept(this);
+        }
+
+        methodDeclaration.getReturnValue().accept(this);
+
+        CodeGenerator.generateCode(methodDeclaration);
 
     }
 

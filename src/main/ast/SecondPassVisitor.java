@@ -60,9 +60,9 @@ public class SecondPassVisitor implements  Visitor{
         }
         if(!isThereError)
         {
-            for (String aToOut : toOut) {
-                System.out.println(aToOut);
-            }
+//            for (String aToOut : toOut) {
+//                System.out.println(aToOut);
+//            }
             CodeGenerationVisitor codeGenerateVisitor = new CodeGenerationVisitor();
             codeGenerateVisitor.visit(program);
         }
