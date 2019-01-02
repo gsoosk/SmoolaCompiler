@@ -8,9 +8,10 @@
    return
 .end method
 
-.method public static main()I
+.method public main()I
    .limit stack 100
    .limit locals 100
+   return
 .end method
 
 

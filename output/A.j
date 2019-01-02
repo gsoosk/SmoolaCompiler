@@ -1,10 +1,10 @@
 .class public A
 .super java/lang/Object
 
-.field protected static x I
-.field protected static x2 I
-.field protected static x3 I
-.field protected static x4 I
+.field protected x I
+.field protected x2 I
+.field protected x3 I
+.field protected x4 I
 
 .method public <init>()V
    aload_0 ; push this
@@ -12,9 +12,10 @@
    return
 .end method
 
-.method public static test1()I
+.method public test1()I
    .limit stack 100
    .limit locals 100
+   return
 .end method
 
 
