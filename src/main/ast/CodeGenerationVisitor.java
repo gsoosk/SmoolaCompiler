@@ -15,6 +15,8 @@ import main.ast.node.statement.*;
 import java.util.ArrayList;
 
 public class CodeGenerationVisitor implements Visitor {
+    public static boolean inMain = false;
+    private static boolean passMain = false;
     @Override
     public void visit(Program program) {
         program.getMainClass().accept(this);
@@ -25,7 +27,11 @@ public class CodeGenerationVisitor implements Visitor {
 
     @Override
     public void visit(ClassDeclaration classDeclaration) {
-
+        if(!passMain)
+        {
+            inMain = true;
+            passMain = true;
+        }
 
         classDeclaration.getName().accept(this);
         if (classDeclaration.getParentName() != null)
@@ -44,6 +50,7 @@ public class CodeGenerationVisitor implements Visitor {
 
         String classCode = CodeGenerator.generateCode(classDeclaration);
         CodeGenerator.jasminFileCreator(classCode, classDeclaration.getName().getName());
+        inMain = false;
     }
 
     @Override
@@ -77,7 +84,7 @@ public class CodeGenerationVisitor implements Visitor {
 
     @Override
     public void visit(VarDeclaration varDeclaration) {
-
+        CodeGenerator.generateCode(varDeclaration);
     }
 
     @Override

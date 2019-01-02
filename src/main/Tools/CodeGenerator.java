@@ -1,10 +1,14 @@
 package main.Tools;
 
+import main.ast.Type.ArrayType.ArrayType;
+import main.ast.Type.PrimitiveType.BooleanType;
 import main.ast.Type.PrimitiveType.IntType;
 import main.ast.Type.PrimitiveType.StringType;
 import main.ast.Type.Type;
+import main.ast.Type.UserDefinedType.UserDefinedType;
 import main.ast.node.declaration.ClassDeclaration;
 import main.ast.node.declaration.MethodDeclaration;
+import main.ast.node.declaration.VarDeclaration;
 
 import java.io.BufferedWriter;
 import java.io.FileWriter;
@@ -19,13 +23,18 @@ public class CodeGenerator {
     {
         String code = ".class public " + classDeclaration.getName().getName() + "\n";
         code += ".super java/lang/Object\n\n";
+
+        ArrayList<VarDeclaration> varDeclarations = classDeclaration.getVarDeclarations();
+        for (VarDeclaration varDeclaration : varDeclarations) {
+            code += varDeclaration.getCode() + "\n";
+        }
+        code += "\n";
         code += ".method public <init>()V\n" +
                 "   aload_0 ; push this\n" +
                 "   invokespecial java/lang/Object/<init>()V ; call super\n" +
                 "   return\n" +
                 ".end method";
 
-        //TODO : adding var declarations
         ArrayList<MethodDeclaration> methodDeclarations = classDeclaration.getMethodDeclarations();
         for (MethodDeclaration methodDeclaration : methodDeclarations) {
             code += "\n\n" + methodDeclaration.getCode() + "\n\n";
@@ -34,16 +43,25 @@ public class CodeGenerator {
         classDeclaration.setCode(code);
         return code;
     }
+    public static String generateCode(VarDeclaration varDeclaration)
+    {
+        String code = ".field protected " + varDeclaration.getIdentifier().getName()
+                + " " + generateCode(varDeclaration.getType()) ;
+
+        varDeclaration.setCode(code);
+        return code ;
+    }
     public static String generateCode(MethodDeclaration methodDeclaration)
     {
 
 
         String returnTypeCode = generateCode(methodDeclaration.getReturnType());
-        String code = ".method public static "+methodDeclaration.getName().getName()+"("+ ")" + returnTypeCode +"\n";
+        String code = ".method public "+methodDeclaration.getName().getName()+"("+ ")" + returnTypeCode +"\n";
         code += "   .limit stack " + stackSize  +"\n" +
                 "   .limit locals "+ stackSize  +"\n";
 
         // TODO : contents
+        code += "   return\n";
         code += ".end method\n";
 
         //TODO : adding arguments and var declarations
@@ -55,11 +73,15 @@ public class CodeGenerator {
     {
         String code = "";
         if (type instanceof StringType)
-            code = "[Ljava/lang/String;";
+            code = "Ljava/lang/String;";
         else if (type instanceof IntType)
             code = "I";
-
-        //TODO : adding other types
+        else if (type instanceof BooleanType)
+            code = "Z";
+        else if (type instanceof ArrayType)
+            code = "[I";
+        else if (type instanceof UserDefinedType)
+            code = "L"+((UserDefinedType) type).getName().getName();
         type.setCode(code);
         return code;
     }
