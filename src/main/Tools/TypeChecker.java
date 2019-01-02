@@ -148,16 +148,17 @@ public class TypeChecker {
   private static Type identifierTypeCheck(Identifier identifier)
   {
     Type toReturn = new NoType();
-    if(allClassesSymbolTable.get(currentClassName).getItems().containsKey(identifier.getName()))
-    {
-       SymbolTableItem item =  allClassesSymbolTable.get(currentClassName).getInCurrentScope(identifier.getName());
-       return ((SymbolTableVariableItemBase) item).getType();
-    }
     if(allMethodsSymbolTable.get(currentClassName + "-" + currentMethodName).getItems().containsKey(identifier.getName()))
     {
       SymbolTableItem item = allMethodsSymbolTable.get(currentClassName + "-" + currentMethodName).getInCurrentScope(identifier.getName());
       return ((SymbolTableVariableItemBase) item).getType();
     }
+    if(allClassesSymbolTable.get(currentClassName).getItems().containsKey(identifier.getName()))
+    {
+       SymbolTableItem item =  allClassesSymbolTable.get(currentClassName).getInCurrentScope(identifier.getName());
+       return ((SymbolTableVariableItemBase) item).getType();
+    }
+
 //    For Static Method support. Smoola doesn't support it!
 //    if(allClassesSymbolTable.containsKey(identifier.getName()))
 //    {
