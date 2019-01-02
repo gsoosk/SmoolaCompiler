@@ -63,6 +63,8 @@ public class SecondPassVisitor implements  Visitor{
             for (String aToOut : toOut) {
                 System.out.println(aToOut);
             }
+            CodeGenerationVisitor codeGenerateVisitor = new CodeGenerationVisitor();
+            codeGenerateVisitor.visit(program);
         }
 
     }
