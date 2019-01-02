@@ -29,6 +29,8 @@ checking grammer of language.
 * return type validation
 * and all other compile errors...
 
+## PHASE4 ( Code Generation)
+
 ## How to run ? 
 You should at first `generate` Smoola.g4 grammer using Antlr. and then running whole project. 
 For more info about Antlr visit [This](https://www.antlr.org) Page.
