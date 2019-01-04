@@ -12,6 +12,18 @@
    .limit stack 100
    .limit locals 100
 
+   ldc 100
+   newarray int
+   astore 9
+
+
+
+   ldc 10
+   newarray int
+   astore 8
+
+
+
    ldc 1
    istore 6
 
@@ -22,29 +34,55 @@
 
 
 
-   iload 6
-   iload 7
-   if_icmpne 0
-   iconst_1
-   goto 1
-0: iconst_0
-1:   istore 8
+   aload 8
+   aload 9
+   invokevirtual java/lang/Object.equals(Ljava/lang/Object;)Z
+   istore 12
 
 
 
    iload 6
    iload 7
-   if_icmpeq 2
+   if_icmpge Label0
    iconst_1
-   goto 3
-2: iconst_0
-3:   iload 6
+   goto Label1
+Label0:
+   iconst_0
+Label1:
+   istore 10
+
+
+
+   iload 6
    iload 7
-   if_icmpne 4
+   if_icmpne Label2
    iconst_1
-   goto 5
-4: iconst_0
-5:   istore 8
+   goto Label3
+Label2:
+   iconst_0
+Label3:
+   istore 11
+
+
+
+   iload 10
+   ifne Label4
+   iload 11
+   ifne Label4
+   iconst_0
+   goto Label5
+Label4:
+   iconst_1
+Label5:
+   ifne Label6
+   iload 12
+   ifne Label6
+   iconst_0
+   goto Label7
+Label6:
+   iconst_1
+Label7:
+   istore 13
 
 
 

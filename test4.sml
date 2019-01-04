@@ -30,12 +30,22 @@ class B
     def test1() : int {
         var x : int;
         var y : int;
+        var s1 : int[];
+        var s2 : int[];
+        var b1 : boolean;
+        var b2 : boolean;
         var b : boolean;
+        var t : boolean;
+        s2 = new int[100];
+        s1 = new int[10];
         x = 1;
         y = 2;
-        b = x == y;
+        #b = "12" == "13";
+        b = s1 == s2;
+        b1 = x < y;
+        b2 = x == y;
+        t = b1 || b2 || b;
 
-        b = (x <> y) && (x == y);
         return 0;
     }
 }

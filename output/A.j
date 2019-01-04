@@ -14,7 +14,6 @@
    .limit locals 100
 
    ldc 4
-
    newarray int
    astore 2
 

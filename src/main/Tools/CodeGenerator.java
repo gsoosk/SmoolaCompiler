@@ -47,7 +47,10 @@ public class CodeGenerator {
         }
 
     }
-
+    private static String getLabel(int l)
+    {
+        return "Label" + Integer.toString(l);
+    }
     public static String generateCode(ClassDeclaration classDeclaration)
     {
         String code = ".class public " + classDeclaration.getName().getName() + "\n";
@@ -176,7 +179,7 @@ public class CodeGenerator {
     public static String generateCode(NewArray newArray)
     {
         String code = "";
-        code += newArray.getExpression().getCode() + "\n";
+        code += newArray.getExpression().getCode();
         code += "   newarray int\n";
         newArray.setCode(code);
         return code;
@@ -252,26 +255,60 @@ public class CodeGenerator {
             code += "   isub\n";
         else if(op == BinaryOperator.mult)
             code += "   imul\n";
-        else if(op == BinaryOperator.eq || op == BinaryOperator.neq)
+        else if(op == BinaryOperator.div)
+            code += "   idiv\n";
+        else if(op == BinaryOperator.eq || op == BinaryOperator.neq || op == BinaryOperator.gt || op == BinaryOperator.lt)
         {
             if(binaryExpression.getLeft().getType() instanceof IntType || binaryExpression.getLeft().getType() instanceof BooleanType)
             {
+                String cond = "";
+                if(op == BinaryOperator.eq)
+                    cond = "   if_icmpne ";
+                else if(op == BinaryOperator.neq)
+                    cond = "   if_icmpeq ";
+                else if (op == BinaryOperator.gt)
+                    cond = "   if_icmple ";
+                else if(op == BinaryOperator.lt)
+                    cond = "   if_icmpge ";
 
-                code += (op == BinaryOperator.eq ?  "   if_icmpne " : "   if_icmpeq ")+
-                        Integer.toString(label)+ "\n" +
+                code += cond +
+                        getLabel(label)+ "\n" +
                         "   iconst_1" + "\n" +
-                        "   goto " + Integer.toString(label + 1) + "\n" +
-                        Integer.toString(label) + ": iconst_0" + "\n" +
-                        Integer.toString(label + 1) + ":";
+                        "   goto " + getLabel(label + 1) + "\n" +
+                        getLabel(label) + ":\n" +
+                        "   iconst_0" + "\n" +
+                        getLabel(label + 1) + ":\n";
                 label += 2;
+            }
+            else if(binaryExpression.getLeft().getType() instanceof StringType)
+            {
+                code += "   invokevirtual java/lang/String.equals(Ljava/lang/Object;)Z\n";
             }
             else
             {
-                //TODO : invoke equals
+                code += "   invokevirtual java/lang/Object.equals(Ljava/lang/Object;)Z\n";
             }
 
         }
-        //TODO adding other operators
+        else if(op == BinaryOperator.and || op == BinaryOperator.or)
+        {
+            String cond = op == BinaryOperator.and ? "   ifeq " : "   ifne ";
+            String const1 = op == BinaryOperator.and ? "   iconst_1\n" : "   iconst_0\n";
+            String const2 = op == BinaryOperator.and ? "   iconst_0\n" : "   iconst_1\n";
+            int label1 = label++;
+            int label2 = label++;
+            code = "";
+            code += binaryExpression.getLeft().getCode();
+            code += cond + getLabel(label1) + "\n";
+            code += binaryExpression.getRight().getCode();
+            code += cond + getLabel(label1) + "\n" +
+                    const1 +
+                    "   goto " + getLabel(label2) + "\n" +
+                    getLabel(label1) +":\n" +
+                    const2+
+                    getLabel(label2) + ":\n";
+
+        }
         binaryExpression.setCode(code);
         return code;
     }
