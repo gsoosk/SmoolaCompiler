@@ -44,7 +44,8 @@ class B
         b = s1 == s2;
         b1 = x < y;
         b2 = x == y;
-        t = b1 || b2 || b;
+        t = !(b1 || b);
+        x = -y;
 
         return 0;
     }

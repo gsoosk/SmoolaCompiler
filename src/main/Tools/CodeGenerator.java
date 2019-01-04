@@ -10,13 +10,11 @@ import main.ast.Type.UserDefinedType.UserDefinedType;
 import main.ast.node.declaration.ClassDeclaration;
 import main.ast.node.declaration.MethodDeclaration;
 import main.ast.node.declaration.VarDeclaration;
-import main.ast.node.expression.ArrayCall;
-import main.ast.node.expression.BinaryExpression;
+import main.ast.node.expression.*;
 import main.ast.node.expression.BinaryExpression.BinaryOperator;
-import main.ast.node.expression.Identifier;
-import main.ast.node.expression.NewArray;
 import main.ast.node.expression.Value.IntValue;
 import main.ast.node.expression.Value.StringValue;
+import main.ast.node.expression.UnaryExpression.UnaryOperator;
 import main.ast.node.statement.Assign;
 import main.ast.node.statement.Statement;
 import main.ast.node.statement.Write;
@@ -310,6 +308,26 @@ public class CodeGenerator {
 
         }
         binaryExpression.setCode(code);
+        return code;
+    }
+    public static String generateCode(UnaryExpression unaryExpression)
+    {
+        String code = "";
+        code += unaryExpression.getValue().getCode();
+        if(unaryExpression.getUnaryOperator() == UnaryOperator.not)
+        {
+            int label1 = label++;
+            int label2 = label++;
+            code += "   ifne " + getLabel(label1) + "\n" +
+                    "   iconst_1\n" +
+                    "   goto " + getLabel(label2) + "\n" +
+                    getLabel(label1) + ":\n" +
+                    "   iconst_0\n" +
+                    getLabel(label2) + ":\n";
+        }
+        else if(unaryExpression.getUnaryOperator() == UnaryOperator.minus)
+            code += "   ineg\n";
+        unaryExpression.setCode(code);
         return code;
     }
 

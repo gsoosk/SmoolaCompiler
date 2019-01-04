@@ -142,7 +142,8 @@ public class CodeGenerationVisitor implements Visitor {
 
     @Override
     public void visit(UnaryExpression unaryExpression) {
-
+        unaryExpression.getValue().accept(this);
+        CodeGenerator.generateCode(unaryExpression);
     }
 
     @Override

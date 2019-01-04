@@ -24,7 +24,7 @@
 
 
 
-   ldc 1
+   ldc 10000
    istore 6
 
 
@@ -67,7 +67,7 @@ Label3:
 
    iload 10
    ifne Label4
-   iload 11
+   iload 12
    ifne Label4
    iconst_0
    goto Label5
@@ -75,14 +75,18 @@ Label4:
    iconst_1
 Label5:
    ifne Label6
-   iload 12
-   ifne Label6
-   iconst_0
+   iconst_1
    goto Label7
 Label6:
-   iconst_1
+   iconst_0
 Label7:
    istore 13
+
+
+
+   iload 7
+   ineg
+   istore 6
 
 
 
