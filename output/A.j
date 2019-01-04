@@ -13,7 +13,26 @@
    .limit stack 100
    .limit locals 100
 
-   astore
+   ldc 2
+   newarray int
+   astore 2
+
+
+   aload 2
+   ldc 0
+   ldc 1200
+   iastore
+
+   aload 2
+   ldc 1
+   ldc 1201
+   iastore
+
+   getstatic java/lang/System/out Ljava/io/PrintStream;
+   aload 2
+   invokestatic java/util/Arrays.toString([I)Ljava/lang/String;
+   invokevirtual java/io/PrintStream/println(Ljava/lang/String;)V
+
 
    ldc 0
    ireturn
