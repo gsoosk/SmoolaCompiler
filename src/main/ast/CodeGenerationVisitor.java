@@ -2,6 +2,7 @@ package main.ast;
 
 import com.sun.tools.javac.jvm.Code;
 import main.Tools.CodeGenerator;
+import main.Tools.TypeChecker;
 import main.ast.node.Program;
 import main.ast.node.declaration.ClassDeclaration;
 import main.ast.node.declaration.MethodDeclaration;
@@ -17,6 +18,8 @@ import java.util.ArrayList;
 public class CodeGenerationVisitor implements Visitor {
     public static boolean inMain = false;
     private static boolean passMain = false;
+    private static String currentClassName = "";
+    private static String currentMethodName = "";
     @Override
     public void visit(Program program) {
         program.getMainClass().accept(this);
@@ -32,6 +35,8 @@ public class CodeGenerationVisitor implements Visitor {
             inMain = true;
             passMain = true;
         }
+        currentClassName = classDeclaration.getName().getName();
+        TypeChecker.setForIdentifier(currentClassName, currentMethodName);
 
         classDeclaration.getName().accept(this);
         if (classDeclaration.getParentName() != null)
@@ -55,6 +60,9 @@ public class CodeGenerationVisitor implements Visitor {
 
     @Override
     public void visit(MethodDeclaration methodDeclaration) {
+
+        currentMethodName = methodDeclaration.getName().getName();
+        TypeChecker.setForIdentifier(currentClassName, currentMethodName);
 
         methodDeclaration.getName().accept(this);
 
@@ -89,17 +97,21 @@ public class CodeGenerationVisitor implements Visitor {
 
     @Override
     public void visit(ArrayCall arrayCall) {
-
+        arrayCall.getInstance().accept(this);
+        arrayCall.getIndex().accept(this);
+        CodeGenerator.generateCode(arrayCall);
     }
 
     @Override
     public void visit(BinaryExpression binaryExpression) {
-
+        binaryExpression.getLeft().accept(this);
+        binaryExpression.getRight().accept(this);
+        CodeGenerator.generateCode(binaryExpression);
     }
 
     @Override
     public void visit(Identifier identifier) {
-
+        CodeGenerator.generateCode(identifier);
     }
 
     @Override
@@ -114,7 +126,8 @@ public class CodeGenerationVisitor implements Visitor {
 
     @Override
     public void visit(NewArray newArray) {
-
+        newArray.getExpression().accept(this);
+        CodeGenerator.generateCode(newArray);
     }
 
     @Override
@@ -139,17 +152,19 @@ public class CodeGenerationVisitor implements Visitor {
 
     @Override
     public void visit(IntValue value) {
-
+        CodeGenerator.generateCode(value);
     }
 
     @Override
     public void visit(StringValue value) {
-
+        CodeGenerator.generateCode(value);
     }
 
     @Override
     public void visit(Assign assign) {
-
+        assign.getlValue().accept(this);
+        assign.getrValue().accept(this);
+        CodeGenerator.generateCode(assign);
     }
 
     @Override
@@ -169,7 +184,8 @@ public class CodeGenerationVisitor implements Visitor {
 
     @Override
     public void visit(Write write) {
-
+        write.getArg().accept(this);
+        CodeGenerator.generateCode(write);
     }
 
     @Override

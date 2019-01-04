@@ -18,6 +18,7 @@
 
 
    ldc 0
+
    return
 .end method
 
