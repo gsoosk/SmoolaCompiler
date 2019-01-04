@@ -2,9 +2,6 @@
 .super java/lang/Object
 
 .field protected x I
-.field protected x2 I
-.field protected x3 I
-.field protected x4 I
 
 .method public <init>()V
    aload_0 ; push this
@@ -15,7 +12,11 @@
 .method public test1()I
    .limit stack 100
    .limit locals 100
-   return
+
+   astore
+
+   ldc 0
+   ireturn
 .end method
 
 
