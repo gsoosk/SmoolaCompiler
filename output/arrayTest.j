@@ -9,8 +9,12 @@
 .end method
 
 .method public test()I
-   .limit stack 100
-   .limit locals 100
+   .limit stack 1000
+   .limit locals 1000
+
+   ; Assign
+   ldc 13
+   istore 20
 
    ; Assign
    ldc 10
@@ -21,6 +25,28 @@
    ldc 12
    newarray int
    astore 19
+
+   ; Assign
+   aload 19
+   ldc 0
+   ldc 12
+   iastore
+
+   ; Assign
+   aload 18
+   ldc 0
+   aload 19
+   ldc 0
+   iaload
+   iload 20
+   ldc 15
+   imul
+   aload 19
+   ldc 0
+   iaload
+   idiv
+   iadd
+   iastore
 
    ; Write
    getstatic java/lang/System/out Ljava/io/PrintStream;

@@ -1,4 +1,4 @@
-.class public MainClass
+.class public m
 .super java/lang/Object
 
 
@@ -8,18 +8,19 @@
    return
 .end method
 
-.method public static main([Ljava/lang/String;)V
+.method public test()I
    .limit stack 1000
    .limit locals 1000
 
-   ; Write
-   getstatic java/lang/System/out Ljava/io/PrintStream;
-   ldc 1200
-   invokevirtual java/io/PrintStream/println(I)V
+   ; Assign
+   new arrayTest
+   dup
+   invokespecial  arrayTest/<init>()V
+   astore 21
 
    ldc 0
 
-   return
+   ireturn
 .end method
 
 

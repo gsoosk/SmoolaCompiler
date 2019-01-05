@@ -9,8 +9,8 @@
 .end method
 
 .method public test1()I
-   .limit stack 100
-   .limit locals 100
+   .limit stack 1000
+   .limit locals 1000
 
    ; Assign
    ldc 100

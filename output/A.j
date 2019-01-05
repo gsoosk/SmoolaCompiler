@@ -10,8 +10,8 @@
 .end method
 
 .method public test1()I
-   .limit stack 100
-   .limit locals 100
+   .limit stack 1000
+   .limit locals 1000
 
    ; Assign
    ldc 4
@@ -21,21 +21,18 @@
    ; Assign
    aload 2
    ldc 0
-
    ldc 1200
    iastore
 
    ; Assign
    aload 2
    ldc 1
-
    ldc 1201
    iastore
 
    ; Assign
    aload 2
    ldc 3
-
    ldc 1
    ldc 2
    iadd

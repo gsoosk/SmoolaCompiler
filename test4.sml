@@ -86,9 +86,20 @@ class arrayTest
         var x : int[];
         var y : int[];
         var z : int;
+        z = 13;
         x = new int[10];
         y = new int[12];
+        y[0] = 12;
+        x[0] = y[0] + z * 15 / y[0];
         writeln(x.length + y.length);
+        return 0;
+    }
+}
+class m
+{
+    def test() : int {
+        var x : arrayTest ;
+        x = new arrayTest();
         return 0;
     }
 }

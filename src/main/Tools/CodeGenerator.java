@@ -27,7 +27,7 @@ import java.util.ArrayList;
 
 
 public class CodeGenerator {
-    private static final String stackSize = "100";
+    private static final String stackSize = "1000";
     private static final String outputPath = "./output/";
     private static int label = 0;
     public static void jasminFileCreator(String code, String className)
@@ -50,6 +50,7 @@ public class CodeGenerator {
     }
     public static String generateCode(ClassDeclaration classDeclaration)
     {
+        //TODO : handle inherit
         String code = ".class public " + classDeclaration.getName().getName() + "\n";
         code += ".super java/lang/Object\n\n";
 
@@ -206,7 +207,8 @@ public class CodeGenerator {
                 iastore
              */
 
-            code += assign.getlValue().getCode();
+            code += ((ArrayCall) assign.getlValue()).getInstance().getCode();
+            code += ((ArrayCall) assign.getlValue()).getIndex().getCode();
             code += assign.getrValue().getCode();
             code += "   iastore";
         }
@@ -223,7 +225,7 @@ public class CodeGenerator {
             code += "   aload " +
                     Integer.toString(TypeChecker.identifierVariableIndex(identifier));
         else if(type instanceof BooleanType || type instanceof IntType)
-            code += "   iload " +
+            code += "   iload " + //TODO : method is diffrenet
                     Integer.toString(TypeChecker.identifierVariableIndex(identifier));
         code += "\n";
         identifier.setCode(code);
@@ -233,7 +235,8 @@ public class CodeGenerator {
     {
         String code = "";
         code += arrayCall.getInstance().getCode();
-        code += arrayCall.getIndex().getCode() + "\n";
+        code += arrayCall.getIndex().getCode();
+        code += "   iaload\n";
 
         arrayCall.setCode(code);
         return code;
@@ -406,6 +409,15 @@ public class CodeGenerator {
         code += length.getExpression().getCode();
         code += "   arraylength \n";
         length.setCode(code);
+        return code;
+    }
+    public static String generateCode(NewClass newClass)
+    {
+        String code = "";
+        code += "   new " + newClass.getClassName().getName() + "\n";
+        code += "   dup\n" + // For invoking constructor
+                "   invokespecial  "+ newClass.getClassName().getName()+"/<init>()V\n";
+        newClass.setCode(code);
         return code;
     }
 

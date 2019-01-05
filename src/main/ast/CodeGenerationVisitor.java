@@ -122,7 +122,7 @@ public class CodeGenerationVisitor implements Visitor {
 
     @Override
     public void visit(MethodCall methodCall) {
-
+        //TODO
     }
 
     @Override
@@ -133,12 +133,13 @@ public class CodeGenerationVisitor implements Visitor {
 
     @Override
     public void visit(NewClass newClass) {
-
+        CodeGenerator.generateCode(newClass);
     }
 
     @Override
     public void visit(This instance) {
 
+        //TODO
     }
 
     @Override
@@ -203,6 +204,6 @@ public class CodeGenerationVisitor implements Visitor {
 
     @Override
     public void visit(Statement statement) {
-
+        //TODO
     }
 }
