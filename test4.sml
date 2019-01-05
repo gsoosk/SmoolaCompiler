@@ -89,6 +89,10 @@ class arrayTest
         z = 13;
         x = new int[10];
         y = new int[12];
+        a = a * 2;
+        z = a + b;
+        x[2] = z;
+
         y[0] = 12;
         x[0] = y[0] + z * 15 / y[0];
         writeln(x.length + y.length);

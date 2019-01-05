@@ -7,6 +7,7 @@ import main.ast.Type.OkType;
 import main.ast.Type.PrimitiveType.BooleanType;
 import main.ast.Type.PrimitiveType.IntType;
 import main.ast.Type.UserDefinedType.UserDefinedType;
+import main.ast.node.declaration.MethodDeclaration;
 import main.ast.node.expression.*;
 import main.ast.node.expression.BinaryExpression.BinaryOperator;
 
@@ -278,6 +279,27 @@ public class TypeChecker {
     String returnType = CodeGenerator.generateCode(methodItem.getReturnType());
     ref = instanceClassName + "/" + methodName + "(" + types + ")" + returnType;
     return ref;
+  }
+  public static String getMethodDeclarationArgsString(MethodDeclaration methodDeclaration)
+  {
+
+    String instanceClassName = currentClassName;
+    String methodName = methodDeclaration.getName().getName();
+    String types = "";
+    SymbolTableMethodItem methodItem;
+    try{
+      methodItem =(SymbolTableMethodItem) allClassesSymbolTable.get(instanceClassName).get("Method:<"+methodName+">");
+
+    } catch (ItemNotFoundException e)
+    {
+      return  "";
+    }
+    ArrayList<Type> methodItemArgsType = methodItem.getArgTypes();
+    for (Type aMethodItemArgsType : methodItemArgsType) {
+      types += CodeGenerator.generateCode(aMethodItemArgsType);
+    }
+
+    return types;
   }
   private static Type lengthTypeCheck(Length length)
   {

@@ -86,7 +86,7 @@ public class CodeGenerator {
 
         String returnTypeCode = generateCode(methodDeclaration.getReturnType());
         String methodName = methodDeclaration.getName().getName();
-        String args = ""; // TODO: ARGS for method
+        String args = TypeChecker.getMethodDeclarationArgsString(methodDeclaration);
         String staticy = "";
         String returnCode = "";
         switch (returnTypeCode)
@@ -123,7 +123,7 @@ public class CodeGenerator {
         code += ".end method\n";
 
         //TODO : var declarations
-
+        //TODO : inherit
         methodDeclaration.setCode(code);
         return code;
     }

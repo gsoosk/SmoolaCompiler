@@ -16,22 +16,22 @@
    ; Assign
    ldc 4
    newarray int
-   astore 6
+   astore 1
 
    ; Assign
-   aload 6
+   aload 1
    ldc 0
    ldc 1200
    iastore
 
    ; Assign
-   aload 6
+   aload 1
    ldc 1
    ldc 1201
    iastore
 
    ; Assign
-   aload 6
+   aload 1
    ldc 3
    ldc 1
    ldc 2
@@ -40,7 +40,7 @@
 
    ; Write
    getstatic java/lang/System/out Ljava/io/PrintStream;
-   aload 6
+   aload 1
    invokestatic java/util/Arrays.toString([I)Ljava/lang/String;
    invokevirtual java/io/PrintStream/println(Ljava/lang/String;)V
 
@@ -56,7 +56,7 @@
    ldc 23
    imul
    iadd
-   istore 9
+   istore 4
 
    ldc 0
 

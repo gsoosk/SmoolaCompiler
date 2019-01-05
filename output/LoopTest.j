@@ -14,40 +14,40 @@
 
    ; Assign
    iconst_1
-   istore 21
+   istore 4
 
    ; Assign
    ldc 12
-   istore 18
+   istore 1
 
    ; Assign
    ldc 13
-   istore 19
+   istore 2
 
    ; Assign
    ldc 0
-   istore 20
+   istore 3
 
    ; While
 Label8:
-   iload 21
+   iload 4
    ifeq Label9
-   iload 20
-   iload 18
+   iload 3
+   iload 1
    iadd
-   iload 19
+   iload 2
    iadd
-   istore 20
-   iload 18
-   iload 19
+   istore 3
+   iload 1
+   iload 2
    imul
-   istore 20
+   istore 3
    goto Label8 
 Label9:
 
    ; Conditional
-   iload 18
-   iload 19
+   iload 1
+   iload 2
    if_icmpne Label10
    iconst_1
    goto Label11
@@ -55,26 +55,26 @@ Label10:
    iconst_0
 Label11:
    ifeq Label12
-   iload 18
-   iload 19
-   iload 18
+   iload 1
+   iload 2
+   iload 1
    imul
    ldc 2
    imul
    iadd
-   istore 20
+   istore 3
    ldc 12
-   iload 20
+   iload 3
    imul
-   istore 20
+   istore 3
    goto Label13
 Label12:
    ldc 14
-   iload 18
+   iload 1
    imul
-   iload 19
+   iload 2
    idiv
-   istore 20
+   istore 3
 Label13:
 
    ldc 0

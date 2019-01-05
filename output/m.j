@@ -17,19 +17,19 @@
    new arrayTest
    dup
    invokespecial  arrayTest/<init>()V
-   astore 28
+   astore 1
 
    ; Assign
    aload_0
    invokevirtual m/test()I
-   istore 29
+   istore 2
 
    ; Assign
-   aload 28
-   iload 29
-   iload 29
+   aload 1
+   iload 2
+   iload 2
    invokevirtual arrayTest/test(II)I
-   istore 30
+   istore 3
 
    ldc 0
 

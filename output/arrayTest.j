@@ -8,40 +8,58 @@
    return
 .end method
 
-.method public test()I
+.method public test(II)I
    .limit stack 1000
    .limit locals 1000
 
    ; Assign
    ldc 13
-   istore 26
+   istore 5
 
    ; Assign
    ldc 10
    newarray int
-   astore 24
+   astore 3
 
    ; Assign
    ldc 12
    newarray int
-   astore 25
+   astore 4
 
    ; Assign
-   aload 25
+   iload 1
+   ldc 2
+   imul
+   istore 1
+
+   ; Assign
+   iload 1
+   iload 2
+   iadd
+   istore 5
+
+   ; Assign
+   aload 3
+   ldc 2
+   iload 5
+   iastore
+
+   ; Assign
+   aload 4
    ldc 0
    ldc 12
    iastore
 
    ; Assign
-   aload 24
+   aload 3
    ldc 0
-   aload 25
+   aload 4
    ldc 0
    iaload
-   iload 26
+   iload 5
    ldc 15
    imul
-   aload 25
+   aload 4
    ldc 0
    iaload
    idiv
@@ -50,9 +68,9 @@
 
    ; Write
    getstatic java/lang/System/out Ljava/io/PrintStream;
-   aload 24
+   aload 3
    arraylength 
-   aload 25
+   aload 4
    arraylength 
    iadd
    invokevirtual java/io/PrintStream/println(I)V

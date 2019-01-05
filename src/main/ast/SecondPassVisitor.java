@@ -45,7 +45,7 @@ public class SecondPassVisitor implements  Visitor{
         allClassesSymbolTable = allClasses;
         allMethodsSymbolTable = allMethods;
         isThereError = error;
-        variablesIndex = varIndex;
+        variablesIndex = 1000;
         TypeChecker.setHashesForIdentifier(allClasses, allMethods);
     }
 
