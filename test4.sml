@@ -97,9 +97,12 @@ class arrayTest
 }
 class m
 {
+    var y : int;
     def test() : int {
         var x : arrayTest ;
+        var z : int;
         x = new arrayTest();
+        z = this.test();
         return 0;
     }
 }

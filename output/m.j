@@ -1,6 +1,7 @@
 .class public m
 .super java/lang/Object
 
+.field protected y I
 
 .method public <init>()V
    aload_0 ; push this
@@ -16,7 +17,12 @@
    new arrayTest
    dup
    invokespecial  arrayTest/<init>()V
-   astore 21
+   astore 22
+
+   ; Assign
+   aload_0
+   invokevirtual
+   istore 23
 
    ldc 0
 

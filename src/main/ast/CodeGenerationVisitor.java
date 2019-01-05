@@ -122,7 +122,13 @@ public class CodeGenerationVisitor implements Visitor {
 
     @Override
     public void visit(MethodCall methodCall) {
-        //TODO
+        methodCall.getInstance().accept(this);
+        methodCall.getMethodName().accept(this);
+        ArrayList<Expression> args = methodCall.getArgs();
+        for (Expression arg : args) {
+            arg.accept(this);
+        }
+        CodeGenerator.generateCode(methodCall);
     }
 
     @Override
@@ -138,8 +144,7 @@ public class CodeGenerationVisitor implements Visitor {
 
     @Override
     public void visit(This instance) {
-
-        //TODO
+        CodeGenerator.generateCode(instance);
     }
 
     @Override

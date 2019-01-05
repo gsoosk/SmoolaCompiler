@@ -420,5 +420,32 @@ public class CodeGenerator {
         newClass.setCode(code);
         return code;
     }
+    public static String generateCode(This instance)
+    {
+        String code = "   aload_0\n";
+        instance.setCode(code);
+        return code;
+    }
+    public static String generateCode(MethodCall methodCall)
+    {
+        /*
+            [instance]
+            [arg]*
+            invokevirtual
+         */
+        String code = "";
+        code += methodCall.getInstance().getCode();
+
+        ArrayList<Expression> args = methodCall.getArgs();
+        for (Expression arg : args) {
+            code += arg.getCode();
+        }
+
+        String methodName = "";//TODO
+        code += "   invokevirtual " + methodName + "\n";
+
+        methodCall.setCode(code);
+        return code;
+    }
 
 }
