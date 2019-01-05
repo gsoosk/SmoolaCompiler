@@ -24,7 +24,7 @@ import java.util.HashMap;
 public class VisitorImpl implements Visitor {
     private boolean isThereError = false;
     private boolean isItInClassVarDeclarations = false;
-    private int variablesIndex = 0;
+    private int variablesIndex = 4;
     private String currentClassName;
     private String currentParentName;
     private ArrayList<PassSaver> passSavers = new ArrayList<>();

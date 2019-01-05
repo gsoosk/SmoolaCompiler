@@ -15,53 +15,53 @@
    ; Assign
    ldc 100
    newarray int
-   astore 9
+   astore 13
 
    ; Assign
    ldc 10
    newarray int
-   astore 8
+   astore 12
 
    ; Assign
    ldc 1
-   istore 6
+   istore 10
 
    ; Assign
    ldc 2
-   istore 7
+   istore 11
 
    ; Assign
-   aload 8
-   aload 9
+   aload 12
+   aload 13
    invokevirtual java/lang/Object.equals(Ljava/lang/Object;)Z
-   istore 12
+   istore 16
 
    ; Assign
-   iload 6
-   iload 7
+   iload 10
+   iload 11
    if_icmpge Label0
    iconst_1
    goto Label1
 Label0:
    iconst_0
 Label1:
-   istore 10
+   istore 14
 
    ; Assign
-   iload 6
-   iload 7
+   iload 10
+   iload 11
    if_icmpne Label2
    iconst_1
    goto Label3
 Label2:
    iconst_0
 Label3:
-   istore 11
+   istore 15
 
    ; Assign
-   iload 10
+   iload 14
    ifne Label4
-   iload 12
+   iload 16
    ifne Label4
    iconst_0
    goto Label5
@@ -74,12 +74,12 @@ Label5:
 Label6:
    iconst_0
 Label7:
-   istore 13
+   istore 17
 
    ; Assign
-   iload 7
+   iload 11
    ineg
-   istore 6
+   istore 10
 
    ldc 0
 

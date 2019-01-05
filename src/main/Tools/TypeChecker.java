@@ -1,5 +1,6 @@
 package main.Tools;
 
+import com.sun.tools.javac.jvm.Code;
 import main.ast.Type.ArrayType.ArrayType;
 import main.ast.Type.NoType;
 import main.ast.Type.OkType;
@@ -255,6 +256,28 @@ public class TypeChecker {
     }
     return methodItem.getReturnType();
 
+  }
+  public static String getMethodCallStringRef(MethodCall methodCall)
+  {
+    String ref = "";
+    String instanceClassName = ((UserDefinedType)methodCall.getInstance().getType()).getName().getName();
+    String methodName = methodCall.getMethodName().getName();
+    String types = "";
+    SymbolTableMethodItem methodItem;
+    try{
+      methodItem =(SymbolTableMethodItem) allClassesSymbolTable.get(instanceClassName).get("Method:<"+methodName+">");
+
+    } catch (ItemNotFoundException e)
+    {
+      return  "";
+    }
+    ArrayList<Type> methodItemArgsType = methodItem.getArgTypes();
+    for (Type aMethodItemArgsType : methodItemArgsType) {
+      types += CodeGenerator.generateCode(aMethodItemArgsType);
+    }
+    String returnType = CodeGenerator.generateCode(methodItem.getReturnType());
+    ref = instanceClassName + "/" + methodName + "(" + types + ")" + returnType;
+    return ref;
   }
   private static Type lengthTypeCheck(Length length)
   {

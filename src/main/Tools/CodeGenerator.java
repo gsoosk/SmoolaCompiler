@@ -127,7 +127,7 @@ public class CodeGenerator {
         methodDeclaration.setCode(code);
         return code;
     }
-    private static String generateCode(Type type)
+    public static String generateCode(Type type)
     {
         String code = "";
         if (type instanceof StringType)
@@ -441,7 +441,7 @@ public class CodeGenerator {
             code += arg.getCode();
         }
 
-        String methodName = "";//TODO
+        String methodName = TypeChecker.getMethodCallStringRef(methodCall);
         code += "   invokevirtual " + methodName + "\n";
 
         methodCall.setCode(code);

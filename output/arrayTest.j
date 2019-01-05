@@ -14,34 +14,34 @@
 
    ; Assign
    ldc 13
-   istore 20
+   istore 26
 
    ; Assign
    ldc 10
    newarray int
-   astore 18
+   astore 24
 
    ; Assign
    ldc 12
    newarray int
-   astore 19
+   astore 25
 
    ; Assign
-   aload 19
+   aload 25
    ldc 0
    ldc 12
    iastore
 
    ; Assign
-   aload 18
+   aload 24
    ldc 0
-   aload 19
+   aload 25
    ldc 0
    iaload
-   iload 20
+   iload 26
    ldc 15
    imul
-   aload 19
+   aload 25
    ldc 0
    iaload
    idiv
@@ -50,9 +50,9 @@
 
    ; Write
    getstatic java/lang/System/out Ljava/io/PrintStream;
-   aload 18
+   aload 24
    arraylength 
-   aload 19
+   aload 25
    arraylength 
    iadd
    invokevirtual java/io/PrintStream/println(I)V

@@ -82,7 +82,7 @@ class LoopTest
 }
 class arrayTest
 {
-    def test() : int {
+    def test(a : int, b : int) : int {
         var x : int[];
         var y : int[];
         var z : int;
@@ -101,8 +101,10 @@ class m
     def test() : int {
         var x : arrayTest ;
         var z : int;
+        var t : int;
         x = new arrayTest();
         z = this.test();
+        t = x.test(z, z);
         return 0;
     }
 }
