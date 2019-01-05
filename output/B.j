@@ -12,6 +12,36 @@
    .limit stack 1000
    .limit locals 1000
 
+   ;Initializing x
+   iconst_0
+   iconst_0
+   istore 1
+
+   ;Initializing y
+   iconst_0
+   iconst_0
+   istore 2
+
+   ;Initializing b1
+   iconst_0
+   iconst_0
+   istore 5
+
+   ;Initializing b2
+   iconst_0
+   iconst_0
+   istore 6
+
+   ;Initializing b
+   iconst_0
+   iconst_0
+   istore 7
+
+   ;Initializing t
+   iconst_0
+   iconst_0
+   istore 8
+
    ; Assign
    ldc 100
    newarray int

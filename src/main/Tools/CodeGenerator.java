@@ -56,13 +56,27 @@ public class CodeGenerator {
 
         ArrayList<VarDeclaration> varDeclarations = classDeclaration.getVarDeclarations();
         for (VarDeclaration varDeclaration : varDeclarations) {
-            code += varDeclaration.getCode() + "\n";
+            code += ".field protected " + varDeclaration.getIdentifier().getName()
+                    + " " + generateCode(varDeclaration.getType()) + "\n";
         }
         code += "\n";
         code += ".method public <init>()V\n" +
                 "   aload_0 ; push this\n" +
-                "   invokespecial java/lang/Object/<init>()V ; call super\n" +
-                "   return\n" +
+                "   invokespecial java/lang/Object/<init>()V ; call super\n";
+
+        for (VarDeclaration varDeclaration : varDeclarations) {
+            if(varDeclaration.getType() instanceof IntType || varDeclaration.getType() instanceof BooleanType || varDeclaration.getType() instanceof StringType)
+            {
+                code += "\n   ;Initializing " + varDeclaration.getIdentifier().getName() +
+                        "\n   aload_0\n" ;
+                code += varDeclaration.getType() instanceof StringType ? "   ldc \"\"\n" : "   iconst_0\n" ;
+                code += "   putfield ";
+                code += classDeclaration.getName().getName() +
+                        "/" + varDeclaration.getIdentifier().getName() +
+                        " " + generateCode(varDeclaration.getType()) + "\n";
+            }
+        }
+        code += "   return\n" +
                 ".end method";
 
         ArrayList<MethodDeclaration> methodDeclarations = classDeclaration.getMethodDeclarations();
@@ -75,9 +89,12 @@ public class CodeGenerator {
     }
     public static String generateCode(VarDeclaration varDeclaration)
     {
-        String code = ".field protected " + varDeclaration.getIdentifier().getName()
-                + " " + generateCode(varDeclaration.getType()) ;
-
+        String code = "";
+        if(varDeclaration.getType() instanceof IntType || varDeclaration.getType() instanceof BooleanType || varDeclaration.getType() instanceof StringType) {
+            code += "   iconst_0\n";
+            code += varDeclaration.getType() instanceof StringType ? "   ldc \"\"\n" : "   iconst_0\n";
+            code += "   istore " + Integer.toString(TypeChecker.identifierVariableIndex(varDeclaration.getIdentifier())) + "\n";
+        }
         varDeclaration.setCode(code);
         return code ;
     }
@@ -105,11 +122,20 @@ public class CodeGenerator {
             returnTypeCode = "V";
             args = "[Ljava/lang/String;";
             staticy = "static ";
-            returnCode = "   return";
+            returnCode = "\n   return";
         }
         String code = ".method public " + staticy + methodName +"("+args+ ")" + returnTypeCode +"\n";
         code += "   .limit stack " + stackSize  +"\n" +
                 "   .limit locals "+ stackSize  +"\n";
+
+        ArrayList<VarDeclaration> varDeclarations = methodDeclaration.getLocalVars();
+        for (VarDeclaration varDeclaration : varDeclarations) {
+            if(!varDeclaration.getCode().equals(""))
+            {
+                code += "\n   ;Initializing " + varDeclaration.getIdentifier().getName();
+                code += "\n" + varDeclaration.getCode();
+            }
+        }
 
         ArrayList<Statement> statements = methodDeclaration.getBody();
         for (Statement statement : statements) {
@@ -117,12 +143,11 @@ public class CodeGenerator {
                     statement.getCode();
         }
 
-        code += "\n" + methodDeclaration.getReturnValue().getCode() + "\n";
+        code += CodeGenerationVisitor.inMain ? "" : "\n" + methodDeclaration.getReturnValue().getCode() + "\n";
 
         code += returnCode + "\n";
         code += ".end method\n";
 
-        //TODO : var declarations
         //TODO : inherit
         methodDeclaration.setCode(code);
         return code;

@@ -12,6 +12,11 @@
    .limit stack 1000
    .limit locals 1000
 
+   ;Initializing z
+   iconst_0
+   iconst_0
+   istore 5
+
    ; Assign
    ldc 13
    istore 5

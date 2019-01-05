@@ -172,20 +172,24 @@ public class TypeChecker {
   }
   public static int identifierVariableIndex(Identifier identifier)
   {
-    if(allMethodsSymbolTable.get(currentClassName + "-" + currentMethodName).getItems().containsKey(identifier.getName()))
+    if(currentMethodName != "")
     {
-      try
+      if(allMethodsSymbolTable.get(currentClassName + "-" + currentMethodName).getItems().containsKey(identifier.getName()))
       {
-        SymbolTableItem item = allMethodsSymbolTable.get(currentClassName + "-" + currentMethodName).get(identifier.getName());
-        if(item instanceof SymbolTableVariableItemBase)
-          return ((SymbolTableVariableItemBase) item).getIndex();
-        return -1;
-      }
-      catch (Exception ex){
-        return -1;
-      }
+        try
+        {
+          SymbolTableItem item = allMethodsSymbolTable.get(currentClassName + "-" + currentMethodName).get(identifier.getName());
+          if(item instanceof SymbolTableVariableItemBase)
+            return ((SymbolTableVariableItemBase) item).getIndex();
+          return -1;
+        }
+        catch (Exception ex){
+          return -1;
+        }
 
+      }
     }
+
     if(allClassesSymbolTable.get(currentClassName).getItems().containsKey(identifier.getName()))
     {
       try

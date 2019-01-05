@@ -36,7 +36,7 @@ public class CodeGenerationVisitor implements Visitor {
             passMain = true;
         }
         currentClassName = classDeclaration.getName().getName();
-        TypeChecker.setForIdentifier(currentClassName, currentMethodName);
+        TypeChecker.setForIdentifier(currentClassName, "");
 
         classDeclaration.getName().accept(this);
         if (classDeclaration.getParentName() != null)
@@ -87,6 +87,7 @@ public class CodeGenerationVisitor implements Visitor {
         methodDeclaration.getReturnValue().accept(this);
 
         CodeGenerator.generateCode(methodDeclaration);
+        TypeChecker.setForIdentifier(currentClassName, "");
 
     }
 
@@ -209,6 +210,10 @@ public class CodeGenerationVisitor implements Visitor {
 
     @Override
     public void visit(Statement statement) {
-        //TODO
+        if(statement.getExpression() != null)
+        {
+            statement.getExpression().accept(this);
+            statement.setCode(statement.getExpression().getCode());
+        }
     }
 }

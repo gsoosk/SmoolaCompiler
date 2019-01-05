@@ -6,12 +6,22 @@
 .method public <init>()V
    aload_0 ; push this
    invokespecial java/lang/Object/<init>()V ; call super
+
+   ;Initializing x
+   aload_0
+   iconst_0
+   putfield A/x I
    return
 .end method
 
 .method public test1()I
    .limit stack 1000
    .limit locals 1000
+
+   ;Initializing x
+   iconst_0
+   iconst_0
+   istore 4
 
    ; Assign
    ldc 4

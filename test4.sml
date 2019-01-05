@@ -2,7 +2,7 @@ class MainClass
 {
     def main() : int {
 
-        writeln(1200);
+        writeln("ok");
         return 0;
     }
 }
@@ -102,6 +102,7 @@ class arrayTest
 class m
 {
     var y : int;
+    var s : string;
     def test() : int {
         var x : arrayTest ;
         var z : int;

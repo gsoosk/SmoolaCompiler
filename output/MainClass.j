@@ -14,10 +14,8 @@
 
    ; Write
    getstatic java/lang/System/out Ljava/io/PrintStream;
-   ldc 1200
-   invokevirtual java/io/PrintStream/println(I)V
-
-   ldc 0
+   ldc "ok"
+   invokevirtual java/io/PrintStream/println(Ljava/lang/String;)V
 
    return
 .end method

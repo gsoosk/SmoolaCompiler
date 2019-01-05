@@ -12,6 +12,26 @@
    .limit stack 1000
    .limit locals 1000
 
+   ;Initializing x
+   iconst_0
+   iconst_0
+   istore 1
+
+   ;Initializing y
+   iconst_0
+   iconst_0
+   istore 2
+
+   ;Initializing z
+   iconst_0
+   iconst_0
+   istore 3
+
+   ;Initializing b
+   iconst_0
+   iconst_0
+   istore 4
+
    ; Assign
    iconst_1
    istore 4
