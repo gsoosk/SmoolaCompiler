@@ -80,3 +80,15 @@ class LoopTest
         return 0;
     }
 }
+class arrayTest
+{
+    def test() : int {
+        var x : int[];
+        var y : int[];
+        var z : int;
+        x = new int[10];
+        y = new int[12];
+        writeln(x.length + y.length);
+        return 0;
+    }
+}

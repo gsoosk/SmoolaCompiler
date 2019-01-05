@@ -116,7 +116,8 @@ public class CodeGenerationVisitor implements Visitor {
 
     @Override
     public void visit(Length length) {
-
+        length.getExpression().accept(this);
+        CodeGenerator.generateCode(length);
     }
 
     @Override

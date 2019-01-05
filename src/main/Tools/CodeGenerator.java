@@ -400,5 +400,13 @@ public class CodeGenerator {
         conditional.setCode(code);
         return code;
     }
+    public static String generateCode(Length length)
+    {
+        String code = "";
+        code += length.getExpression().getCode();
+        code += "   arraylength \n";
+        length.setCode(code);
+        return code;
+    }
 
 }
