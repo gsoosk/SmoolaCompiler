@@ -45,6 +45,38 @@ Label8:
    goto Label8 
 Label9:
 
+   ; Conditional
+   iload 14
+   iload 15
+   if_icmpne Label10
+   iconst_1
+   goto Label11
+Label10:
+   iconst_0
+Label11:
+   ifeq Label12
+   iload 14
+   iload 15
+   iload 14
+   imul
+   ldc 2
+   imul
+   iadd
+   istore 16
+   ldc 12
+   iload 16
+   imul
+   istore 16
+   goto Label13
+Label12:
+   ldc 14
+   iload 14
+   imul
+   iload 15
+   idiv
+   istore 16
+Label13:
+
    ldc 0
 
    ireturn

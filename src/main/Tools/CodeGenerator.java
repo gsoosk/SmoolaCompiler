@@ -373,5 +373,32 @@ public class CodeGenerator {
         block.setCode(code);
         return code;
     }
+    public static String generateCode(Conditional conditional)
+    {
+        /*
+                [condition]
+                ifeq ELSE
+                [consequenceBody]
+                goto END
+          ELSE:
+                [alternativeBody]?
+          END:
+
+         */
+        int elseLabel = label++;
+        int endLabel = label++;
+        String code = "";
+        code += conditional.getExpression().getCode();
+        code += "   ifeq " + getLabel(elseLabel) + "\n";
+        code += conditional.getConsequenceBody().getCode();
+        code += "   goto " + getLabel(endLabel) + "\n" +
+                getLabel(elseLabel) + ":\n" ;
+        if(conditional.getAlternativeBody() != null)
+            code += conditional.getAlternativeBody().getCode();
+        code += getLabel(endLabel) + ":\n";
+
+        conditional.setCode(code);
+        return code;
+    }
 
 }

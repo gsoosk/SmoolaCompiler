@@ -179,7 +179,11 @@ public class CodeGenerationVisitor implements Visitor {
 
     @Override
     public void visit(Conditional conditional) {
-
+        conditional.getExpression().accept(this);
+        conditional.getConsequenceBody().accept(this);
+        if(conditional.getAlternativeBody() != null)
+            conditional.getAlternativeBody().accept(this);
+        CodeGenerator.generateCode(conditional);
 
     }
 

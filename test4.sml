@@ -66,6 +66,17 @@ class LoopTest
             z = z + x + y;
             z = x * y;
         }
+
+        if( x == y ) then
+        {
+            z = x + y * x * 2;
+            z = 12 * z;
+        }
+        else
+        {
+            z = 14 * x / y;
+        }
+
         return 0;
     }
 }
