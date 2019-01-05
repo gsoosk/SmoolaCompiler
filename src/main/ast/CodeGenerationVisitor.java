@@ -148,7 +148,7 @@ public class CodeGenerationVisitor implements Visitor {
 
     @Override
     public void visit(BooleanValue value) {
-
+        CodeGenerator.generateCode(value);
     }
 
     @Override
@@ -170,17 +170,24 @@ public class CodeGenerationVisitor implements Visitor {
 
     @Override
     public void visit(Block block) {
-
+        ArrayList<Statement> body =  block.getBody();
+        for (Statement aBody : body) {
+            aBody.accept(this);
+        }
+        CodeGenerator.generateCode(block);
     }
 
     @Override
     public void visit(Conditional conditional) {
 
+
     }
 
     @Override
     public void visit(While loop) {
-
+        loop.getCondition().accept(this);
+        loop.getBody().accept(this);
+        CodeGenerator.generateCode(loop);
     }
 
     @Override

@@ -12,12 +12,11 @@ import main.ast.node.declaration.MethodDeclaration;
 import main.ast.node.declaration.VarDeclaration;
 import main.ast.node.expression.*;
 import main.ast.node.expression.BinaryExpression.BinaryOperator;
+import main.ast.node.expression.Value.BooleanValue;
 import main.ast.node.expression.Value.IntValue;
 import main.ast.node.expression.Value.StringValue;
 import main.ast.node.expression.UnaryExpression.UnaryOperator;
-import main.ast.node.statement.Assign;
-import main.ast.node.statement.Statement;
-import main.ast.node.statement.Write;
+import main.ast.node.statement.*;
 
 import java.awt.*;
 import java.io.BufferedWriter;
@@ -113,7 +112,8 @@ public class CodeGenerator {
 
         ArrayList<Statement> statements = methodDeclaration.getBody();
         for (Statement statement : statements) {
-            code += "\n" + statement.getCode() + "\n";
+            code += "\n   ; " + statement.toString() + "\n" +
+                    statement.getCode();
         }
 
         code += "\n" + methodDeclaration.getReturnValue().getCode() + "\n";
@@ -193,10 +193,10 @@ public class CodeGenerator {
 
             if(lvalueType instanceof StringType || lvalueType instanceof ArrayType || lvalueType instanceof UserDefinedType)
                 code += "   astore " +
-                        Integer.toString(TypeChecker.identifierVariableIndex((Identifier)assign.getlValue())) + "\n";
+                        Integer.toString(TypeChecker.identifierVariableIndex((Identifier)assign.getlValue()));
             else if(lvalueType instanceof IntType || lvalueType instanceof BooleanType)
                 code += "   istore " +
-                        Integer.toString(TypeChecker.identifierVariableIndex((Identifier)assign.getlValue())) + "\n";
+                        Integer.toString(TypeChecker.identifierVariableIndex((Identifier)assign.getlValue()));
         }
         else if(assign.getlValue() instanceof ArrayCall)
         {
@@ -328,6 +328,49 @@ public class CodeGenerator {
         else if(unaryExpression.getUnaryOperator() == UnaryOperator.minus)
             code += "   ineg\n";
         unaryExpression.setCode(code);
+        return code;
+    }
+    public static String generateCode(While loop)
+    {
+        /*
+            CHECK_COND :
+                [cond]
+                ifeq END
+                [statement]
+                goto CHECK_COND
+            END :
+         */
+        int labelCond = label++;
+        int labelEnd = label++;
+        String code = getLabel(labelCond) + ":\n";
+        code += loop.getCondition().getCode() +
+                "   ifeq " + getLabel(labelEnd  ) + "\n";
+        code += loop.getBody().getCode();
+        code += "   goto " + getLabel(labelCond) + " \n" +
+                getLabel(labelEnd) + ":\n";
+
+
+        loop.setCode(code);
+        return code;
+    }
+    public static String generateCode(BooleanValue value)
+    {
+        String code = "";
+        if(value.isConstant())
+            code += "   iconst_1\n";
+        else
+            code += "   iconst_0\n";
+        value.setCode(code);
+        return code;
+    }
+    public static String generateCode(Block block)
+    {
+        String code = "";
+        ArrayList<Statement> body =  block.getBody();
+        for (Statement aBody : body) {
+            code += aBody.getCode();
+        }
+        block.setCode(code);
         return code;
     }
 

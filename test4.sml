@@ -50,3 +50,22 @@ class B
         return 0;
     }
 }
+class LoopTest
+{
+    def testLoop() : int {
+        var x : int;
+        var y : int;
+        var z : int;
+        var b : boolean;
+        b = true;
+        x = 12;
+        y = 13;
+        z = 0;
+        while(b)
+        {
+            z = z + x + y;
+            z = x * y;
+        }
+        return 0;
+    }
+}

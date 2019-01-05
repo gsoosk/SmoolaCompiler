@@ -12,10 +12,10 @@
    .limit stack 100
    .limit locals 100
 
+   ; Write
    getstatic java/lang/System/out Ljava/io/PrintStream;
    ldc 1200
    invokevirtual java/io/PrintStream/println(I)V
-
 
    ldc 0
 

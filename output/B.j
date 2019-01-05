@@ -12,35 +12,31 @@
    .limit stack 100
    .limit locals 100
 
+   ; Assign
    ldc 100
    newarray int
    astore 9
 
-
-
+   ; Assign
    ldc 10
    newarray int
    astore 8
 
-
-
-   ldc 10000
+   ; Assign
+   ldc 1
    istore 6
 
-
-
+   ; Assign
    ldc 2
    istore 7
 
-
-
+   ; Assign
    aload 8
    aload 9
    invokevirtual java/lang/Object.equals(Ljava/lang/Object;)Z
    istore 12
 
-
-
+   ; Assign
    iload 6
    iload 7
    if_icmpge Label0
@@ -51,8 +47,7 @@ Label0:
 Label1:
    istore 10
 
-
-
+   ; Assign
    iload 6
    iload 7
    if_icmpne Label2
@@ -63,8 +58,7 @@ Label2:
 Label3:
    istore 11
 
-
-
+   ; Assign
    iload 10
    ifne Label4
    iload 12
@@ -82,13 +76,10 @@ Label6:
 Label7:
    istore 13
 
-
-
+   ; Assign
    iload 7
    ineg
    istore 6
-
-
 
    ldc 0
 
