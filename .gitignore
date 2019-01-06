@@ -99,3 +99,5 @@ src/SmoolaLexer.tokens
 src/SmoolaListener.java
 src/Smoola.tokens
 src/SmoolaParser.java
+output/*.j
+output/*.class

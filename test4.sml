@@ -113,7 +113,11 @@ class m
         return 0;
     }
 }
-class fieldTest
+class u
+{
+
+}
+class fieldTest extends u
 {
     var x : int;
     var y : int;
@@ -121,6 +125,7 @@ class fieldTest
         var l1 : int;
 
         l1 = x + y + a;
+        x = a;
 
 
         return "";

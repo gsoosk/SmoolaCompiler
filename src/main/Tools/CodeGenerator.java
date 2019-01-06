@@ -27,7 +27,8 @@ import java.util.ArrayList;
 
 
 public class CodeGenerator {
-    private static final String stackSize = "1000";
+    private static final String stackSize = "100";
+    private static final String local = "100";
     private static final String outputPath = "./output/";
     private static int label = 0;
     public static void jasminFileCreator(String code, String className)
@@ -50,9 +51,16 @@ public class CodeGenerator {
     }
     public static String generateCode(ClassDeclaration classDeclaration)
     {
-        //TODO : handle inherit
         String code = ".class public " + classDeclaration.getName().getName() + "\n";
-        code += ".super java/lang/Object\n\n";
+        if(classDeclaration.getParentName() != null)
+        {
+            code += ".super "+ classDeclaration.getParentName().getName()+"\n\n";
+        }
+        else
+        {
+            code += ".super java/lang/Object\n\n";
+        }
+
 
         ArrayList<VarDeclaration> varDeclarations = classDeclaration.getVarDeclarations();
         for (VarDeclaration varDeclaration : varDeclarations) {
@@ -61,8 +69,18 @@ public class CodeGenerator {
         }
         code += "\n";
         code += ".method public <init>()V\n" +
-                "   aload_0 ; push this\n" +
-                "   invokespecial java/lang/Object/<init>()V ; call super\n";
+                "   .limit stack " + stackSize  +"\n" +
+                "   .limit locals "+ local +"\n"+
+                "   aload_0 ; push this\n" ;
+        if(classDeclaration.getParentName() != null)
+        {
+            code += "   invokespecial "+ classDeclaration.getParentName().getName() + "/<init>()V ; call super\n";
+        }
+        else
+        {
+            code += "   invokespecial java/lang/Object/<init>()V ; call super\n";
+        }
+
 
         for (VarDeclaration varDeclaration : varDeclarations) {
             if(varDeclaration.getType() instanceof IntType || varDeclaration.getType() instanceof BooleanType || varDeclaration.getType() instanceof StringType)
@@ -126,7 +144,7 @@ public class CodeGenerator {
         }
         String code = ".method public " + staticy + methodName +"("+args+ ")" + returnTypeCode +"\n";
         code += "   .limit stack " + stackSize  +"\n" +
-                "   .limit locals "+ stackSize  +"\n";
+                "   .limit locals "+ local +"\n";
 
         ArrayList<VarDeclaration> varDeclarations = methodDeclaration.getLocalVars();
         for (VarDeclaration varDeclaration : varDeclarations) {
@@ -148,7 +166,6 @@ public class CodeGenerator {
         code += returnCode + "\n";
         code += ".end method\n";
 
-        //TODO : inherit
         methodDeclaration.setCode(code);
         return code;
     }
@@ -215,14 +232,27 @@ public class CodeGenerator {
 
         if(assign.getlValue() instanceof Identifier)
         {
-            code += assign.getrValue().getCode();
+            if(TypeChecker.isField((Identifier) assign.getlValue()))
+            {
 
-            if(lvalueType instanceof StringType || lvalueType instanceof ArrayType || lvalueType instanceof UserDefinedType)
-                code += "   astore " +
-                        Integer.toString(TypeChecker.identifierVariableIndex((Identifier)assign.getlValue()));
-            else if(lvalueType instanceof IntType || lvalueType instanceof BooleanType)
-                code += "   istore " +
-                        Integer.toString(TypeChecker.identifierVariableIndex((Identifier)assign.getlValue()));
+                code += "   aload_0\n" + assign.getrValue().getCode();
+                code += "   putfield " +
+                        TypeChecker.getFieldStringRef((Identifier) assign.getlValue()) + " " +
+                        generateCode(lvalueType) ;
+
+            }
+            else
+            {
+                code += assign.getrValue().getCode();
+
+                if(lvalueType instanceof StringType || lvalueType instanceof ArrayType || lvalueType instanceof UserDefinedType)
+                    code += "   astore " +
+                            Integer.toString(TypeChecker.identifierVariableIndex((Identifier)assign.getlValue()));
+                else if(lvalueType instanceof IntType || lvalueType instanceof BooleanType)
+                    code += "   istore " +
+                            Integer.toString(TypeChecker.identifierVariableIndex((Identifier)assign.getlValue()));
+
+            }
         }
         else if(assign.getlValue() instanceof ArrayCall)
         {
@@ -253,7 +283,7 @@ public class CodeGenerator {
                 code += "   aload " +
                         Integer.toString(TypeChecker.identifierVariableIndex(identifier));
             else if(type instanceof BooleanType || type instanceof IntType)
-                code += "   iload " + //TODO : method is diffrenet
+                code += "   iload " +
                         Integer.toString(TypeChecker.identifierVariableIndex(identifier));
             code += "\n";
 
@@ -263,7 +293,6 @@ public class CodeGenerator {
             code += "   aload_0\n" +
                     "   getfield " + TypeChecker.getFieldStringRef(identifier) + " " +
                     generateCode(type) + "\n";
-
         }
         identifier.setCode(code);
         return code;

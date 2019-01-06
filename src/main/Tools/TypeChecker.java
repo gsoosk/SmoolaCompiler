@@ -121,8 +121,8 @@ public class TypeChecker {
         if(((ArrayType) leftType).getSize() != ((ArrayType) rightType).getSize())
           return new NoType();
       }
-      if(leftType instanceof BooleanType || rightType instanceof BooleanType)
-        return new NoType();
+//      if(leftType instanceof BooleanType || rightType instanceof BooleanType)
+//        return new NoType();
 
       if(leftType instanceof NoType || rightType instanceof NoType)
         return new BooleanType();
