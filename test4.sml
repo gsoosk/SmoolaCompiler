@@ -113,3 +113,16 @@ class m
         return 0;
     }
 }
+class fieldTest
+{
+    var x : int;
+    var y : int;
+    def test(a : int, b : string) : string {
+        var l1 : int;
+
+        l1 = x + y + a;
+
+
+        return "";
+    }
+}

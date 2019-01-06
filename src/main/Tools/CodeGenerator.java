@@ -246,13 +246,25 @@ public class CodeGenerator {
     {
         String code = "";
         Type type = identifier.getType();
-        if(type instanceof ArrayType || type instanceof UserDefinedType || type instanceof StringType)
-            code += "   aload " +
-                    Integer.toString(TypeChecker.identifierVariableIndex(identifier));
-        else if(type instanceof BooleanType || type instanceof IntType)
-            code += "   iload " + //TODO : method is diffrenet
-                    Integer.toString(TypeChecker.identifierVariableIndex(identifier));
-        code += "\n";
+        if(!TypeChecker.isField(identifier))
+        {
+
+            if(type instanceof ArrayType || type instanceof UserDefinedType || type instanceof StringType)
+                code += "   aload " +
+                        Integer.toString(TypeChecker.identifierVariableIndex(identifier));
+            else if(type instanceof BooleanType || type instanceof IntType)
+                code += "   iload " + //TODO : method is diffrenet
+                        Integer.toString(TypeChecker.identifierVariableIndex(identifier));
+            code += "\n";
+
+        }
+        else
+        {
+            code += "   aload_0\n" +
+                    "   getfield " + TypeChecker.getFieldStringRef(identifier) + " " +
+                    generateCode(type) + "\n";
+
+        }
         identifier.setCode(code);
         return code;
     }

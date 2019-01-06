@@ -170,9 +170,38 @@ public class TypeChecker {
 //    }
     return toReturn;
   }
+  public static boolean isField(Identifier identifier)
+  {
+    if(!currentMethodName.equals(""))
+    {
+      if(allMethodsSymbolTable.get(currentClassName + "-" + currentMethodName).getItems().containsKey(identifier.getName()))
+      {
+        return false;
+      }
+    }
+
+    if(allClassesSymbolTable.get(currentClassName).getItems().containsKey(identifier.getName()))
+    {
+      return true;
+    }
+    return false;
+  }
+  public static String getFieldStringRef(Identifier identifier)
+  {
+    try
+    {
+      SymbolTableItem item = allClassesSymbolTable.get(currentClassName).get(identifier.getName());
+      if(item instanceof SymbolTableVariableItemBase)
+        return currentClassName + "/" + ((SymbolTableVariableItemBase) item).getName();
+      return "";
+    }
+    catch (Exception ex){
+      return "";
+    }
+  }
   public static int identifierVariableIndex(Identifier identifier)
   {
-    if(currentMethodName != "")
+    if(!currentMethodName.equals(""))
     {
       if(allMethodsSymbolTable.get(currentClassName + "-" + currentMethodName).getItems().containsKey(identifier.getName()))
       {
