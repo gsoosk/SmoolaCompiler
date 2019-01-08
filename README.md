@@ -2,25 +2,25 @@
 ### What does it do ? 
 This is a compiler for Smoola language.
 
-In Phase 1 lexer of smoola made in smoola.g4 using Antlr
+In [Phase 1](#phase1-lexer) lexer of smoola made in smoola.g4 using Antlr
 
-In Phase 2 of project it makes AST from lexer analysis and make SymbolTable. At last it shows up semantic Errors.
+In [Phase 2](#phase2-semantics) of project it makes AST from lexer analysis and make SymbolTable. At last it shows up semantic Errors.
 
-In Phase 3 of project it shows remaining errors and do type checking.
+In [Phase 3](#phase3-type-checking) of project it shows remaining errors and do type checking.
 
-In Phase 4 Java byte code of smoola code will be generated.
+In [Phase 4](#phase4-code-generation) Java byte code of smoola code will be generated.
 
 ## PHASE1 (LEXER)
 checking grammer of language.
 
-## PHASE2 ( Semantics )
+## PHASE2 (Semantics)
 ### Errors 
 * Redefination of Methods 
 * Redefination of Variables
 * Redefination of Classes
 * New Array zero length 
 
-## PHASE3 ( Type Checking )
+## PHASE3 (Type Checking)
 ### Errors ( Main Errors ) 
 * Refrence to a undeclared variable
 * Unsupported operand type using 
@@ -31,7 +31,7 @@ checking grammer of language.
 * return type validation
 * and all other compile errors...
 
-## PHASE4 ( Code Generation)
+## PHASE4 (Code Generation)
 * All kind of code generations handled in this phase of Compiler.
 * This compiler make `Java Byte Code`s using jasmin assembler. 
 * After all Smoola Code runs on Java Virtual Machine.
