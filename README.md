@@ -30,7 +30,22 @@ checking grammer of language.
 * and all other compile errors...
 
 ## PHASE4 ( Code Generation)
+* All kind of code generations handled in this phase of Compiler.
+* This compiler make `Java Byte Code`s using jasmin assembler. 
+* After all Smoola Code runs on Java Virtual Machine.
 
 ## How to run ? 
-You should at first `generate` Smoola.g4 grammer using Antlr. and then running whole project. 
-For more info about Antlr visit [This](https://www.antlr.org) Page.
+#### Step 1 :
+You should at first `generate` Smoola.g4 grammer using Antlr. For more info about Antlr visit [This](https://www.antlr.org) Page.
+#### Step 2 : 
+You should run whole java project. For running that you can use MySmoola.java script. If you run this code it runs whole project easily.
+#### Step 3 : 
+After running java project Java Byte Codes will create in `output` folder. Then its time to run generated code.
+First go to `output` repository in terminal. then run
+```
+java -jar jasmin.jar *.j
+```
+and then it will create java classes. Then you should run code with running code of your main class :
+```
+java <MainClass>
+```
