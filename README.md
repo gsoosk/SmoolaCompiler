@@ -8,6 +8,8 @@ In Phase 2 of project it makes AST from lexer analysis and make SymbolTable. At 
 
 In Phase 3 of project it shows remaining errors and do type checking.
 
+In Phase 4 Java byte code of smoola code will be generated.
+
 ## PHASE1 (LEXER)
 checking grammer of language.
 
