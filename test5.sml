@@ -136,6 +136,18 @@ class LoopTest
     }
 
 }
+class assignTest
+{
+    def test() : int
+    {
+        var a : int;
+        var c : int;
+        var b : int;
+        var d : int;
+        a = b = c ;
+        return 0;
+    }
+}
 
 
 

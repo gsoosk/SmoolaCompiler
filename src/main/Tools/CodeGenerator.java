@@ -109,7 +109,6 @@ public class CodeGenerator {
     {
         String code = "";
         if(varDeclaration.getType() instanceof IntType || varDeclaration.getType() instanceof BooleanType || varDeclaration.getType() instanceof StringType) {
-            code += "   iconst_0\n";
             code += varDeclaration.getType() instanceof StringType ? "   ldc \"\"\n" : "   iconst_0\n";
             code += "   istore " + Integer.toString(TypeChecker.identifierVariableIndex(varDeclaration.getIdentifier())) + "\n";
         }
@@ -375,6 +374,12 @@ public class CodeGenerator {
                     const2+
                     getLabel(label2) + ":\n";
 
+        }
+        else if(op == BinaryOperator.assign)
+        {
+            code = "";
+            code += generateCode(new Assign(binaryExpression.getLeft(),binaryExpression.getRight()));
+            code += binaryExpression.getLeft().getCode();
         }
         binaryExpression.setCode(code);
         return code;
