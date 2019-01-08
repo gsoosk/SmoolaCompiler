@@ -12,12 +12,13 @@ class assignTest
 {
     def test() : int
     {
-        var a : int;
+        var a : int[];
         var c : int;
         var b : int;
         var d : int;
         d = 12;
-        a = b = c = d;
+        a = new int[10];
+        a[0] = b = c = d;
         writeln(d);
         writeln(c);
         writeln(b);
@@ -25,3 +26,4 @@ class assignTest
         return 0;
     }
 }
+

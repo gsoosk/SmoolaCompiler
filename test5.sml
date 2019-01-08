@@ -9,6 +9,7 @@ class MainClass
         writeln("Factorial of 6 is :");
         writeln(new A().calculateFactorial(6));
         new B().binaryExprCheck();
+        new assignTest().test();
         new FakeMain().fakeMain();
         return 0;
     }
@@ -19,12 +20,35 @@ class FakeMain
     {
         var loopTest : LoopTest;
         var arr : int[];
+        var temp : int;
         arr = new int[10];
+
         loopTest = new LoopTest();
         arr = loopTest.initArr(arr);
         arr = loopTest.bubbleSort(arr);
         writeln("Sorted : ");
         writeln(arr);
+
+        temp = this.qTest();
+
+        return 0;
+    }
+    def qTest() : int
+    {
+
+        var q : Queue;
+        var temp : int;
+        q = new Queue();
+        writeln("Initializing queue...");
+        writeln("adding 3, 2, 5, 7 to queue");
+        temp = q.push(3);
+        temp = q.push(2);
+        temp = q.push(5);
+        temp = q.push(7);
+        writeln("front of queue : ");
+        writeln(q.front());
+        writeln("queue after front value pop is :");
+        temp = q.print();
         return 0;
     }
 }
@@ -138,16 +162,93 @@ class LoopTest
 }
 class assignTest
 {
+    var b : int;
     def test() : int
     {
-        var a : int;
+        var a : int[];
         var c : int;
-        var b : int;
         var d : int;
-        a = b = c ;
+        writeln("assignTest:");
+        d = 12;
+        a = new int[10];
+        a[0] = b = c = d;
+        writeln(d);
+        writeln(c);
+        writeln(b);
+        writeln(a);
         return 0;
     }
 }
+class Queue
+{
+    var q : int[];
+    var size : int;
+    def initQ() : int
+    {
+       q = new int[10];
+       size = 0;
+       return 0;
+    }
+    def front() : int
+    {
 
+        var newQ : int[];
+        var toReturn : int;
+        var i : int;
+        newQ = new int[10];
+        if(q.length > 0) then
+        {
+            i = 0 ;
+            while(i < size - 1)
+            {
+                newQ[i] = q[i];
+                i = i + 1;
+            }
+            toReturn = q[i];
+            size = size - 1;
+        }
+        else
+        {
+            writeln("Q is empty!");
+        }
+        q = newQ;
+        return toReturn;
+    }
+    def push(member : int) : int
+    {
+        var newQ : int[];
+        var toReturn : int;
+        var i : int;
+        newQ = new int[10];
+        if(size < 10) then
+        {
+            i = 0 ;
+            while(i < size)
+            {
+                newQ[i] = q[i];
+                i = i + 1;
+            }
+            newQ[i] = member;
+            q = newQ;
+            size = size + 1;
+        }
+        else
+        {
+            writeln("Size of Q is maximum!");
+        }
+
+        return 0;
+    }
+    def print() : int
+    {
+        var i : int;
+        while( i < size )
+        {
+            writeln(q[i]);
+            i = i + 1;
+        }
+        return 0;
+    }
+}
 
 
