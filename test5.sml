@@ -21,6 +21,7 @@ class FakeMain
         var loopTest : LoopTest;
         var arr : int[];
         var temp : int;
+        var gcd: int;
         arr = new int[10];
 
         loopTest = new LoopTest();
@@ -30,6 +31,8 @@ class FakeMain
         writeln(arr);
 
         temp = this.qTest();
+        gcd = loopTest.GCDCalculator(55, 121);
+        arr = loopTest.reverseArray(arr);
 
         return 0;
     }
@@ -157,6 +160,54 @@ class LoopTest
         a = b;
         b = temp;
         return 0;
+    }
+    def GCDCalculator(num1 : int, num2 : int) : int
+    {
+        var t1 : int;
+        var t2 : int;
+        t1 = num1;
+        t2 = num2;
+        while (num1 <> num2) {
+            if(num1 > num2) then
+                num1 = num1 - num2;
+            else
+                num2 = num2 - num1;
+        }
+        writeln("-----");
+        writeln("GCD of");
+        writeln(t1);
+        writeln("and");
+        writeln(t2);
+        writeln("is:");
+        writeln(num2);
+        writeln("-----");
+        return num2;
+    }
+    def reverseArray(arr : int[]) : int[]
+    {
+        var i : int;
+        var j : int;
+        var temp : int;
+        var out : int[];
+
+        writeln("-----");
+        writeln("Initial array is:");
+        writeln(arr);
+        i = 0;
+        j = 9;
+        out = new int[10];
+        while(i < 10)
+        {
+            temp = arr[i];
+            out[i] = arr[j];
+            arr[j] = temp;
+            i = i + 1;
+            j = j - 1;
+        }
+        writeln("Reversed array is:");
+        writeln(out);
+        writeln("-----");
+        return out;
     }
 
 }
