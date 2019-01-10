@@ -1,11 +1,13 @@
 package main.Tools;
 
+import com.sun.tools.javac.jvm.Code;
 import main.ast.Type.ArrayType.ArrayType;
 import main.ast.Type.NoType;
 import main.ast.Type.OkType;
 import main.ast.Type.PrimitiveType.BooleanType;
 import main.ast.Type.PrimitiveType.IntType;
 import main.ast.Type.UserDefinedType.UserDefinedType;
+import main.ast.node.declaration.MethodDeclaration;
 import main.ast.node.expression.*;
 import main.ast.node.expression.BinaryExpression.BinaryOperator;
 
@@ -119,8 +121,8 @@ public class TypeChecker {
         if(((ArrayType) leftType).getSize() != ((ArrayType) rightType).getSize())
           return new NoType();
       }
-      if(leftType instanceof BooleanType || rightType instanceof BooleanType)
-        return new NoType();
+//      if(leftType instanceof BooleanType || rightType instanceof BooleanType)
+//        return new NoType();
 
       if(leftType instanceof NoType || rightType instanceof NoType)
         return new BooleanType();
@@ -167,6 +169,70 @@ public class TypeChecker {
 //      return classType;
 //    }
     return toReturn;
+  }
+  public static boolean isField(Identifier identifier)
+  {
+    if(!currentMethodName.equals(""))
+    {
+      if(allMethodsSymbolTable.get(currentClassName + "-" + currentMethodName).getItems().containsKey(identifier.getName()))
+      {
+        return false;
+      }
+    }
+
+    if(allClassesSymbolTable.get(currentClassName).getItems().containsKey(identifier.getName()))
+    {
+      return true;
+    }
+    return false;
+  }
+  public static String getFieldStringRef(Identifier identifier)
+  {
+    try
+    {
+      SymbolTableItem item = allClassesSymbolTable.get(currentClassName).get(identifier.getName());
+      if(item instanceof SymbolTableVariableItemBase)
+        return currentClassName + "/" + ((SymbolTableVariableItemBase) item).getName();
+      return "";
+    }
+    catch (Exception ex){
+      return "";
+    }
+  }
+  public static int identifierVariableIndex(Identifier identifier)
+  {
+    if(!currentMethodName.equals(""))
+    {
+      if(allMethodsSymbolTable.get(currentClassName + "-" + currentMethodName).getItems().containsKey(identifier.getName()))
+      {
+        try
+        {
+          SymbolTableItem item = allMethodsSymbolTable.get(currentClassName + "-" + currentMethodName).get(identifier.getName());
+          if(item instanceof SymbolTableVariableItemBase)
+            return ((SymbolTableVariableItemBase) item).getIndex();
+          return -1;
+        }
+        catch (Exception ex){
+          return -1;
+        }
+
+      }
+    }
+
+    if(allClassesSymbolTable.get(currentClassName).getItems().containsKey(identifier.getName()))
+    {
+      try
+      {
+        SymbolTableItem item = allClassesSymbolTable.get(currentClassName).get(identifier.getName());
+        if(item instanceof SymbolTableVariableItemBase)
+          return ((SymbolTableVariableItemBase) item).getIndex();
+        return -1;
+      }
+      catch (Exception ex){
+        return -1;
+      }
+    }
+    return -1;
   }
   private static Type methodCallTypeCheck(MethodCall methodCall)
   {
@@ -224,6 +290,49 @@ public class TypeChecker {
     }
     return methodItem.getReturnType();
 
+  }
+  public static String getMethodCallStringRef(MethodCall methodCall)
+  {
+    String ref = "";
+    String instanceClassName = ((UserDefinedType)methodCall.getInstance().getType()).getName().getName();
+    String methodName = methodCall.getMethodName().getName();
+    String types = "";
+    SymbolTableMethodItem methodItem;
+    try{
+      methodItem =(SymbolTableMethodItem) allClassesSymbolTable.get(instanceClassName).get("Method:<"+methodName+">");
+
+    } catch (ItemNotFoundException e)
+    {
+      return  "";
+    }
+    ArrayList<Type> methodItemArgsType = methodItem.getArgTypes();
+    for (Type aMethodItemArgsType : methodItemArgsType) {
+      types += CodeGenerator.generateCode(aMethodItemArgsType);
+    }
+    String returnType = CodeGenerator.generateCode(methodItem.getReturnType());
+    ref = instanceClassName + "/" + methodName + "(" + types + ")" + returnType;
+    return ref;
+  }
+  public static String getMethodDeclarationArgsString(MethodDeclaration methodDeclaration)
+  {
+
+    String instanceClassName = currentClassName;
+    String methodName = methodDeclaration.getName().getName();
+    String types = "";
+    SymbolTableMethodItem methodItem;
+    try{
+      methodItem =(SymbolTableMethodItem) allClassesSymbolTable.get(instanceClassName).get("Method:<"+methodName+">");
+
+    } catch (ItemNotFoundException e)
+    {
+      return  "";
+    }
+    ArrayList<Type> methodItemArgsType = methodItem.getArgTypes();
+    for (Type aMethodItemArgsType : methodItemArgsType) {
+      types += CodeGenerator.generateCode(aMethodItemArgsType);
+    }
+
+    return types;
   }
   private static Type lengthTypeCheck(Length length)
   {

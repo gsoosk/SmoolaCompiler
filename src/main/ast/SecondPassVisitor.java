@@ -45,7 +45,7 @@ public class SecondPassVisitor implements  Visitor{
         allClassesSymbolTable = allClasses;
         allMethodsSymbolTable = allMethods;
         isThereError = error;
-        variablesIndex = varIndex;
+        variablesIndex = 1000;
         TypeChecker.setHashesForIdentifier(allClasses, allMethods);
     }
 
@@ -63,6 +63,8 @@ public class SecondPassVisitor implements  Visitor{
             for (String aToOut : toOut) {
                 System.out.println(aToOut);
             }
+            CodeGenerationVisitor codeGenerateVisitor = new CodeGenerationVisitor();
+            codeGenerateVisitor.visit(program);
         }
 
     }

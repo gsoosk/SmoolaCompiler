@@ -39,7 +39,7 @@ import main.ast.node.expression.UnaryExpression.UnaryOperator;
     ;
     mainClass returns [ClassDeclaration synMainClass]
     :
-        'class'  mainClassName = ID '{' 'def' mainMethodName = ID '(' ')' ':' 'int' '{'  allStatements = statements 'return' mainVal = expression ';' '}' '}'
+        'class'  mainClassName = ID '{' 'def' mainMethodName = 'main' '(' ')' ':' 'int' '{'  allStatements = statements 'return' mainVal = expression ';' '}' '}'
         {
             $synMainClass = AstMaker.mainClass($mainClassName.text, $mainMethodName.text, $mainVal.synExpression, $allStatements.synStatements);
             $synMainClass.setLineNumber($mainClassName.getLine());
@@ -182,7 +182,6 @@ import main.ast.node.expression.UnaryExpression.UnaryOperator;
             }
         }
     ;
-    //Todo : check all lines number in all rules to be correct
     expression returns [Expression synExpression, String BinaryOp]
     :
         expr = expressionAssignment

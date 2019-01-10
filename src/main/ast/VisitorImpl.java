@@ -24,7 +24,7 @@ import java.util.HashMap;
 public class VisitorImpl implements Visitor {
     private boolean isThereError = false;
     private boolean isItInClassVarDeclarations = false;
-    private int variablesIndex = 0;
+    private int variablesIndex = 1;
     private String currentClassName;
     private String currentParentName;
     private ArrayList<PassSaver> passSavers = new ArrayList<>();
@@ -181,6 +181,7 @@ public class VisitorImpl implements Visitor {
     @Override
     public void visit(MethodDeclaration methodDeclaration) {
         //
+        variablesIndex = 1;
         ArrayList<Type> argsType = new ArrayList<>();
         for (VarDeclaration arg: methodDeclaration.getArgs()) {
           argsType.add(arg.getType());
@@ -250,7 +251,7 @@ public class VisitorImpl implements Visitor {
     public void visit(VarDeclaration varDeclaration) {
 
         SymbolTableItem item = new SymbolTableVariableItemBase(varDeclaration.getIdentifier().getName(),
-                                    varDeclaration.getType(), ++variablesIndex);
+                                    varDeclaration.getType(), variablesIndex++);
         boolean putSuccess = false;
         int i = 0;
         do {
