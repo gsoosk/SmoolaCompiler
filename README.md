@@ -1,6 +1,6 @@
 # Smoola Compiler
 ### What does it do ? 
-This is a compiler for Smoola language.
+This is a compiler for Smoola language. ( You can see [Smoola Documentation](https://github.com/gsoosk/SmoolaCompiler/wiki/Smoola-Documentation) )
 
 In [Phase 1](#phase1-lexer) lexer of smoola made in smoola.g4 using Antlr
 
