@@ -1,53 +1,53 @@
 # Smoola Compiler
-### What does it do ? 
-This is a compiler for Smoola language. ( You can see [Smoola Documentation](https://github.com/gsoosk/SmoolaCompiler/wiki/Smoola-Documentation) )
+### What does it do? 
+This is a compiler for Smoola language. (You can see [Smoola Documentation](https://github.com/gsoosk/SmoolaCompiler/wiki/Smoola-Documentation))
 
-In [Phase 1](#phase1-lexer) lexer of smoola made in smoola.g4 using Antlr
+In [Phase 1](#phase1-lexer), the lexer of Smoola is made in Smoola.g4 using [Antlr](https://github.com/antlr/antlr4)
 
-In [Phase 2](#phase2-semantics) of project it makes AST from lexer analysis and make SymbolTable. At last it shows up semantic Errors.
+In [Phase 2](#phase2-semantics), the AST is constructed from lexical analysis and the symbol table is filled. Finally, it shows up semantic errors.
 
-In [Phase 3](#phase3-type-checking) of project it shows remaining errors and do type checking.
+In [Phase 3](#phase3-type-checking), the remaining errors are shown and type-checking is done.
 
-In [Phase 4](#phase4-code-generation) Java byte code of smoola code will be generated.
+In [Phase 4](#phase4-code-generation), Java bytecode of the Smoola program will be generated.
 
-## PHASE1 (LEXER)
-checking grammer of language.
+## Phase 1 (Lexer)
+Checking grammar of language.
 
-## PHASE2 (Semantics)
+## Phase 2 (Semantics)
 ### Errors 
-* Redefination of Methods 
-* Redefination of Variables
-* Redefination of Classes
-* New Array zero length 
+* Redefinition of methods 
+* Redefinition of variables
+* Redefinition of classes
+* New array with zero length 
 
-## PHASE3 (Type Checking)
-### Errors ( Main Errors ) 
-* Refrence to a undeclared variable
-* Unsupported operand type using 
-* Type checking all conditions and statements
+## Phase 3 (Type-Checking)
+### Errors (Main Errors) 
+* Reference to an undeclared variable
+* Unsupported usage of operand type 
+* Type-checking all conditions and statements
 * Unsupported usage of method calls
-* writeln type check
+* `writeln` type-checking
 * Not validation of left side of assignment
-* return type validation
+* Return type validation
 * and all other compile errors...
 
-## PHASE4 (Code Generation)
-* All kind of code generations handled in this phase of Compiler.
-* This compiler make `Java Byte Code`s using jasmin assembler. 
-* After all Smoola Code runs on Java Virtual Machine.
+## Phase 4 (Code Generation)
+* All of the code generation process is handled in this phase.
+* This compiler generates Java bytecode using [jasmin](http://jasmin.sourceforge.net/) assembler. 
+* After all, the Smoola program is run on Java Virtual Machine.
 
-## How to run ? 
-#### Step 1 :
-You should at first `generate` Smoola.g4 grammer using Antlr. For more info about Antlr visit [This](https://www.antlr.org) Page.
-#### Step 2 : 
-You should run whole java project. For running that you can use MySmoola.java script. If you run this code it runs whole project easily.
-#### Step 3 : 
-After running java project Java Byte Codes will create in `output` folder. Then its time to run generated code.
-First go to `output` repository in terminal. then run
+## How to run? 
+#### Step 1:
+You should at first generate Smoola.g4 grammer using Antlr. For more info about Antlr visit [This](https://www.antlr.org) Page.
+#### Step 2: 
+You should run the whole Java project. For running that you can use MySmoola.java script. If you run this code, it runs the whole project easily.
+#### Step 3: 
+After running the Java project, Java bytecode will be generated in the `output` folder. Then it's time to run the generated code.
+First go to the `output` directory in terminal. Then run
 ```
 java -jar jasmin.jar *.j
 ```
-and then it will create java classes. Then you should run code with running code of your main class :
+and then it will create corresponding Java classes. Then you should run the program through executing your main class:
 ```
 java <MainClass>
 ```
